@@ -1,0 +1,75 @@
+<project name = "phase03"
+	 default = "run">
+
+  <!-- It is considered bad form to define properties directly in a
+       build file. It is better to use a properties file. We have
+       moved src.dir and build.dir out to the build.properties file in
+       the phase03 directory. We have also defined the command-line
+       parameters for the run command out there, too. -->
+  <property file = "build.properties" />
+
+  <!-- Make a clean target so that we can clean up (delete) all build
+       targets. -->
+  <target name = "clean" description = "Delete all build targets">
+    <delete dir = "${build.dir}" /> <!-- the build.dir property -->
+  </target>
+
+  <target name = "init" description = "Starting point for building">
+    <mkdir dir = "${build.dir}" />
+  </target>
+
+  <!-- Split the <javac> and <java> steps to two different targets -->
+  <target name = "compile" depends = "init" description = "Compile the program">
+    <!-- Compile ALL java files found in or below the source
+         directory, building the matching structure in the destination
+         directory. -->
+    <javac srcdir = "${src.dir}" destdir = "${build.dir}" />
+  </target>
+
+  <!-- This is the run target; it no longer contains a <java>
+       tag. Instead it has two <antcall> tags. <antcall> "calls" the
+       named target. So this target permits the user to specify run as
+       the target and have both run.argument and run.noargument
+       executed. -->
+  <target name = "run" depends = "compile" description = "Run the program">
+    <antcall target="run.argument" />
+    <antcall target="run.noargument" />
+  </target>
+
+  <!-- Notice the if attribute for this target. If the named property
+       is defined, then this target will execute. If the named
+       property is not defined, then this target will not be
+       executed. This is necessary because an undefined property will
+       evaluate to its own name (${input.filename} evaluates to the
+       string "${input.filename}") and we do not want to mess with
+       passing that in as the name of the file to read. Thus we only
+       want to do this target _if_ the given property is defined. -->
+  <target name = "run.argument"
+	  description = "[internal] Run the program with an input file name"
+	  if="input.filename">
+    <echo>Reading from ${input.filename}</echo>
+    <java classname = "main.Echo">
+      <classpath>
+	<pathelement location = "${build.dir}" />
+      </classpath>
+      <arg value="${input.filename}" />
+    </java>
+  </target>
+
+  <!-- There is no "else" in Ant but rather an unless attribute. This
+       rule executes in just those cases where run.noargument does not
+       execute (and vice versa). There is no <arg> tag on the <java>
+       tag so there is no command-line argument passed to the Echo
+       program. Thus it runs interactively. -->
+  <target name = "run.noargument"
+	  description = "[internal] Run the program with no input file name"
+	  unless="input.filename">
+    <echo>Running without an argument; 
+    -Dinput.filename=[fname] to define a file name.</echo>
+    <java classname = "main.Echo">
+      <classpath>
+	<pathelement location = "${build.dir}" />
+      </classpath>
+    </java>
+  </target>
+</project>
