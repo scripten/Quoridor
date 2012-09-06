@@ -1,0 +1,120 @@
+<project name = "phase04"
+	 default = "run">
+
+  <!-- Included to shut ant 1.8+ up about the value not being set. -->
+  <presetdef name="javac">
+     <javac includeantruntime="false" />
+  </presetdef>
+
+  <!-- It is considered bad form to define properties directly in a
+       build file. It is better to use a properties file. We have
+       moved src.dir and build.dir out to the build.properties file in
+       the phase03 directory. We have also defined the command-line
+       parameters for the run command out there, too. -->
+  <property file = "build.properties" />
+
+  <!-- What is the classpath to use for production builds? This path
+       can ignore the test-only paths. It will just be the build 
+       directory for this project. If there are jar files you're using
+       in production, their paths go here. -->
+  <path id="classpath.base">
+    <pathelement location="${build.dir}" />
+  </path>
+
+  <!-- Extend classpath.base by prepending the location of the junit
+       and hamcrest jar files. ant supports very complex file
+       gathering tags so it is possible to easily specify all jar
+       files in a given directory (or in a given directory tree). -->
+  <path id="classpath.test">
+    <pathelement location="/home/blad/jar/junit-dep-4.10.jar" />
+    <pathelement location="/home/blad/jar/hamcrest-all-1.3.jar" />
+    <path refid="classpath.base" />
+  </path>
+
+  <!-- Make a clean target so that we can clean up (delete) all build
+       targets. -->
+  <target name = "clean" description = "Delete all build targets">
+    <delete dir = "${build.dir}" /> <!-- the build.dir property -->
+  </target>
+
+  <target name = "init" description = "Starting point for building">
+    <mkdir dir = "${build.dir}" />
+  </target>
+
+  <!-- Split the <javac> and <java> steps to two different targets -->
+  <target name = "compile" depends = "init" 
+          description = "Compile the program">
+    <!-- Compile ALL java files found in or below the source
+         directory, building the matching structure in the destination
+         directory. -->
+    <javac srcdir = "${src.dir}" destdir = "${build.dir}">
+      <classpath refid="classpath.base"/>
+    </javac>
+  </target>
+
+  
+  <!-- Add targets to compile the tests and to run them -->
+  <target name="compile-test" depends="compile">
+    <!-- Compile all the tests using the test classpath -->
+    <javac srcdir="${tst.dir}" destdir = "${build.dir}">
+      <classpath refid="classpath.test"/>
+    </javac>
+  </target>
+
+
+  <target name="test" depends="compile-test">
+    <!-- Using the junit task (built in to ant), run the tests. The
+         test tag(s) name the CLASSES containing tests. All the tests
+         in the classes specified will be run. The formatter
+         determines how the output will be formatted for viewing.
+    -->
+    <junit fork="yes">
+      <classpath refid="classpath.test" />
+      <formatter type="brief" usefile="false" />
+      <test name="runner_test.EchoRunnerTest" />
+    </junit>
+  </target>
+
+  <!-- This is the run target; it no longer contains a <java>
+       tag. Instead it has two <antcall> tags. <antcall> "calls" the
+       named target. So this target permits the user to specify run as
+       the target and have both run.argument and run.noargument
+       executed. -->
+  <target name = "run" depends = "compile" description = "Run the program">
+    <antcall target="run.argument" />
+    <antcall target="run.noargument" />
+  </target>
+
+  <!-- Notice the if attribute for this target. If the named property
+       is defined, then this target will execute. If the named
+       property is not defined, then this target will not be
+       executed. This is necessary because an undefined property will
+       evaluate to its own name (${input.filename} evaluates to the
+       string "${input.filename}") and we do not want to mess with
+       passing that in as the name of the file to read. Thus we only
+       want to do this target _if_ the given property is defined. -->
+  <target name = "run.argument"
+	  description = "[internal] Run the program with an input file name"
+	  if="input.filename">
+    <echo>Reading from ${input.filename}</echo>
+    <java classname = "main.Echo">
+      <classpath refid="classpath.base"/>
+      <arg value="${input.filename}" />
+    </java>
+  </target>
+
+  <!-- There is no "else" in Ant but rather an unless attribute. This
+       rule executes in just those cases where run.noargument does not
+       execute (and vice versa). There is no <arg> tag on the <java>
+       tag so there is no command-line argument passed to the Echo
+       program. Thus it runs interactively. -->
+  <target name = "run.noargument"
+	  description = "[internal] Run the program with no input file name"
+	  unless="input.filename">
+    <echo>Running without an argument; 
+    -Dinput.filename=[fname] to define a file name.</echo>
+    <java classname = "main.Echo">
+      <classpath refid="classpath.base"/>
+    </java>
+  </target>
+</project>
