@@ -1,0 +1,7 @@
+Oradea
+Zerind
+Sibiu
+Arad
+
+Oradea Zerind 2
+Sibiu Arad 2
