@@ -46,8 +46,12 @@ public class FirstWindow extends JFrame{
 	
 	public final static String NEW_GAME_MESSAGE = "This will eventually start a new game!";
 
+	private boolean visible;
+	
 	public FirstWindow() {
+		
 		super();
+		visible = true;
 		setName(MAIN_WINDOW_TITLE);
 		setTitle(MAIN_WINDOW_TITLE);
 		setSize(640, 480);
@@ -67,6 +71,9 @@ public class FirstWindow extends JFrame{
 			// Add actions to be preformed when the item is clicked here
 			@Override
 			public void mousePressed(MouseEvent e) {
+				// Close the welcome menu and bring up the game board
+				dispose();
+				GameBoard gameBoard = new GameBoard();	
 			}
 		});
 		mntmNewGame.setHorizontalAlignment(SwingConstants.LEFT);
@@ -110,8 +117,9 @@ public class FirstWindow extends JFrame{
 		btnNewGame.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
-				// show a new popup dialog
-				JOptionPane.showMessageDialog(rootPane, NEW_GAME_MESSAGE);
+				// Close the welcome menu and bring up the game board
+				dispose();
+				GameBoard gameBoard = new GameBoard();	
 			}
 		});
 		btnNewGame.setName("btnNewGame");
@@ -147,6 +155,6 @@ public class FirstWindow extends JFrame{
 		getContentPane().setLayout(groupLayout);
 	
 		// make everything visible
-		setVisible(true);
+		setVisible(visible);
 	}
 }
