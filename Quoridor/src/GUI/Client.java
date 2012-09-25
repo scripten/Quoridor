@@ -12,7 +12,8 @@ public class Client {
 	        System.out.println("This program uses no arguments");
 	        return;
         }
-        FirstWindow gui = new FirstWindow();
+       // FirstWindow gui = new FirstWindow();
+	    GameBoard gameBoard = new GameBoard();
      
 	}
 }
