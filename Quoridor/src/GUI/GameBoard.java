@@ -1,13 +1,16 @@
 package GUI;
 
+import javax.swing.Icon;
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.JToggleButton;
 
 import java.awt.Desktop;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -20,7 +23,18 @@ import java.awt.Component;
 import java.awt.Insets;
 import javax.swing.JLayeredPane;
 
-public class GameBoard extends JFrame{
+public class GameBoard extends JFrame implements MouseListener{
+	private int currentRow = -1;
+	private int currentColumn = -1;
+	private SquareButton [][]squareSpaces = new SquareButton[9][9];  // [columns][rows]
+	private GridBagConstraints[][] squareGridBags= new GridBagConstraints[9][9];
+	private VerticallWallButton[][] verticalWalls = new VerticallWallButton[8][9];
+	private GridBagConstraints[][] verticalWallGridBags= new GridBagConstraints[8][9];
+	private HorizontalWallButton[][] horizontalWalls = new HorizontalWallButton[9][8];
+	private GridBagConstraints[][] horizontalWallGridBags= new GridBagConstraints[9][8];
+
+
+
 	public GameBoard() {
 		setResizable(false);
 		setSize(800, 625);
@@ -69,45 +83,18 @@ public class GameBoard extends JFrame{
 		gridBagLayout.columnWeights = new double[]{1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 		gridBagLayout.rowWeights = new double[]{1.0, Double.MIN_VALUE};
 		getContentPane().setLayout(gridBagLayout);
-		/*
-		JButton btnNewButton = new JButton("");
-		btnNewButton.setMargin(new Insets(0, 0, 0, 0));
-		btnNewButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-		btnNewButton.setSize(new Dimension(50, 50));
-		btnNewButton.setIcon(new ImageIcon(GameBoard.class.getResource("/quoridor images/empty space.png")));
-		GridBagConstraints gbc_btnNewButton = new GridBagConstraints();
-		gbc_btnNewButton.insets = new Insets(0, 0, 0, 5);
-		gbc_btnNewButton.gridx = 0;
-		gbc_btnNewButton.gridy = 0;
-		getContentPane().add(btnNewButton, gbc_btnNewButton);
-
-		JButton btnNewButton_1 = new JButton("");
-		btnNewButton_1.setMargin(new Insets(0, 0, 0, 0));
-		btnNewButton_1.setIcon(new ImageIcon(GameBoard.class.getResource("/quoridor images/empty wall.png")));
-		GridBagConstraints gbc_btnNewButton_1 = new GridBagConstraints();
-		gbc_btnNewButton_1.insets = new Insets(0, 0, 0, 5);
-		gbc_btnNewButton_1.gridx = 1;
-		gbc_btnNewButton_1.gridy = 0;
-		getContentPane().add(btnNewButton_1, gbc_btnNewButton_1);
-
-		 */
-
-		JButton[][] squareSpaces = new JButton[9][9];  // [columns][rows]
-		GridBagConstraints[][] squareGridBags= new GridBagConstraints[9][9];
-		JButton[][] verticalWalls = new JButton[8][9];
-		GridBagConstraints[][] verticalWallGridBags= new GridBagConstraints[8][9];
-		JButton[][] horizontalWalls = new JButton[9][8];
-		GridBagConstraints[][] horizontalWallGridBags= new GridBagConstraints[9][8];
-
+		
 		for(int row=0; row<9; row++){
 			//show row of empty spaces and vertical walls
 			for(int column=0; column<9; column++){
 				//show an empty square space
-				squareSpaces[column][row] = new JButton("");
+				squareSpaces[column][row] = new SquareButton("", column, row);
 				squareSpaces[column][row].setMargin(new Insets(0, 0, 0, 0));
 				squareSpaces[column][row].setAlignmentX(Component.CENTER_ALIGNMENT);
 				squareSpaces[column][row].setSize(new Dimension(50, 50));
 				squareSpaces[column][row].setIcon(new ImageIcon(GameBoard.class.getResource("/quoridor images/empty space.png")));
+				squareSpaces[column][row].addMouseListener(this);
+
 				squareGridBags[column][row] =  new GridBagConstraints();
 				squareGridBags[column][row].insets = new Insets(0, 0, 0, 5);
 				squareGridBags[column][row].gridx = column*2;
@@ -116,11 +103,12 @@ public class GameBoard extends JFrame{
 
 				if(column!=8){
 					//show an empty vertical wall
-					verticalWalls[column][row] = new JButton("");
+					verticalWalls[column][row] = new VerticallWallButton("", column, row);
 					verticalWalls[column][row].setMargin(new Insets(0, 0, 0, 0));
 					verticalWalls[column][row].setAlignmentX(Component.CENTER_ALIGNMENT);
 					verticalWalls[column][row].setSize(new Dimension(50, 50));
 					verticalWalls[column][row].setIcon(new ImageIcon(GameBoard.class.getResource("/quoridor images/emptyVerticalWall.png")));
+					verticalWalls[column][row].addMouseListener(this);
 					verticalWallGridBags[column][row] =  new GridBagConstraints();
 					verticalWallGridBags[column][row].insets = new Insets(0, 0, 0, 5);
 					verticalWallGridBags[column][row].gridx = column*2+1;
@@ -130,11 +118,13 @@ public class GameBoard extends JFrame{
 
 				if(row!=8){
 					//show an empty horizontal wall
-					horizontalWalls[column][row] = new JButton("");
+					horizontalWalls[column][row] = new HorizontalWallButton("", column, row);
 					horizontalWalls[column][row].setMargin(new Insets(0, 0, 0, 0));
 					horizontalWalls[column][row].setAlignmentX(Component.CENTER_ALIGNMENT);
 					horizontalWalls[column][row].setSize(new Dimension(50, 50));
 					horizontalWalls[column][row].setIcon(new ImageIcon(GameBoard.class.getResource("/quoridor images/emptyHorizontalWall.png")));
+					horizontalWalls[column][row].addMouseListener(this); 
+					
 					horizontalWallGridBags[column][row] =  new GridBagConstraints();
 					horizontalWallGridBags[column][row].insets = new Insets(0, 0, 0, 5);
 					horizontalWallGridBags[column][row].gridx = column*2;
@@ -142,12 +132,111 @@ public class GameBoard extends JFrame{
 					getContentPane().add(horizontalWalls[column][row], horizontalWallGridBags[column][row]);	
 				}
 			}
-
-
 		}
-
 		setVisible(true);
+	}
 
+	public void handleSquareButtonPress(SquareButton btn){
+		// TODO check if it's a valid move given the current position
+		//System.out.println("Clicked square");
+		if(currentColumn==-1 && currentRow==-1){
+			if(btn.getRow()==8){
+				//TODO first move stuff
+
+				btn.setIcon(new ImageIcon(GameBoard.class.getResource("/quoridor images/blue space.png")));
+				currentColumn = btn.getColumn();
+				currentRow = btn.getRow();
+				return;
+			}
+		}
+		
+		//allow moves of North South East West from current position
+		/*TODO checking for valid moves should be abstracted away from
+		 * the GameBoard class.  Ideally we should be able to pass the 
+		 * clicked buttons row and column into a isValidMove() method 
+		 */
+
+		//North
+		if(btn.getRow()==(currentRow-1) && btn.getColumn()==currentColumn){
+			btn.setIcon(new ImageIcon(GameBoard.class.getResource("/quoridor images/blue space.png")));
+			squareSpaces[currentColumn][currentRow].setIcon(new ImageIcon(GameBoard.class.getResource("/quoridor images/empty space.png")));
+			currentColumn = btn.getColumn();
+			currentRow = btn.getRow();
+			return;
+		}
+		
+		//South
+		if(btn.getRow()==(currentRow+1) && btn.getColumn()==currentColumn){
+			btn.setIcon(new ImageIcon(GameBoard.class.getResource("/quoridor images/blue space.png")));
+			squareSpaces[currentColumn][currentRow].setIcon(new ImageIcon(GameBoard.class.getResource("/quoridor images/empty space.png")));
+			currentColumn = btn.getColumn();
+			currentRow = btn.getRow();
+			return;
+		}
+		
+		//East
+		if(btn.getColumn()==(currentColumn-1)&& btn.getRow()==currentRow){
+			btn.setIcon(new ImageIcon(GameBoard.class.getResource("/quoridor images/blue space.png")));
+			squareSpaces[currentColumn][currentRow].setIcon(new ImageIcon(GameBoard.class.getResource("/quoridor images/empty space.png")));
+			currentColumn = btn.getColumn();
+			currentRow = btn.getRow();
+			return;
+		}
+		
+		//West
+		if(btn.getColumn()==(currentColumn+1)&& btn.getRow()==currentRow){
+			btn.setIcon(new ImageIcon(GameBoard.class.getResource("/quoridor images/blue space.png")));
+			squareSpaces[currentColumn][currentRow].setIcon(new ImageIcon(GameBoard.class.getResource("/quoridor images/empty space.png")));
+			currentColumn = btn.getColumn();
+			currentRow = btn.getRow();
+			return;
+		}
+	}
+	
+	
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		
+		//determine what type of button caused the event
+		if(e.getSource() instanceof SquareButton){
+			handleSquareButtonPress((SquareButton) e.getSource());
+		}else if(e.getSource() instanceof VerticallWallButton){
+			System.out.println("handle vertical wall button press");
+		}else if(e.getSource() instanceof HorizontalWallButton){
+			System.out.println("handle horizontal wall button press");
+		}
+	
+	}
+
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
 	}
 
 
