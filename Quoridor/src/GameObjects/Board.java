@@ -4,6 +4,10 @@ package GameObjects;
 import java.util.*;
 import java.io.*;
 
+import GUI.HorizontalWallButton;
+import GUI.SquareButton;
+import GUI.VerticalWallButton;
+
 /* This Board object runs the back-end elements of the Quoridor game.
 // So far the initial construction of the board is completed, as
 // is a skeletal system for initial placement and movement of pawns
@@ -13,9 +17,9 @@ public class Board {
 
 	// Fields
 
-	protected ArrayList<ArrayList> rows;			 // ArrayList containing the ArrayLists that
+	protected Tile [][]Board = new Tile[9][9];			 // [row][column]
 													 // correspond to each row of the board
-	private Pawn player1, player2, player3, player4; // Pawn objects that are to be used for each player
+	
 	private boolean fourPlayerGame;
 
 	// Constructor
@@ -27,42 +31,16 @@ public class Board {
 	public Board (boolean fourPlayerGame) {
 		this.fourPlayerGame = fourPlayerGame;
 		// Initialize the x axis of the board grid using rows
-		for(int x = 0; x < 9; x++) {
-			ArrayList<Tile> row = new ArrayList<Tile>();
+		for(int column = 0; column < 9; column++) {
 			// For each row there exists nine tiles, which can be accessed through
 			// the getTile(int x, int y) method
-			for(int y = 0; y < 9; y++) {
+			for(int row = 0; row < 9; row++) {
 				// When each tile is generated, this algorithm checks if it is on the
 				// edge of the board and if so, a wall is instantly placed to block off
 				// movement outside of the grid
-				Tile tile = new Tile(x, y);
-				if(x == 0)
-					tile.placeTop();
-				else if(x == 9)  //FIXME 
-					tile.placeBottom();
-				if(y == 0)
-					tile.placeLeft();
-				else if(y == 9)  //FIXME 
-					tile.placeRight();
-				row.add(tile);
+				Tile tile = new Tile(row, column);	
 			}
-			// Once each tile is finished, the final product is added to rows
-			rows.add(row);
-		}
-		// Pawns are then generated based on the number of players currently in the game
-		// Pawns have the ability to move their location and to keep track of that player's walls
-		player1 = new Pawn(1,5);
-		player2 = new Pawn(9,5);
-		if(fourPlayerGame) {
-			player3 = new Pawn(5,1);
-			player4 = new Pawn(5,9);
-			player1.setInitialWallCount(true);
-			player2.setInitialWallCount(true);
-			player3.setInitialWallCount(true);
-			player4.setInitialWallCount(true);
-		} else {
-			player1.setInitialWallCount(false);
-			player2.setInitialWallCount(false);
+
 		}
 	}
 
@@ -78,52 +56,36 @@ public class Board {
 	// Returns a tile at any given x and y value. If the given coordinates are outside of the grid
 	// bounds, nothing happens beside a short print message and a null Tile being returned (This
 	// may throw an exception in the future)
-	public Tile getTile (int x, int y) {
+	public Tile getTile (int row, int column) {
 		try {
-			return (Tile)rows.get(x).get(y);
+			return Board[row][column];
 		} catch (ArrayIndexOutOfBoundsException e) {
 			System.out.println("That coordinate is outside the grid.");
 		}
 		return null;
 	}
 	
-	// Returns one of the four Pawn objects. If an invalid parameter is passed, a null Pawn object
-	// is returned (This may just become an exception, since an invalid player being called is a bug.
-	public Pawn getPlayer (int player) {
-		switch (player) {
-			case 1:
-				return player1;
-			case 2:
-				return player2;
-			case 3:
-				if(fourPlayerGame)
-					return player3;
-				else
-					break;
-			case 4:
-				if(fourPlayerGame)
-					return player4;
-				else
-					break;
-		}
-		System.out.println("That is not a legal player!");
-		return null;
-	}
+	
 
 	// Pawn is a private class used by the board object to keep track of the status of each player
 	private class Pawn {
 	
 		// Fields
 		
-		private int x, y;		// Holds the coordinates of the pawn
+		private int row, column;		// Holds the coordinates of the pawn
 		private int wallCount;  // Holds the number of walls this pawn has to use (Full wall placing
 								// functionality is not yet implemented)
 		
 		// Constructor
 		
-		public Pawn (int x, int y) {
-			this.x = x;
-			this.y = y;
+		public Pawn (int row, int column) {
+			this.row = row;
+			this.column = column;
+		}
+		
+		public Pawn (SquareButton tile){
+			this.row = tile.getRow();
+			this.column = tile.getColumn();
 		}
 		
 		// Methods
@@ -299,5 +261,19 @@ public class Board {
 				return isWall;
 			}
 		}
+	}
+	
+	public boolean isLegalMove(SquareButton tile){
+		//TODO needs to be implemented
+		return true;
+	}
+	public boolean isLegalMove(HorizontalWallButton horizWall){
+		//TODO needs to be implemented
+		return true;
+			
+	}
+	public boolean isLegalMove(VerticalWallButton vertWall){
+		//TODO needs to be implemented
+		return true;
 	}
 }
