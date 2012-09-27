@@ -52,7 +52,7 @@
       <classpath>
 	<pathelement location = "${build.dir}" />
       </classpath>
-      <arg value="${input.filename}" />
+      <arg line="${input.filename}" />
     </java>
   </target>
 
