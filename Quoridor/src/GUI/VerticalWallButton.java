@@ -12,20 +12,27 @@ import javax.swing.JButton;
  * @author Nick
  *
  */
-public class VerticallWallButton extends JButton {
+public class VerticalWallButton extends JButton {
 	private int row;
 	private int column;
+	private boolean isInUse;
 	
-	public VerticallWallButton(){
+	public VerticalWallButton(){
 		super();
 		row = -1;
 		column = -1;
 	}
 	
-	public VerticallWallButton(String text, int columns, int rows){
+	public VerticalWallButton(String text, int columns, int rows){
 		super(text);
 		row = rows;
 		column = columns;
+	}
+	public void setUsed (boolean used){
+		isInUse = used;
+	}
+	public boolean getUsed(){
+		return isInUse;
 	}
 
 }

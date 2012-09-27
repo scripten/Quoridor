@@ -15,6 +15,7 @@ import javax.swing.JButton;
 public class HorizontalWallButton extends JButton {
 	private int row;
 	private int column;
+	private boolean isInUse;
 	
 	public HorizontalWallButton(){
 		super();
@@ -26,6 +27,12 @@ public class HorizontalWallButton extends JButton {
 		super(text);
 		row = rows;
 		column = columns;
+	}
+	public void setUsed (boolean used){
+		isInUse = used;
+	}
+	public boolean getUsed(){
+		return isInUse;
 	}
 
 }

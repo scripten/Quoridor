@@ -22,13 +22,14 @@ import java.awt.Dimension;
 import java.awt.Component;
 import java.awt.Insets;
 import javax.swing.JLayeredPane;
+import javax.swing.SwingConstants;
 
 public class GameBoard extends JFrame implements MouseListener{
 	private int currentRow = -1;
 	private int currentColumn = -1;
 	private SquareButton [][]squareSpaces = new SquareButton[9][9];  // [columns][rows]
 	private GridBagConstraints[][] squareGridBags= new GridBagConstraints[9][9];
-	private VerticallWallButton[][] verticalWalls = new VerticallWallButton[8][9];
+	private VerticalWallButton[][] verticalWalls = new VerticalWallButton[8][9];
 	private GridBagConstraints[][] verticalWallGridBags= new GridBagConstraints[8][9];
 	private HorizontalWallButton[][] horizontalWalls = new HorizontalWallButton[9][8];
 	private GridBagConstraints[][] horizontalWallGridBags= new GridBagConstraints[9][8];
@@ -37,7 +38,7 @@ public class GameBoard extends JFrame implements MouseListener{
 
 	public GameBoard() {
 		setResizable(false);
-		setSize(800, 625);
+		setSize(570, 540);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setTitle("Quoridor");
 
@@ -54,6 +55,8 @@ public class GameBoard extends JFrame implements MouseListener{
 		mnFile.add(mntmExit);
 
 		JMenu mnHelp = new JMenu("Help");
+		mnHelp.setHorizontalTextPosition(SwingConstants.RIGHT);
+		mnHelp.setHorizontalAlignment(SwingConstants.RIGHT);
 		menuBar.add(mnHelp);
 
 		JMenuItem mntmQuoridorWiki = new JMenuItem("Quoridor Wiki");
@@ -94,6 +97,8 @@ public class GameBoard extends JFrame implements MouseListener{
 				squareSpaces[column][row].setSize(new Dimension(50, 50));
 				squareSpaces[column][row].setIcon(new ImageIcon(GameBoard.class.getResource("/quoridor images/empty space.png")));
 				squareSpaces[column][row].addMouseListener(this);
+				squareSpaces[column][row].setBorderPainted(false);
+				squareSpaces[column][row].setBorder(null);
 
 				squareGridBags[column][row] =  new GridBagConstraints();
 				squareGridBags[column][row].insets = new Insets(0, 0, 0, 5);
@@ -103,12 +108,15 @@ public class GameBoard extends JFrame implements MouseListener{
 
 				if(column!=8){
 					//show an empty vertical wall
-					verticalWalls[column][row] = new VerticallWallButton("", column, row);
+					verticalWalls[column][row] = new VerticalWallButton("", column, row);
 					verticalWalls[column][row].setMargin(new Insets(0, 0, 0, 0));
 					verticalWalls[column][row].setAlignmentX(Component.CENTER_ALIGNMENT);
 					verticalWalls[column][row].setSize(new Dimension(50, 50));
 					verticalWalls[column][row].setIcon(new ImageIcon(GameBoard.class.getResource("/quoridor images/emptyVerticalWall.png")));
 					verticalWalls[column][row].addMouseListener(this);
+					verticalWalls[column][row].setBorderPainted(false);
+					verticalWalls[column][row].setBorder(null);
+					
 					verticalWallGridBags[column][row] =  new GridBagConstraints();
 					verticalWallGridBags[column][row].insets = new Insets(0, 0, 0, 5);
 					verticalWallGridBags[column][row].gridx = column*2+1;
@@ -123,7 +131,9 @@ public class GameBoard extends JFrame implements MouseListener{
 					horizontalWalls[column][row].setAlignmentX(Component.CENTER_ALIGNMENT);
 					horizontalWalls[column][row].setSize(new Dimension(50, 50));
 					horizontalWalls[column][row].setIcon(new ImageIcon(GameBoard.class.getResource("/quoridor images/emptyHorizontalWall.png")));
-					horizontalWalls[column][row].addMouseListener(this); 
+					horizontalWalls[column][row].addMouseListener(this);
+					horizontalWalls[column][row].setBorderPainted(false);
+					horizontalWalls[column][row].setBorder(null);
 					
 					horizontalWallGridBags[column][row] =  new GridBagConstraints();
 					horizontalWallGridBags[column][row].insets = new Insets(0, 0, 0, 5);
@@ -193,6 +203,20 @@ public class GameBoard extends JFrame implements MouseListener{
 		}
 	}
 	
+	public void handleVerticalWallPress(VerticalWallButton vertWall){
+		if(isLegalMove(vertWall)){
+			vertWall.setIcon(new ImageIcon(GameBoard.class.getResource("/quoridor images/blueVerticalWall.png")));
+			vertWall.setUsed(true);
+		}
+	}
+	
+	public void handleHorizontalWallPress(HorizontalWallButton horizWall){
+		if(isLegalMove(horizWall)){
+			horizWall.setIcon(new ImageIcon(GameBoard.class.getResource("/quoridor images/blueHorizontalWall.png")));
+			horizWall.setUsed(true);
+		}
+	}
+	
 	
 	@Override
 	public void mouseClicked(MouseEvent e) {
@@ -200,10 +224,10 @@ public class GameBoard extends JFrame implements MouseListener{
 		//determine what type of button caused the event
 		if(e.getSource() instanceof SquareButton){
 			handleSquareButtonPress((SquareButton) e.getSource());
-		}else if(e.getSource() instanceof VerticallWallButton){
-			System.out.println("handle vertical wall button press");
+		}else if(e.getSource() instanceof VerticalWallButton){
+			handleVerticalWallPress((VerticalWallButton)e.getSource());
 		}else if(e.getSource() instanceof HorizontalWallButton){
-			System.out.println("handle horizontal wall button press");
+			handleHorizontalWallPress((HorizontalWallButton)e.getSource());
 		}
 	
 	}
@@ -211,8 +235,25 @@ public class GameBoard extends JFrame implements MouseListener{
 
 	@Override
 	public void mouseEntered(MouseEvent e) {
-		// TODO Auto-generated method stub
 		
+		if(e.getSource() instanceof SquareButton){
+			SquareButton tile = (SquareButton) e.getSource();
+			if(isLegalMove(tile)){//FIXME
+				tile.setIcon(new ImageIcon(GameBoard.class.getResource("/quoridor images/blue space.png")));
+			}
+		}
+		if(e.getSource() instanceof VerticalWallButton){
+			VerticalWallButton verticalWall = (VerticalWallButton)e.getSource();
+			if(isLegalMove(verticalWall)){
+			verticalWall.setIcon(new ImageIcon(GameBoard.class.getResource("/quoridor images/blueVerticalWall.png")));
+			}
+		}
+		if(e.getSource() instanceof HorizontalWallButton){
+			HorizontalWallButton horizontalWall = (HorizontalWallButton)e.getSource();
+			if(isLegalMove(horizontalWall)){
+			horizontalWall.setIcon(new ImageIcon(GameBoard.class.getResource("/quoridor images/blueHorizontalWall.png")));
+			}
+		}
 	}
 
 
@@ -221,6 +262,24 @@ public class GameBoard extends JFrame implements MouseListener{
 	public void mouseExited(MouseEvent e) {
 		// TODO Auto-generated method stub
 		
+		if(e.getSource() instanceof SquareButton){
+			SquareButton tile = (SquareButton) e.getSource();
+			if(isLegalMove(tile)){
+				tile.setIcon(new ImageIcon(GameBoard.class.getResource("/quoridor images/empty space.png")));
+			}
+		}
+		if(e.getSource() instanceof VerticalWallButton){
+			VerticalWallButton verticalWall = (VerticalWallButton)e.getSource();
+			if(isLegalMove(verticalWall)){
+			verticalWall.setIcon(new ImageIcon(GameBoard.class.getResource("/quoridor images/emptyVerticalWall.png")));
+			}
+		}
+		if(e.getSource() instanceof HorizontalWallButton){
+			HorizontalWallButton horizontalWall = (HorizontalWallButton)e.getSource();
+			if(isLegalMove(horizontalWall)){
+			horizontalWall.setIcon(new ImageIcon(GameBoard.class.getResource("/quoridor images/emptyHorizontalWall.png")));
+			}
+		}
 	}
 
 
@@ -228,7 +287,6 @@ public class GameBoard extends JFrame implements MouseListener{
 	@Override
 	public void mousePressed(MouseEvent e) {
 		// TODO Auto-generated method stub
-		
 	}
 
 
@@ -237,6 +295,48 @@ public class GameBoard extends JFrame implements MouseListener{
 	public void mouseReleased(MouseEvent e) {
 		// TODO Auto-generated method stub
 		
+	}
+	
+	/**
+	 * TODO This is a placeholder, it will later be 
+	 * replaced
+	 * @param tile
+	 * @return
+	 */
+	public boolean isLegalMove(JButton btnOnBoard){
+		
+		if(btnOnBoard instanceof SquareButton){
+			SquareButton tile = (SquareButton)btnOnBoard;
+		//North
+		if(tile.getRow()==(currentRow-1) && tile.getColumn()==currentColumn){
+			return true;
+		}
+		//South
+		if(tile.getRow()==(currentRow+1) && tile.getColumn()==currentColumn){
+			return true;
+		}
+		//East
+		if(tile.getColumn()==(currentColumn-1)&& tile.getRow()==currentRow){
+			return true;
+		}
+		//West
+		if(tile.getColumn()==(currentColumn+1)&& tile.getRow()==currentRow){
+			return true;
+		}
+		}else if(btnOnBoard instanceof VerticalWallButton){
+			if(((VerticalWallButton)btnOnBoard).getUsed())
+				return false;
+			return true;
+		}else if(btnOnBoard instanceof HorizontalWallButton){
+			if(((HorizontalWallButton)btnOnBoard).getUsed())
+				return false;
+			return true;
+		}
+		
+		
+		
+		
+		return false;
 	}
 
 

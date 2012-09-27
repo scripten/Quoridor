@@ -15,11 +15,13 @@ import javax.swing.JButton;
 public class SquareButton extends JButton {
 	private int row;
 	private int column;
+	private boolean isInUse;
 	
 	public SquareButton(){
 		super();
 		row = -1;
 		column = -1;
+		isInUse = false;
 	}
 	
 	public SquareButton(String text, int columns, int rows){
@@ -34,6 +36,12 @@ public class SquareButton extends JButton {
 	
 	public int getColumn(){
 		return column;
+	}
+	public void setUsed (boolean used){
+		isInUse = used;
+	}
+	public boolean getUsed(){
+		return isInUse;
 	}
 
 }
