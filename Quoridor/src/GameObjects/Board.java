@@ -15,12 +15,19 @@ import GUI.VerticalWallButton;
 
 public class Board {
 
+	public enum DIRECTION {
+		UP, DOWN, LEFT, RIGHT
+	}
+	
+	public final static int FOUR_PLAYER_MAX_WALLS = 5;
+	public final static int TWO_PLAYER_MAX_WALLS = 10; 
 	// Fields
 
-	protected Tile [][]Board = new Tile[9][9];			 // [row][column]
+	protected Tile[][] board = new Tile[9][9];			 // [row][column]
 													 // correspond to each row of the board
 	
 	private boolean fourPlayerGame;
+	
 
 	// Constructor
 
@@ -31,35 +38,23 @@ public class Board {
 	public Board (boolean fourPlayerGame) {
 		this.fourPlayerGame = fourPlayerGame;
 		// Initialize the x axis of the board grid using rows
-		for(int column = 0; column < 9; column++) {
-			// For each row there exists nine tiles, which can be accessed through
-			// the getTile(int x, int y) method
-			for(int row = 0; row < 9; row++) {
-				// When each tile is generated, this algorithm checks if it is on the
-				// edge of the board and if so, a wall is instantly placed to block off
-				// movement outside of the grid
-				Tile tile = new Tile(row, column);	
+		
+		for(int row = 0; row < 9; row++) 
+			for(int column = 0; column < 9; column++) {
+				board[row][column] = new Tile(row, column);	
 			}
-
-		}
 	}
 
 	// Methods
-
-	// Move() takes a selected pawn and moves it in a legal direction if possible. If move()
-	// is successful, it returns true and the move is made. Otherwise, move() returns false
-	// and the attempted movement is skipped. Legal directions are "up", "down", "left", and "right"
-	public boolean move (Pawn pawn, String direction) {
-		return pawn.move(direction);
-	}
 	
 	// Returns a tile at any given x and y value. If the given coordinates are outside of the grid
 	// bounds, nothing happens beside a short print message and a null Tile being returned (This
 	// may throw an exception in the future)
 	public Tile getTile (int row, int column) {
 		try {
-			return Board[row][column];
+			return board[row][column];
 		} catch (ArrayIndexOutOfBoundsException e) {
+			// throw exception
 			System.out.println("That coordinate is outside the grid.");
 		}
 		return null;
@@ -68,22 +63,21 @@ public class Board {
 	
 
 	// Pawn is a private class used by the board object to keep track of the status of each player
-	private class Pawn {
+	public class Pawn {
 	
 		// Fields
-		
 		private int row, column;		// Holds the coordinates of the pawn
 		private int wallCount;  // Holds the number of walls this pawn has to use (Full wall placing
 								// functionality is not yet implemented)
 		
 		// Constructor
 		
-		public Pawn (int row, int column) {
+		public Pawn(int row, int column) {
 			this.row = row;
 			this.column = column;
 		}
 		
-		public Pawn (SquareButton tile){
+		public Pawn(SquareButton tile){
 			this.row = tile.getRow();
 			this.column = tile.getColumn();
 		}
@@ -94,54 +88,63 @@ public class Board {
 		// was successful. If it was, true is returned and the move in completed, otherwise, false
 		// is returned and the move is skipped. (This method should only be called by the board object,
 		// anyway)
-		protected boolean move (String direction) {
-			if(direction.equals("up")) {
-				if(x == 0)
-					return false;
-				Tile goal = (Tile)rows.get(x - 1).get(y);
-				if(goal.hasOpenBottom()) {
-					x--;
-					return true;
-				} else
-					return false;
-			} else if(direction.equals("left")) {
-				if(y == 0)
-					return false;
-				Tile goal = (Tile)rows.get(x).get(y - 1);
-				if(goal.hasOpenBottom()) {
-					x--;
-					return true;
-				} else
-					return false;
-			} else if(direction.equals("right")) {
-				if(y == 9)
-					return false;
-				Tile goal = (Tile)rows.get(x).get(y + 1);
-				if(goal.hasOpenBottom()) {
-					x--;
-					return true;
-				} else
-					return false;
-			} else if(direction.equals("down")) {
-				if(x == 9)
-					return false;
-				Tile goal = (Tile)rows.get(x + 1).get(y);
-				if(goal.hasOpenBottom()) {
-					x--;
-					return true;
-				} else
-					return false;
-			} else
-			return false;
+		public void move(DIRECTION direction) {
+			switch (direction) {
+				case UP:{
+					row--;
+					break;
+				}
+				case DOWN:{
+					row++;
+					break;
+				}
+				case LEFT:{
+					column--;
+					break;
+				}
+				case RIGHT:{
+					column++;
+					break;
+				}
+				default: {
+					//throw invalid move exception
+					break;
+				}
+				
+				// set board tile to occupied
+			}
 		}
 		
 		// This merely sets the initial wall count for the player depending on how many other players
 		// there are
-		public void setInitialWallCount (boolean fourPlayerGame) {
+		public void setInitialWallCount(boolean fourPlayerGame) {
 			if(fourPlayerGame)
 				wallCount = 5;
 			else
 				wallCount = 10;
+		}
+		
+		public int getWallCount() {
+			return wallCount;
+		}
+		
+		public void setWall(int row, int column) {
+			//set wall at row,column
+			wallCount++;
+		}
+		
+		public boolean hasAvailableWalls() {
+			if (fourPlayerGame) {
+				if (wallCount < FOUR_PLAYER_MAX_WALLS) 
+					return true;
+				else
+					return false;
+			} else {
+				if (wallCount < TWO_PLAYER_MAX_WALLS) 
+					return true;
+				else
+					return false;
+			}
 		}
 	}
 

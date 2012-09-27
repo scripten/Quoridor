@@ -3,12 +3,12 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="testing"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
-	<classpathentry kind="lib" path="C:/Users/Nick/workspace/405 libs/jmock-2.5.1/hamcrest-all-1.3.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Nick/workspace/405 libs/jmock-2.5.1/junit-dep-4.10.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Nick/workspace/405 libs/jmock-2.5.1/windowlicker-swing-DEV.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Nick/workspace/405 libs/jmock-2.5.1/windowlicker-core-DEV.jar"/>
 	<classpathentry kind="lib" path="forms-1.3.0.jar" sourcepath="forms-1.3.0-src.zip"/>
 	<classpathentry kind="lib" path="miglayout15-swing.jar" sourcepath="miglayout-src.zip"/>
-	<classpathentry kind="lib" path="C:/Users/Nick/Desktop/quoridor images.zip"/>
+	<classpathentry kind="lib" path="/home/student/dubeejw196/cis405/team_DKMSS/Quoridor/jars/hamcrest-all-1.3.jar"/>
+	<classpathentry kind="lib" path="/home/student/dubeejw196/cis405/team_DKMSS/Quoridor/jars/junit-dep-4.10.jar"/>
+	<classpathentry kind="lib" path="/home/student/dubeejw196/cis405/team_DKMSS/Quoridor/jars/quoridor images.zip"/>
+	<classpathentry kind="lib" path="/home/student/dubeejw196/cis405/team_DKMSS/Quoridor/jars/windowlicker-core-DEV.jar"/>
+	<classpathentry kind="lib" path="/home/student/dubeejw196/cis405/team_DKMSS/Quoridor/jars/windowlicker-swing-DEV.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
