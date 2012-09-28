@@ -1,0 +1,181 @@
+package GameObjects;
+
+
+import java.util.*;
+import java.io.*;
+
+import GUI.HorizontalWallButton;
+import GUI.SquareButton;
+import GUI.VerticalWallButton;
+
+/* This Board object runs the back-end elements of the Quoridor game.
+// So far the initial construction of the board is completed, as
+// is a skeletal system for initial placement and movement of pawns
+*/
+
+public class Board {
+
+	public enum DIRECTION {
+		UP, DOWN, LEFT, RIGHT
+	}
+
+	// Fields
+
+	private Tile[][] board = new Tile[9][9];											 
+	private boolean fourPlayerGame;
+	
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	
+	// Constructor
+
+	// Board is constructed utilizing a single boolean parameter which designates how many players
+	// are to be initialized and where they will start. Right now, no work has been done on
+	// distinguishing between human and computer players, but the functionality for moving pawns
+	// is entirely blind and thus allows for either a player-driven GUI or an AI to drive it.
+	public Board (boolean fourPlayerGame) {
+		this.fourPlayerGame = fourPlayerGame;
+		
+		// Initialize the x axis of the board grid using rows
+		
+		for(int row = 0; row < 9; row++) 
+			for(int column = 0; column < 9; column++) {
+				board[row][column] = new Tile();	
+			}
+	}
+
+	// Methods
+	
+	// Returns a tile at any given x and y value. If the given coordinates are outside of the grid
+	// bounds, nothing happens beside a short print message and a null Tile being returned (This
+	// may throw an exception in the future)
+	public Tile getTile (int row, int column) {
+		try {
+			return board[row][column];
+		} catch (ArrayIndexOutOfBoundsException e) {
+			// throw exception
+			System.out.println("That coordinate is outside the grid.");
+		}
+		return null;
+	}
+	
+	public void setOccupied(int row, int column) {
+		board[row][column].setOccupied();
+	}
+	
+	public void setUnccupied(int row, int column) {
+		board[row][column].setUnoccupied();
+	}
+	
+	public boolean isOccupied(int row, int column) {
+		return board[row][column].isOccupied();
+	}
+	
+	public boolean isValidMove(Coordinates currentCoordinates, Coordinates newCoordinates) {
+		int curX;
+		int curY;
+		int newX;
+		int newY;
+		
+		curX = currentCoordinates.getX();
+		curY = currentCoordinates.getY();
+		
+		newX = newCoordinates.getX();
+		newY = newCoordinates.getY();
+		
+		if (curX < newX && board[curX][curY].getBottomWall().isWall()) {
+			// south
+			return false;
+		} else if (curX > newX && board[curX][curY].getTopWall().isWall()) {
+			// north
+			return false;
+		} else if (curY < newY && board[curX][curY].getRightWall().isWall()) {
+			// east
+			return false;
+		} else if (curY > newY && board[curX][curY].getLeftWall().isWall()) {
+			// west
+			return false;
+		} else
+			return true;
+	}
+
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	
+	private class Tile {
+	
+		// Fields
+
+		private Wall topWall;
+		private Wall rightWall;
+		private Wall leftWall;
+		private Wall bottomWall;
+		
+		private boolean occupied;
+
+		// Constructor
+
+		public Tile () {
+			occupied = false;
+			
+			topWall = new Wall();
+			rightWall = new Wall();
+			leftWall = new Wall();
+			bottomWall = new Wall();
+		}
+
+		// Methods
+		
+		public boolean isOccupied() {
+				return occupied;
+		}
+		
+		public void setOccupied() {
+			occupied = true;
+		}
+		
+		public void setUnoccupied() {
+			occupied = false;
+		}
+	
+		public Wall getTopWall () {
+			return topWall;
+		}
+		
+		public Wall getRightWall () {
+			return rightWall;
+		}
+
+		public Wall getLeftWall () {
+			return leftWall;
+		}
+		
+		public Wall getBottomWall () {
+			return bottomWall;
+		}
+
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		
+		private class Wall {
+	
+			// Fields
+
+			private boolean isWall;
+
+			// Constructor
+
+			public Wall() {
+			}
+
+			// Methods
+
+			public void placeWall() {
+				isWall = true;
+			}
+
+			public boolean isWall() {
+				return isWall;
+			}
+		}
+	}
+	
+	
+}
