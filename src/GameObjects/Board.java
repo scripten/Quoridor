@@ -71,6 +71,7 @@ public class Board {
 	}
 	
 	public boolean isValidMove(Coordinates currentCoordinates, Coordinates newCoordinates) {
+		boolean canMove = false;
 		int curX;
 		int curY;
 		int newX;
@@ -81,21 +82,28 @@ public class Board {
 		
 		newX = newCoordinates.getX();
 		newY = newCoordinates.getY();
-		
-		if (curX < newX && board[curX][curY].getBottomWall().isWall()) {
-			// south
+		if (curX != newX && curY != newY) {
+			// diagonal
 			return false;
-		} else if (curX > newX && board[curX][curY].getTopWall().isWall()) {
+		} else if (curX < newX) {
 			// north
-			return false;
-		} else if (curY < newY && board[curX][curY].getRightWall().isWall()) {
+			if (newX - curX > 1 || board[curX][curY].getBottomWall().isWall()) 
+				return false;
+		} else if (curX > newX ) {
+			// south
+			if (curX - newX  > 1 || board[curX][curY].getTopWall().isWall()) 
+				return false;
+		} else if (curY < newY) {
 			// east
-			return false;
-		} else if (curY > newY && board[curX][curY].getLeftWall().isWall()) {
+			if (newY - curY > 1 || board[curX][curY].getRightWall().isWall()) 
+				return false;
+		} else if (curY > newY) {
 			// west
-			return false;
-		} else
-			return true;
+			if (curY - newY > 1 || board[curX][curY].getLeftWall().isWall()) 
+				return false;
+		} 
+			
+		return true;
 	}
 
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
