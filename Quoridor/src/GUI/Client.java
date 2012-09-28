@@ -13,7 +13,7 @@ public class Client {
 	        return;
         }
        FirstWindow gui = new FirstWindow();
-	   // GameBoard gameBoard = new GameBoard();
-     
+	    //GameBoard gameBoard = new GameBoard();
+	   
 	}
 }

@@ -24,6 +24,10 @@ import java.awt.Insets;
 import javax.swing.JLayeredPane;
 import javax.swing.SwingConstants;
 
+import GameObjects.Board;
+import GameObjects.Coordinates;
+import GameObjects.Players;
+
 public class GameBoard extends JFrame implements MouseListener{
 	private int currentRow = -1;
 	private int currentColumn = -1;
@@ -34,6 +38,9 @@ public class GameBoard extends JFrame implements MouseListener{
 	private HorizontalWallButton[][] horizontalWalls = new HorizontalWallButton[9][8];
 	private GridBagConstraints[][] horizontalWallGridBags= new GridBagConstraints[9][8];
 
+	
+	private Board board = new Board(false);
+	private Players players = new Players(false);
 
 
 	public GameBoard() {
@@ -147,6 +154,38 @@ public class GameBoard extends JFrame implements MouseListener{
 	}
 
 	public void handleSquareButtonPress(SquareButton btn){
+		
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		// START TEST
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		
+		Coordinates currentCoordinates;
+		Coordinates newCoordinates;
+		
+		currentCoordinates = players.getCurrentPlayer().getCoordinates();
+		
+		newCoordinates = new Coordinates();
+		newCoordinates.setX(btn.getRow());
+		newCoordinates.setY(btn.getColumn());
+		
+		System.out.println("Current pawn coordiates: " + currentCoordinates.getX() + " " + currentCoordinates.getY());
+		System.out.println("Coordiates to move to: " + newCoordinates.getX() + " " + newCoordinates.getY());
+		
+		if (board.isValidMove(currentCoordinates, newCoordinates)) {
+			System.out.println("VALID MOVE");
+			
+			players.getCurrentPlayer().move(newCoordinates);
+			
+			// players.nextPlayer();
+		} else {
+			System.out.println("INVALID MOVE");
+		}
+		
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		// END TEST
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		
+		
 		// TODO check if it's a valid move given the current position
 		//System.out.println("Clicked square");
 		if(currentColumn==-1 && currentRow==-1){
