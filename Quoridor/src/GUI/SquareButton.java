@@ -37,6 +37,7 @@ public class SquareButton extends JButton {
 	public int getColumn(){
 		return column;
 	}
+	
 	public void setUsed (boolean used){
 		isInUse = used;
 	}
