@@ -21,7 +21,10 @@ public class Board {
 
 	// Fields
 
-	private Tile[][] board = new Tile[9][9];											 
+	private static int NUM_ROWS = 9;
+	private static int NUM_COLS = 9;
+	
+	private Tile[][] board = new Tile[NUM_ROWS][NUM_COLS];											 
 	private boolean fourPlayerGame;
 	
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -37,8 +40,8 @@ public class Board {
 		
 		// Initialize the x axis of the board grid using rows
 		
-		for(int row = 0; row < 9; row++) 
-			for(int column = 0; column < 9; column++) {
+		for(int row = 0; row < NUM_ROWS; row++) 
+			for(int column = 0; column < NUM_COLS; column++) {
 				board[row][column] = new Tile();	
 			}
 	}
@@ -81,23 +84,44 @@ public class Board {
 		
 		newX = newCoordinates.getX();
 		newY = newCoordinates.getY();
-		
-		if (curX < newX && board[curX][curY].getBottomWall().isWall()) {
-			// south
+		if (curX != newX && curY != newY) {
+			// diagonal
 			return false;
-		} else if (curX > newX && board[curX][curY].getTopWall().isWall()) {
+		} else if (curX < newX) {
 			// north
-			return false;
-		} else if (curY < newY && board[curX][curY].getRightWall().isWall()) {
+			if (newX - curX > 1 || board[curX][curY].getBottomWall().isWall()) 
+				return false;
+		} else if (curX > newX ) {
+			// south
+			if (curX - newX  > 1 || board[curX][curY].getTopWall().isWall()) 
+				return false;
+		} else if (curY < newY) {
 			// east
-			return false;
-		} else if (curY > newY && board[curX][curY].getLeftWall().isWall()) {
+			if (newY - curY > 1 || board[curX][curY].getRightWall().isWall()) 
+				return false;
+		} else if (curY > newY) {
 			// west
-			return false;
-		} else
-			return true;
+			if (curY - newY > 1 || board[curX][curY].getLeftWall().isWall()) 
+				return false;
+		} 
+			
+		return true;
 	}
 
+	public void setHorizontalWall(int x, int y) {
+		board[x][y].getBottomWall().placeWall();
+		
+		if (x < NUM_ROWS - 1)
+			board[++x][y].getTopWall().placeWall();
+	}
+	
+	public void setVerticalWall(int x, int y) {
+		board[x][y].getRightWall().placeWall();
+
+		if (y < NUM_COLS - 1)
+			board[x][++y].getLeftWall().placeWall();
+	}
+	
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	
 	private class Tile {
@@ -163,6 +187,7 @@ public class Board {
 			// Constructor
 
 			public Wall() {
+				isWall = false;
 			}
 
 			// Methods

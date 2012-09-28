@@ -28,9 +28,19 @@ public class HorizontalWallButton extends JButton {
 		row = rows;
 		column = columns;
 	}
+	
+	public int getRow(){
+		return row;
+	}
+	
+	public int getColumn(){
+		return column;
+	}
+	
 	public void setUsed (boolean used){
 		isInUse = used;
 	}
+	
 	public boolean getUsed(){
 		return isInUse;
 	}
