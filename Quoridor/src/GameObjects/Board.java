@@ -109,34 +109,64 @@ public class Board {
 	}
 
 	public void setHorizontalWall(int x, int y) {
-		board[x][y].getBottomWall().placeWall();
-		
-		if (x < NUM_ROWS - 1)
-			board[++x][y].getTopWall().placeWall();
+		if (y < NUM_COLS - 1) {
+			board[x][y].getBottomWall().placeWall();
+			board[x][y + 1].getBottomWall().placeWall();
+			
+			
+			if (x < NUM_ROWS - 1) {
+				board[++x][y].getTopWall().placeWall();
+				board[x][++y].getTopWall().placeWall();
+			}
+		} else {
+			// invalid wall placement
+		}
 	}
 	
 	public void setVerticalWall(int x, int y) {
-		board[x][y].getRightWall().placeWall();
-
-		if (y < NUM_COLS - 1)
-			board[x][++y].getLeftWall().placeWall();
+		if (x  < NUM_ROWS - 1) {
+			board[x][y].getRightWall().placeWall();
+			board[x+1][y].getRightWall().placeWall();
+	
+			if (y < NUM_COLS - 1) {
+				board[x][++y].getLeftWall().placeWall();
+				board[++x][y].getLeftWall().placeWall();
+			}
+		} else {
+			// invalid wall placement
+		}
+	}
+	
+	public boolean isValidWallPlacement(int x, int y) {
+		
+		if (x == NUM_ROWS - 1 || y == NUM_COLS - 1)
+			return false;
+		if (board[x][y].getBottomWall().isWall() || board[x][y + 1].getBottomWall().isWall())
+			return false;
+		if (board[x][y].getTopWall().isWall() || board[x][y + 1].getTopWall().isWall() )
+			return false;
+		if (board[x][y].getLeftWall().isWall() || board[x + 1][y].getLeftWall().isWall())
+			return false;
+		if (board[x][y].getRightWall().isWall() || board[x + 1][y].getRightWall().isWall())
+			return false;
+		else 
+			return true;
+		
+		// TODO: determine if placement blocks all available paths
 	}
 	
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	
 	private class Tile {
 	
-		// Fields
-
+		// Field
 		private Wall topWall;
 		private Wall rightWall;
 		private Wall leftWall;
 		private Wall bottomWall;
-		
 		private boolean occupied;
 
 		// Constructor
-
 		public Tile () {
 			occupied = false;
 			

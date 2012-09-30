@@ -248,7 +248,12 @@ public class GameBoard extends JFrame implements MouseListener{
 		// START TEST
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		
-		board.setVerticalWall(vertWall.getRow(), vertWall.getColumn());
+		if (board.isValidWallPlacement(vertWall.getRow(), vertWall.getColumn())) {
+			System.out.println("Valid wall placement.");
+			board.setVerticalWall(vertWall.getRow(), vertWall.getColumn());
+		} else {
+			System.out.println("Invalid wall placement.");
+		}
 		
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		// END TEST
@@ -265,8 +270,12 @@ public class GameBoard extends JFrame implements MouseListener{
 		// START TEST
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		
-		
-		board.setHorizontalWall(horizWall.getRow(), horizWall.getColumn());
+		if (board.isValidWallPlacement(horizWall.getRow(), horizWall.getColumn())) {
+			System.out.println("Valid wall placement.");
+			board.setHorizontalWall(horizWall.getRow(), horizWall.getColumn());
+		} else {
+			System.out.println("Invalid wall placement.");
+		}
 		
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		// END TEST
