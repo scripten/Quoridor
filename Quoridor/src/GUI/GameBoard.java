@@ -48,6 +48,7 @@ public class GameBoard extends JFrame implements MouseListener{
 		setSize(570, 540);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setTitle("Quoridor");
+		setName("Quoridor");
 
 		JMenuBar menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
@@ -67,6 +68,7 @@ public class GameBoard extends JFrame implements MouseListener{
 		menuBar.add(mnHelp);
 
 		JMenuItem mntmQuoridorWiki = new JMenuItem("Quoridor Wiki");
+		mntmQuoridorWiki.setName("Quoridor Wiki");
 		mntmQuoridorWiki.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent arg0) {
