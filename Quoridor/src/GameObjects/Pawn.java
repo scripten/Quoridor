@@ -24,8 +24,8 @@ import GameObjects.Coordinates;
 		}
 
 		public void move(Coordinates newCoordinates) {
-			coord.setX(newCoordinates.getX());
-			coord.setY(newCoordinates.getY());
+			coord.setRow(newCoordinates.getRow());
+			coord.setColumn(newCoordinates.getColumn());
 		}
 		
 		public int getWallCount() {

@@ -78,11 +78,11 @@ public class Board {
 		int newrow;
 		int newcolumn;
 		
-		currow = currentCoordinates.getrow();
-		curcolumn = currentCoordinates.getcolumn();
+		currow = currentCoordinates.getRow();
+		curcolumn = currentCoordinates.getColumn();
 		
-		newrow = newCoordinates.getrow();
-		newcolumn = newCoordinates.getcolumn();
+		newrow = newCoordinates.getRow();
+		newcolumn = newCoordinates.getColumn();
 		if (currow != newrow && curcolumn != newcolumn) {
 			// diagonal
 			return false;

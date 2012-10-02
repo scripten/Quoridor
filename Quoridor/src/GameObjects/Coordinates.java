@@ -1,32 +1,32 @@
 package GameObjects;
 
 public class Coordinates {
-	private int x;
-	private int y;
+	private int row;
+	private int column;
 	
 	public Coordinates() {
-		x = -1;
-		y = -1;
+		row = -1;
+		column = -1;
 	}
 	
-	public Coordinates(int xCoordinate, int yCoordinate) {
-		x = xCoordinate;
-		y = yCoordinate;
+	public Coordinates(int rowCoordinate, int columnCoordinate) {
+		row = rowCoordinate;
+		column = columnCoordinate;
 	}
 	
-	public void setX(int coordinate) {
-		x = coordinate;
+	public void setRow(int coordinate) {
+		row = coordinate;
 	}
 	
-	public int getX() {
-		return x;
+	public int getRow() {
+		return row;
 	}
 	
-	public void setY(int coordinate) {
-		y = coordinate;
+	public void setColumn(int coordinate) {
+		column = coordinate;
 	}
 	
-	public int getY() {
-		return y;
+	public int getColumn() {
+		return column;
 	}
 }
