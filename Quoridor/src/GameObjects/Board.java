@@ -21,11 +21,11 @@ public class Board {
 
 	// Fields
 
-	private static int NUM_ROWS = 9;
-	private static int NUM_COLS = 9;
+	private final static int NUM_ROWS = 9;
+	private final static int NUM_COLS = 9;
+	private final static int MAX_WALLS = 20;
 	
 	private Tile[][] board = new Tile[NUM_ROWS][NUM_COLS];											 
-	private boolean fourPlayerGame;
 	
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	
@@ -35,9 +35,7 @@ public class Board {
 	// are to be initialized and where they will start. Right now, no work has been done on
 	// distinguishing between human and computer players, but the functionality for moving pawns
 	// is entirely blind and thus allows for either a player-driven GUI or an AI to drive it.
-	public Board (boolean fourPlayerGame) {
-		this.fourPlayerGame = fourPlayerGame;
-		
+	public Board () {
 		// Initialize the x axis of the board grid using rows
 		
 		for(int row = 0; row < NUM_ROWS; row++) 
@@ -51,13 +49,14 @@ public class Board {
 	// Returns a tile at any given x and y value. If the given coordinates are outside of the grid
 	// bounds, nothing happens beside a short print message and a null Tile being returned (This
 	// may throw an exception in the future)
-	public Tile getTile (int row, int column) {
+	public Tile getTile(int row, int column) {
 		try {
 			return board[row][column];
 		} catch (ArrayIndexOutOfBoundsException e) {
 			// throw exception
 			System.out.println("That coordinate is outside the grid.");
 		}
+		
 		return null;
 	}
 	
@@ -65,7 +64,7 @@ public class Board {
 		board[row][column].setOccupied();
 	}
 	
-	public void setUnccupied(int row, int column) {
+	public void setUnoccupied(int row, int column) {
 		board[row][column].setUnoccupied();
 	}
 	
@@ -109,34 +108,64 @@ public class Board {
 	}
 
 	public void setHorizontalWall(int x, int y) {
-		board[x][y].getBottomWall().placeWall();
-		
-		if (x < NUM_ROWS - 1)
-			board[++x][y].getTopWall().placeWall();
+		if (y < NUM_COLS - 1) {
+			board[x][y].getBottomWall().placeWall();
+			board[x][y + 1].getBottomWall().placeWall();
+			
+			
+			if (x < NUM_ROWS - 1) {
+				board[++x][y].getTopWall().placeWall();
+				board[x][++y].getTopWall().placeWall();
+			}
+		} else {
+			// invalid wall placement
+		}
 	}
 	
 	public void setVerticalWall(int x, int y) {
-		board[x][y].getRightWall().placeWall();
-
-		if (y < NUM_COLS - 1)
-			board[x][++y].getLeftWall().placeWall();
+		if (x  < NUM_ROWS - 1) {
+			board[x][y].getRightWall().placeWall();
+			board[x+1][y].getRightWall().placeWall();
+	
+			if (y < NUM_COLS - 1) {
+				board[x][++y].getLeftWall().placeWall();
+				board[++x][y].getLeftWall().placeWall();
+			}
+		} else {
+			// invalid wall placement
+		}
+	}
+	
+	public boolean isValidWallPlacement(int x, int y) {
+		
+		if (x == NUM_ROWS - 1 || y == NUM_COLS - 1)
+			return false;
+		if (board[x][y].getBottomWall().isWall() || board[x][y + 1].getBottomWall().isWall())
+			return false;
+		if (board[x][y].getTopWall().isWall() || board[x][y + 1].getTopWall().isWall() )
+			return false;
+		if (board[x][y].getLeftWall().isWall() || board[x + 1][y].getLeftWall().isWall())
+			return false;
+		if (board[x][y].getRightWall().isWall() || board[x + 1][y].getRightWall().isWall())
+			return false;
+		else 
+			return true;
+		
+		// TODO: determine if placement blocks all available paths
 	}
 	
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	
 	private class Tile {
 	
-		// Fields
-
+		// Field
 		private Wall topWall;
 		private Wall rightWall;
 		private Wall leftWall;
 		private Wall bottomWall;
-		
 		private boolean occupied;
 
 		// Constructor
-
 		public Tile () {
 			occupied = false;
 			
@@ -182,22 +211,22 @@ public class Board {
 	
 			// Fields
 
-			private boolean isWall;
+			private boolean wall;
 
 			// Constructor
 
 			public Wall() {
-				isWall = false;
+				wall = false;
 			}
 
 			// Methods
 
 			public void placeWall() {
-				isWall = true;
+				wall = true;
 			}
 
 			public boolean isWall() {
-				return isWall;
+				return wall;
 			}
 		}
 	}

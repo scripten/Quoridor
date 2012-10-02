@@ -39,7 +39,7 @@ public class GameBoard extends JFrame implements MouseListener{
 	private GridBagConstraints[][] horizontalWallGridBags= new GridBagConstraints[9][8];
 
 	
-	private Board board = new Board(false);
+	private Board board = new Board();
 	private Players players = new Players(false);
 
 
