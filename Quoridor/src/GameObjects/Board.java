@@ -73,8 +73,8 @@ public class Board {
 	}
 	
 	public boolean isValidMove(Coordinates currentCoordinates, Coordinates newCoordinates) {
-		int currow; //row is row
-		int curcolumn; //column is column
+		int currow; 
+		int curcolumn; 
 		int newrow;
 		int newcolumn;
 		
@@ -86,7 +86,9 @@ public class Board {
 		if (currow != newrow && curcolumn != newcolumn) {
 			// diagonal
 			return false;
-		} else if (currow < newrow) {
+		} else if (currow==newrow && curcolumn==newcolumn){
+			return false;
+		}else if (currow < newrow) {
 			// north
 			if (newrow - currow > 1 || board[currow][curcolumn].getBottomWall().isWall()) 
 				return false;
