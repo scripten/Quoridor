@@ -36,6 +36,7 @@ import javax.swing.GroupLayout.Alignment;
  */
 public class FirstWindow extends JFrame{
 	public final static String MAIN_WINDOW_TITLE = "FirstWindow";
+	public final static String MENU_BAR_NAME = "MenuBar";
 	public final static String LABEL = "Hello";
 	
 	public final static String BUTTON_TEXT = "New Game";
@@ -59,6 +60,7 @@ public class FirstWindow extends JFrame{
 		
 		// Adding a menu bar that appears at the top of the window
 		JMenuBar menuBar = new JMenuBar();
+		menuBar.setName(MENU_BAR_NAME);
 		setJMenuBar(menuBar);
 		
 		// Adding an menu called "File" to the menu bar
@@ -90,6 +92,7 @@ public class FirstWindow extends JFrame{
 		
 		// Adding a 'QuoridorWiki' menu item to the 'Help' menu
 		JMenuItem mntmQuoridorWiki = new JMenuItem("Quoridor Wiki");
+		mntmQuoridorWiki.setName("Quoridor Wiki");
 		mntmQuoridorWiki.addMouseListener(new MouseAdapter() {
 			// the on mouse press event
 			@Override

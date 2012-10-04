@@ -1,13 +1,5 @@
 package GameObjects;
 
-
-import java.util.*;
-import java.io.*;
-
-import GUI.HorizontalWallButton;
-import GUI.SquareButton;
-import GUI.VerticalWallButton;
-
 /* This Board object runs the back-end elements of the Quoridor game.
 // So far the initial construction of the board is completed, as
 // is a skeletal system for initial placement and movement of pawns
@@ -21,52 +13,44 @@ public class Board {
 
 	// Fields
 
-	private static int NUM_ROWS = 9;
-	private static int NUM_COLS = 9;
+	private final static int NUM_ROWS = 9;
+	private final static int NUM_COLS = 9;
 	
 	private Tile[][] board = new Tile[NUM_ROWS][NUM_COLS];											 
-	private boolean fourPlayerGame;
 	
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	
 	// Constructor
 
-	// Board is constructed utilizing a single boolean parameter which designates how many players
-	// are to be initialized and where they will start. Right now, no work has been done on
-	// distinguishing between human and computer players, but the functionality for moving pawns
+	// Board is constructed utilizing a single boolean parameter which designates how many columns
+	// are to be initialized and where the column will start. Right now, no work has been done on
+	// distinguishing between human and computer columns, but the functionality for moving pawns
 	// is entirely blind and thus allows for either a player-driven GUI or an AI to drive it.
-	public Board (boolean fourPlayerGame) {
-		this.fourPlayerGame = fourPlayerGame;
-		
-		// Initialize the x axis of the board grid using rows
-		
-		for(int row = 0; row < NUM_ROWS; row++) 
+	public Board () {
+		// Initialize the rows of the board grid using rows
+		for(int row = 0; row < NUM_ROWS; row++) { 
 			for(int column = 0; column < NUM_COLS; column++) {
 				board[row][column] = new Tile();	
 			}
+		}
 	}
 
 	// Methods
 	
-	// Returns a tile at any given x and y value. If the given coordinates are outside of the grid
+	// Returns a tile at a given row and column value. If the given coordinates are outside of the grid
 	// bounds, nothing happens beside a short print message and a null Tile being returned (This
 	// may throw an exception in the future)
-	public Tile getTile (int row, int column) {
+	public Tile getTile(int row, int column) {
 		try {
 			return board[row][column];
 		} catch (ArrayIndexOutOfBoundsException e) {
-			// throw exception
 			System.out.println("That coordinate is outside the grid.");
+			throw e;
 		}
-		return null;
 	}
 	
-	public void setOccupied(int row, int column) {
+	public void switchOccupied(int row, int column) {
 		board[row][column].setOccupied();
-	}
-	
-	public void setUnccupied(int row, int column) {
-		board[row][column].setUnoccupied();
 	}
 	
 	public boolean isOccupied(int row, int column) {
@@ -74,69 +58,101 @@ public class Board {
 	}
 	
 	public boolean isValidMove(Coordinates currentCoordinates, Coordinates newCoordinates) {
-		int curX;
-		int curY;
-		int newX;
-		int newY;
+		int currow; 
+		int curcolumn; 
+		int newrow;
+		int newcolumn;
 		
-		curX = currentCoordinates.getX();
-		curY = currentCoordinates.getY();
+		currow = currentCoordinates.getRow();
+		curcolumn = currentCoordinates.getColumn();
 		
-		newX = newCoordinates.getX();
-		newY = newCoordinates.getY();
-		if (curX != newX && curY != newY) {
+		newrow = newCoordinates.getRow();
+		newcolumn = newCoordinates.getColumn();
+		if (currow != newrow && curcolumn != newcolumn) {
 			// diagonal
 			return false;
-		} else if (curX < newX) {
+		} else if (currow==newrow && curcolumn==newcolumn){
+			return false;
+		}else if (currow < newrow) {
 			// north
-			if (newX - curX > 1 || board[curX][curY].getBottomWall().isWall()) 
+			if (newrow - currow > 1 || board[currow][curcolumn].getBottomWall().isWall()) 
 				return false;
-		} else if (curX > newX ) {
+		} else if (currow > newrow ) {
 			// south
-			if (curX - newX  > 1 || board[curX][curY].getTopWall().isWall()) 
+			if (currow - newrow  > 1 || board[currow][curcolumn].getTopWall().isWall()) 
 				return false;
-		} else if (curY < newY) {
+		} else if (curcolumn < newcolumn) {
 			// east
-			if (newY - curY > 1 || board[curX][curY].getRightWall().isWall()) 
+			if (newcolumn - curcolumn > 1 || board[currow][curcolumn].getRightWall().isWall()) 
 				return false;
-		} else if (curY > newY) {
+		} else if (curcolumn > newcolumn) {
 			// west
-			if (curY - newY > 1 || board[curX][curY].getLeftWall().isWall()) 
+			if (curcolumn - newcolumn > 1 || board[currow][curcolumn].getLeftWall().isWall()) 
 				return false;
 		} 
 			
 		return true;
 	}
 
-	public void setHorizontalWall(int x, int y) {
-		board[x][y].getBottomWall().placeWall();
-		
-		if (x < NUM_ROWS - 1)
-			board[++x][y].getTopWall().placeWall();
+	public void setHorizontalWall(int row, int column) {
+		if (column < NUM_COLS - 1) {
+			board[row][column].getBottomWall().placeWall();
+			board[row][column + 1].getBottomWall().placeWall();
+			
+			
+			if (row < NUM_ROWS - 1) {
+				board[++row][column].getTopWall().placeWall();
+				board[row][++column].getTopWall().placeWall();
+			}
+		} else {
+			// invalid wall placement
+		}
 	}
 	
-	public void setVerticalWall(int x, int y) {
-		board[x][y].getRightWall().placeWall();
-
-		if (y < NUM_COLS - 1)
-			board[x][++y].getLeftWall().placeWall();
+	public void setVerticalWall(int row, int column) {
+		if (row  < NUM_ROWS - 1) {
+			board[row][column].getRightWall().placeWall();
+			board[row+1][column].getRightWall().placeWall();
+	
+			if (column < NUM_COLS - 1) {
+				board[row][++column].getLeftWall().placeWall();
+				board[++row][column].getLeftWall().placeWall();
+			}
+		} else {
+			// invalid wall placement
+		}
+	}
+	
+	public boolean isValidWallPlacement(int row, int column) {
+		
+		if (row == NUM_ROWS - 1 || column == NUM_COLS - 1)
+			return false;
+		if (board[row][column].getBottomWall().isWall() || board[row][column + 1].getBottomWall().isWall())
+			return false;
+		if (board[row][column].getTopWall().isWall() || board[row][column + 1].getTopWall().isWall() )
+			return false;
+		if (board[row][column].getLeftWall().isWall() || board[row + 1][column].getLeftWall().isWall())
+			return false;
+		if (board[row][column].getRightWall().isWall() || board[row + 1][column].getRightWall().isWall())
+			return false;
+		else 
+			return true;
+		
+		// TODO: determine if placement blocks all available paths
 	}
 	
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	
 	private class Tile {
 	
-		// Fields
-
+		// Field
 		private Wall topWall;
 		private Wall rightWall;
 		private Wall leftWall;
 		private Wall bottomWall;
-		
 		private boolean occupied;
 
 		// Constructor
-
 		public Tile () {
 			occupied = false;
 			
@@ -153,11 +169,10 @@ public class Board {
 		}
 		
 		public void setOccupied() {
-			occupied = true;
-		}
-		
-		public void setUnoccupied() {
-			occupied = false;
+			if(occupied)
+				occupied = false;
+			else
+				occupied = true;
 		}
 	
 		public Wall getTopWall () {
@@ -182,22 +197,22 @@ public class Board {
 	
 			// Fields
 
-			private boolean isWall;
+			private boolean wall;
 
 			// Constructor
 
 			public Wall() {
-				isWall = false;
+				wall = false;
 			}
 
 			// Methods
 
 			public void placeWall() {
-				isWall = true;
+				wall = true;
 			}
 
 			public boolean isWall() {
-				return isWall;
+				return wall;
 			}
 		}
 	}

@@ -10,34 +10,22 @@ import GameObjects.Coordinates;
 		
 		// Fields
 		private int wallCount;  // Holds the number of walls this pawn has to use (Full wall placing
-
-		
 		private Coordinates coord;
 		
 		// Constructor
-		public Pawn(boolean fourPlayers, int row, int column) {
-			setInitialWallCount(fourPlayers);
+		public Pawn(int row, int column, int numWalls) {
+			wallCount = numWalls;
 			coord = new Coordinates(row, column);
 		}
 		
 		// Methods
-	
 		public Coordinates getCoordinates() {
 			return coord;
 		}
 
 		public void move(Coordinates newCoordinates) {
-			coord.setX(newCoordinates.getX());
-			coord.setY(newCoordinates.getY());
-		}
-		
-		// This merely sets the initial wall count for the player depending on how many other players
-		// there are
-		public void setInitialWallCount(boolean fourPlayerGame) {
-			if (fourPlayerGame)
-				wallCount = 5;
-			else
-				wallCount = 10;
+			coord.setRow(newCoordinates.getRow());
+			coord.setColumn(newCoordinates.getColumn());
 		}
 		
 		public int getWallCount() {
@@ -49,6 +37,6 @@ import GameObjects.Coordinates;
 		}
 		
 		public boolean hasAvailableWalls() {
-			return wallCount == 0;
+			return wallCount != 0;
 		}
 	}
