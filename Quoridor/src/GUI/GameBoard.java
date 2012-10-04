@@ -175,7 +175,7 @@ public class GameBoard extends JFrame implements MouseListener{
 
 
 		System.out.println("Current pawn coordiates: " + currentCoordinates.getRow() + " " + currentCoordinates.getColumn());
-		System.out.println("Coordiates to move to: " + newCoordinates.getColumn() + " " + newCoordinates.getColumn());
+		System.out.println("Coordiates to move to: " + newCoordinates.getRow() + " " + newCoordinates.getColumn());
 
 		if (board.isValidMove(currentCoordinates, newCoordinates)) {
 			System.out.println("VALID MOVE");
