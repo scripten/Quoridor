@@ -17,9 +17,9 @@ public class Board {
 	private final static int NUM_COLS = 9;
 	
 	private Tile[][] board = new Tile[NUM_ROWS][NUM_COLS];											 
-	
+
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	
+
 	// Constructor
 
 	// Board is constructed utilizing a single boolean parameter which designates how many columns
@@ -94,42 +94,46 @@ public class Board {
 		return true;
 	}
 
-	public void setHorizontalWall(int row, int column) {
+	public boolean setHorizontalWall(int row, int column) {
+//		if(!isValidWallPlacement(row, column))
+//			return false;
+		if(board[row][column].hasFirstWall(false))
+			return false;
 		if (column < NUM_COLS - 1) {
 			board[row][column].getBottomWall().placeWall();
 			board[row][column + 1].getBottomWall().placeWall();
-			
-			
+			board[row][column].setFirstWall(true);
 			if (row < NUM_ROWS - 1) {
 				board[++row][column].getTopWall().placeWall();
 				board[row][++column].getTopWall().placeWall();
 			}
-		} else {
-			// invalid wall placement
 		}
+		return true;
 	}
 	
-	public void setVerticalWall(int row, int column) {
+	public boolean setVerticalWall(int row, int column) {
+//		if(!isValidWallPlacement(row, column))
+//			return false;
+		if(board[row][column].hasFirstWall(true))
+			return false;
 		if (row  < NUM_ROWS - 1) {
 			board[row][column].getRightWall().placeWall();
 			board[row+1][column].getRightWall().placeWall();
-	
+			board[row][column].setFirstWall(false);
 			if (column < NUM_COLS - 1) {
 				board[row][++column].getLeftWall().placeWall();
 				board[++row][column].getLeftWall().placeWall();
 			}
-		} else {
-			// invalid wall placement
 		}
+		return true;
 	}
 	
 	public boolean isValidWallPlacement(int row, int column) {
-		
 		if (row == NUM_ROWS - 1 || column == NUM_COLS - 1)
 			return false;
 		if (board[row][column].getBottomWall().isWall() || board[row][column + 1].getBottomWall().isWall())
 			return false;
-		if (board[row][column].getTopWall().isWall() || board[row][column + 1].getTopWall().isWall() )
+		if (board[row][column].getTopWall().isWall() || board[row][column + 1].getTopWall().isWall())
 			return false;
 		if (board[row][column].getLeftWall().isWall() || board[row + 1][column].getLeftWall().isWall())
 			return false;
@@ -151,11 +155,14 @@ public class Board {
 		private Wall leftWall;
 		private Wall bottomWall;
 		private boolean occupied;
+		private boolean hasHorizFirstWall;
+		private boolean hasVertFirstWall;
 
 		// Constructor
 		public Tile () {
 			occupied = false;
-			
+			hasHorizFirstWall = false;
+			hasVertFirstWall = false;
 			topWall = new Wall();
 			rightWall = new Wall();
 			leftWall = new Wall();
@@ -173,6 +180,20 @@ public class Board {
 				occupied = false;
 			else
 				occupied = true;
+		}
+		
+		public boolean hasFirstWall(boolean horiz) {
+			if(horiz)
+				return hasHorizFirstWall;
+			else
+				return hasVertFirstWall;
+		}
+		
+		public void setFirstWall(boolean horiz) {
+			if(horiz)
+				hasHorizFirstWall = true;
+			else
+				hasVertFirstWall = true;
 		}
 	
 		public Wall getTopWall () {

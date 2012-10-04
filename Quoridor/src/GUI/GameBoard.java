@@ -206,7 +206,9 @@ public class GameBoard extends JFrame implements MouseListener{
 		// START TEST
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-		board.setVerticalWall(vertWall.getRow(), vertWall.getColumn());
+		/*if(!board.setVerticalWall(vertWall.getRow(), vertWall.getColumn()))
+				System.out.println(vertWall.getRow() + " " + vertWall.getColumn() + " : INVALID WALL");*/
+
 
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		// END TEST
@@ -215,14 +217,16 @@ public class GameBoard extends JFrame implements MouseListener{
 		if(vertWall.getRow()==8)	//FIXME don't allow user to click vertical walls in bottom most column.
 			return;					// is there a better way to handle this?
 		
-		if(isLegalMove(vertWall)){
+		//if(isLegalMove(vertWall)){
 			// update the wall the user clicked
+		if(board.setVerticalWall(vertWall.getRow(), vertWall.getColumn())) {
 			vertWall.setIcon(new ImageIcon(GameBoard.class.getResource("/quoridor images/blueVerticalWall.png")));
 			vertWall.setUsed(true);
 			// and also update the vertical wall in the row beneath it
 			verticalWalls[vertWall.getColumn()][vertWall.getRow()+1].setIcon(new ImageIcon(GameBoard.class.getResource("/quoridor images/blueVerticalWall.png")));
 			verticalWalls[vertWall.getColumn()][vertWall.getRow()+1].setUsed(true);
-		}
+		} else
+			System.out.println(vertWall.getRow() + " " + vertWall.getColumn() + " : INVALID WALL");
 	}
 
 	public void handleHorizontalWallPress(HorizontalWallButton horizWall){
@@ -230,8 +234,8 @@ public class GameBoard extends JFrame implements MouseListener{
 		// START TEST
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-
-		board.setHorizontalWall(horizWall.getRow(), horizWall.getColumn());
+		/*if(!board.setHorizontalWall(horizWall.getRow(), horizWall.getColumn()))
+			System.out.println(horizWall.getRow() + " " + horizWall.getColumn() + " : INVALID WALL");*/
 
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		// END TEST
@@ -240,12 +244,14 @@ public class GameBoard extends JFrame implements MouseListener{
 		if(horizWall.getColumn()==8)  	//FIXME don't allow user to click horizontal walls in right most column.
 			return;						// is there a better way to handle this?
 
-		if(isLegalMove(horizWall)){
+		//if(isLegalMove(horizWall)){
+		if(board.setHorizontalWall(horizWall.getRow(), horizWall.getColumn())) {
 			horizWall.setIcon(new ImageIcon(GameBoard.class.getResource("/quoridor images/blueHorizontalWall.png")));
 			horizWall.setUsed(true);
 			horizontalWalls[horizWall.getColumn()+1][horizWall.getRow()].setIcon(new ImageIcon(GameBoard.class.getResource("/quoridor images/blueHorizontalWall.png")));
 			horizontalWalls[horizWall.getColumn()+1][horizWall.getRow()].setUsed(true);
-		}
+		} else
+			System.out.println(horizWall.getRow() + " " + horizWall.getColumn() + " : INVALID WALL");
 	}
 
 
