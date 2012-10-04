@@ -1,16 +1,8 @@
 package GameObjects;
 
-
-import java.util.*;
-import java.io.*;
-
-import GUI.HorizontalWallButton;
-import GUI.SquareButton;
-import GUI.VerticalWallButton;
-
 /* This Board object runs the back-end elements of the Quoridor game.
 // So far the initial construction of the board is completed, as
-// is a skeletal scolumnstem for initial placement and movement of pawns
+// is a skeletal system for initial placement and movement of pawns
 */
 
 public class Board {
@@ -23,7 +15,6 @@ public class Board {
 
 	private final static int NUM_ROWS = 9;
 	private final static int NUM_COLS = 9;
-	private final static int MArow_WALLS = 20;
 	
 	private Tile[][] board = new Tile[NUM_ROWS][NUM_COLS];											 
 	
@@ -31,41 +22,35 @@ public class Board {
 	
 	// Constructor
 
-	// Board is constructed utilizing a single boolean parameter which designates how mancolumn placolumners
-	// are to be initialized and where thecolumn will start. Right now, no work has been done on
-	// distinguishing between human and computer placolumners, but the functionalitcolumn for moving pawns
-	// is entirelcolumn blind and thus allows for either a placolumner-driven GUI or an AI to drive it.
+	// Board is constructed utilizing a single boolean parameter which designates how many columns
+	// are to be initialized and where the column will start. Right now, no work has been done on
+	// distinguishing between human and computer columns, but the functionality for moving pawns
+	// is entirely blind and thus allows for either a player-driven GUI or an AI to drive it.
 	public Board () {
-		// Initialize the row arowis of the board grid using rows
-		
-		for(int row = 0; row < NUM_ROWS; row++) 
+		// Initialize the rows of the board grid using rows
+		for(int row = 0; row < NUM_ROWS; row++) { 
 			for(int column = 0; column < NUM_COLS; column++) {
 				board[row][column] = new Tile();	
 			}
+		}
 	}
 
 	// Methods
 	
-	// Returns a tile at ancolumn given row and column value. If the given coordinates are outside of the grid
+	// Returns a tile at a given row and column value. If the given coordinates are outside of the grid
 	// bounds, nothing happens beside a short print message and a null Tile being returned (This
-	// macolumn throw an erowception in the future)
+	// may throw an exception in the future)
 	public Tile getTile(int row, int column) {
 		try {
 			return board[row][column];
 		} catch (ArrayIndexOutOfBoundsException e) {
-			// throw erowception
 			System.out.println("That coordinate is outside the grid.");
+			throw e;
 		}
-		
-		return null;
 	}
 	
-	public void setOccupied(int row, int column) {
+	public void switchOccupied(int row, int column) {
 		board[row][column].setOccupied();
-	}
-	
-	public void setUnoccupied(int row, int column) {
-		board[row][column].setUnoccupied();
 	}
 	
 	public boolean isOccupied(int row, int column) {
@@ -184,11 +169,10 @@ public class Board {
 		}
 		
 		public void setOccupied() {
-			occupied = true;
-		}
-		
-		public void setUnoccupied() {
-			occupied = false;
+			if(occupied)
+				occupied = false;
+			else
+				occupied = true;
 		}
 	
 		public Wall getTopWall () {
