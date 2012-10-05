@@ -75,7 +75,7 @@ public class FirstWindow extends JFrame{
 			public void mousePressed(MouseEvent e) {
 				// Close the welcome menu and bring up the game board
 				dispose();
-				GameBoard gameBoard = new GameBoard();	
+				BoardGUI gameBoard = new BoardGUI();	
 			}
 		});
 		mntmNewGame.setHorizontalAlignment(SwingConstants.LEFT);
@@ -122,7 +122,7 @@ public class FirstWindow extends JFrame{
 			public void mouseClicked(MouseEvent arg0) {
 				// Close the welcome menu and bring up the game board
 				dispose();
-				GameBoard gameBoard = new GameBoard();	
+				BoardGUI gameBoard = new BoardGUI();	
 			}
 		});
 		btnNewGame.setName("btnNewGame");

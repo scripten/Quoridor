@@ -25,12 +25,13 @@ import javax.swing.JLayeredPane;
 import javax.swing.SwingConstants;
 
 import GameObjects.Board;
+import GameObjects.Board.WALL_TYPE;
 import GameObjects.Coordinates;
 import GameObjects.Players;
 
-public class GameBoard extends JFrame implements MouseListener{
-	private int currentRow = 8;
-	private int currentColumn = 4;
+public class BoardGUI extends JFrame implements MouseListener{
+	//private int currentRow = 8;
+	//private int currentColumn = 4;
 	private SquareButton [][]tiles = new SquareButton[9][9];  // [columns][rows]
 	private GridBagConstraints[][] squareGridBags= new GridBagConstraints[9][9];
 	private VerticalWallButton[][] verticalWalls = new VerticalWallButton[8][9];
@@ -43,7 +44,7 @@ public class GameBoard extends JFrame implements MouseListener{
 	private Players players = new Players(false);
 
 
-	public GameBoard() {
+	public BoardGUI() {
 		setResizable(false);
 		setSize(570, 540);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -88,6 +89,7 @@ public class GameBoard extends JFrame implements MouseListener{
 				}
 			}
 		});
+		
 		mnHelp.add(mntmQuoridorWiki);
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0};
@@ -104,7 +106,7 @@ public class GameBoard extends JFrame implements MouseListener{
 				tiles[column][row].setMargin(new Insets(0, 0, 0, 0));
 				tiles[column][row].setAlignmentX(Component.CENTER_ALIGNMENT);
 				tiles[column][row].setSize(new Dimension(50, 50));
-				tiles[column][row].setIcon(new ImageIcon(GameBoard.class.getResource("/quoridor images/empty space.png")));
+				tiles[column][row].setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/empty space.png")));
 				tiles[column][row].addMouseListener(this);
 				tiles[column][row].setBorderPainted(false);
 				tiles[column][row].setBorder(null);
@@ -121,7 +123,7 @@ public class GameBoard extends JFrame implements MouseListener{
 					verticalWalls[column][row].setMargin(new Insets(0, 0, 0, 0));
 					verticalWalls[column][row].setAlignmentX(Component.CENTER_ALIGNMENT);
 					verticalWalls[column][row].setSize(new Dimension(50, 50));
-					verticalWalls[column][row].setIcon(new ImageIcon(GameBoard.class.getResource("/quoridor images/emptyVerticalWall.png")));
+					verticalWalls[column][row].setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/emptyVerticalWall.png")));
 					verticalWalls[column][row].addMouseListener(this);
 					verticalWalls[column][row].setBorderPainted(false);
 					verticalWalls[column][row].setBorder(null);
@@ -139,7 +141,7 @@ public class GameBoard extends JFrame implements MouseListener{
 					horizontalWalls[column][row].setMargin(new Insets(0, 0, 0, 0));
 					horizontalWalls[column][row].setAlignmentX(Component.CENTER_ALIGNMENT);
 					horizontalWalls[column][row].setSize(new Dimension(50, 50));
-					horizontalWalls[column][row].setIcon(new ImageIcon(GameBoard.class.getResource("/quoridor images/emptyHorizontalWall.png")));
+					horizontalWalls[column][row].setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/emptyHorizontalWall.png")));
 					horizontalWalls[column][row].addMouseListener(this);
 					horizontalWalls[column][row].setBorderPainted(false);
 					horizontalWalls[column][row].setBorder(null);
@@ -152,99 +154,76 @@ public class GameBoard extends JFrame implements MouseListener{
 				}
 			}
 		}
+		
 		// before the user can see the board, set their starting piece on the board
-		tiles[4][8].setIcon(new ImageIcon(GameBoard.class.getResource("/quoridor images/blue space.png")));
+		
+		// Bottom row player
+		tiles[4][8].setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/blue space.png")));
 		tiles[4][8].setUsed(true);
+		setVisible(true);
+		
+		// Top row player
+		tiles[4][0].setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/blue space.png")));
+		tiles[4][0].setUsed(true);
 		setVisible(true);
 	}
 
 	public void handleSquareButtonPress(SquareButton btn){
-
-		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		// START TEST
-		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
 		Coordinates currentCoordinates;
 		Coordinates newCoordinates;
 
-		currentCoordinates = players.getCurrentPlayer().getCoordinates();
+		//System.out.println("Current pawn coordiates: " + currentCoordinates.getRow() + " " + currentCoordinates.getColumn());
+		//System.out.println("Coordiates to move to: " + newCoordinates.getRow() + " " + newCoordinates.getColumn());
 
-		newCoordinates = new Coordinates();
-		newCoordinates.setRow(btn.getRow());
-		newCoordinates.setColumn(btn.getColumn());
+		if (btn.isValidated()) {
+			currentCoordinates = players.getCurrentPlayer().getCoordinates();
 
+			newCoordinates = new Coordinates();
+			newCoordinates.setRow(btn.getRow());
+			newCoordinates.setColumn(btn.getColumn());
+			
+			btn.setUsed(true);
+			btn.setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/blue space.png")));
+			
 
-		System.out.println("Current pawn coordiates: " + currentCoordinates.getRow() + " " + currentCoordinates.getColumn());
-		System.out.println("Coordiates to move to: " + newCoordinates.getRow() + " " + newCoordinates.getColumn());
-
-		if (board.isValidMove(currentCoordinates, newCoordinates)) {
-			System.out.println("VALID MOVE");
-
+			tiles[currentCoordinates.getColumn()][currentCoordinates.getRow()].setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/empty space.png")));
+			tiles[currentCoordinates.getColumn()][currentCoordinates.getRow()].setUsed(false);
+			tiles[currentCoordinates.getColumn()][currentCoordinates.getRow()].setInvalidated();
+			
+			
 			players.getCurrentPlayer().move(newCoordinates);
-			btn.setIcon(new ImageIcon(GameBoard.class.getResource("/quoridor images/blue space.png")));
-			tiles[currentColumn][currentRow].setIcon(new ImageIcon(GameBoard.class.getResource("/quoridor images/empty space.png")));
-			currentColumn = btn.getColumn();
-			currentRow = btn.getRow();
-			return;
-
-			// players.nextPlayer();
-		} else {
-			System.out.println("INVALID MOVE");
-			return;
+			players.nextPlayer();
 		}
-
-		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		// END TEST
-		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
 		
 	}
 
 	public void handleVerticalWallPress(VerticalWallButton vertWall){
+		if(board.isValidWallPlacement(vertWall.getRow(), vertWall.getColumn(), WALL_TYPE.VERTICAL)) {
+			board.setVerticalWall(vertWall.getRow(), vertWall.getColumn());
+			
+			vertWall.setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/blueVerticalWall.png")));
 
-		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		// START TEST
-		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-		board.setVerticalWall(vertWall.getRow(), vertWall.getColumn());
-
-		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		// END TEST
-		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-		if(vertWall.getRow()==8)	//FIXME don't allow user to click vertical walls in bottom most column.
-			return;					// is there a better way to handle this?
-		
-		if(isLegalMove(vertWall)){
-			// update the wall the user clicked
-			vertWall.setIcon(new ImageIcon(GameBoard.class.getResource("/quoridor images/blueVerticalWall.png")));
 			vertWall.setUsed(true);
 			// and also update the vertical wall in the row beneath it
-			verticalWalls[vertWall.getColumn()][vertWall.getRow()+1].setIcon(new ImageIcon(GameBoard.class.getResource("/quoridor images/blueVerticalWall.png")));
+			verticalWalls[vertWall.getColumn()][vertWall.getRow()+1].setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/blueVerticalWall.png")));
 			verticalWalls[vertWall.getColumn()][vertWall.getRow()+1].setUsed(true);
-		}
+			
+			 players.nextPlayer();
+		} 
 	}
 
 	public void handleHorizontalWallPress(HorizontalWallButton horizWall){
-		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		// START TEST
-		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		if(board.isValidWallPlacement(horizWall.getRow(), horizWall.getColumn(), WALL_TYPE.HORIZONTAL)) {
+			board.setHorizontalWall(horizWall.getRow(), horizWall.getColumn());
+			
+			horizWall.setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/blueHorizontalWall.png")));
 
-
-		board.setHorizontalWall(horizWall.getRow(), horizWall.getColumn());
-
-		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		// END TEST
-		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		
-		if(horizWall.getColumn()==8)  	//FIXME don't allow user to click horizontal walls in right most column.
-			return;						// is there a better way to handle this?
-
-		if(isLegalMove(horizWall)){
-			horizWall.setIcon(new ImageIcon(GameBoard.class.getResource("/quoridor images/blueHorizontalWall.png")));
 			horizWall.setUsed(true);
-			horizontalWalls[horizWall.getColumn()+1][horizWall.getRow()].setIcon(new ImageIcon(GameBoard.class.getResource("/quoridor images/blueHorizontalWall.png")));
+			
+			horizontalWalls[horizWall.getColumn()+1][horizWall.getRow()].setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/blueHorizontalWall.png")));
 			horizontalWalls[horizWall.getColumn()+1][horizWall.getRow()].setUsed(true);
+			
+			 players.nextPlayer();
 		}
 	}
 
@@ -266,42 +245,50 @@ public class GameBoard extends JFrame implements MouseListener{
 
 	@Override
 	public void mouseEntered(MouseEvent e) {
-
+		Coordinates currentCoordinates;
+		Coordinates newCoordinates;
+		
 		if(e.getSource() instanceof SquareButton){
+			currentCoordinates = players.getCurrentPlayer().getCoordinates();
+
 			SquareButton tile = (SquareButton) e.getSource();
-			if(isLegalMove(tile)){//FIXME
-				tile.setIcon(new ImageIcon(GameBoard.class.getResource("/quoridor images/blue space.png")));
+	
+			newCoordinates = new Coordinates();
+			newCoordinates.setRow(tile.getRow());
+			newCoordinates.setColumn(tile.getColumn());
+			
+			if (!tile.getUsed() && board.isValidMove(currentCoordinates, newCoordinates)) {
+				tile.setValidated();
+				tile.setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/blue space.png")));
 			}
-		}
-		if(e.getSource() instanceof VerticalWallButton){
+		} else if(e.getSource() instanceof VerticalWallButton) {
 			VerticalWallButton verticalWall = (VerticalWallButton)e.getSource();
 			
-			if(verticalWall.getRow()==8)
-				return;
-			
-			if(isLegalMove(verticalWall)){
+			if(!verticalWall.getUsed() && board.isValidWallPlacement(verticalWall.getRow(), verticalWall.getColumn(), WALL_TYPE.VERTICAL)) {
+				verticalWall.setValidated();
+				
 				// highlight the places where the wall would be placed
 				if(!verticalWall.getUsed())
-					verticalWall.setIcon(new ImageIcon(GameBoard.class.getResource("/quoridor images/blueVerticalWall.png")));
+					verticalWall.setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/blueVerticalWall.png")));
 				if(verticalWall.getRow()<8){
 					VerticalWallButton lowerWall = verticalWalls[verticalWall.getColumn()][verticalWall.getRow()+1];
 					if(!lowerWall.getUsed())
-						lowerWall.setIcon(new ImageIcon(GameBoard.class.getResource("/quoridor images/blueVerticalWall.png")));
+						lowerWall.setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/blueVerticalWall.png")));
 				}
 			}
-		}
-		if(e.getSource() instanceof HorizontalWallButton){
+		} else if(e.getSource() instanceof HorizontalWallButton){
 			HorizontalWallButton horizontalWall = (HorizontalWallButton)e.getSource();
-			if(horizontalWall.getColumn()==8)
-				return;
-			if(isLegalMove(horizontalWall)){
+
+			if(!horizontalWall.getUsed() && board.isValidWallPlacement(horizontalWall.getRow(), horizontalWall.getColumn(), WALL_TYPE.HORIZONTAL)) {
+				horizontalWall.setValidated();
+				
 				// highlight the places where the wall would be placed
 				if(!horizontalWall.getUsed())
-					horizontalWall.setIcon(new ImageIcon(GameBoard.class.getResource("/quoridor images/blueHorizontalWall.png")));
+					horizontalWall.setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/blueHorizontalWall.png")));
 				if(horizontalWall.getColumn()<8){
 					HorizontalWallButton rightWall = horizontalWalls[horizontalWall.getColumn()+1][horizontalWall.getRow()];
 					if(!rightWall.getUsed())
-						rightWall.setIcon(new ImageIcon(GameBoard.class.getResource("/quoridor images/blueHorizontalWall.png")));
+						rightWall.setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/blueHorizontalWall.png")));
 				}
 			}
 		}
@@ -311,43 +298,47 @@ public class GameBoard extends JFrame implements MouseListener{
 
 	@Override
 	public void mouseExited(MouseEvent e) {
+	
 		// TODO Auto-generated method stub
 
 		if(e.getSource() instanceof SquareButton){
 			SquareButton tile = (SquareButton) e.getSource();
-			if(isLegalMove(tile)){
-				tile.setIcon(new ImageIcon(GameBoard.class.getResource("/quoridor images/empty space.png")));
+			if (tile.isValidated() ){
+		
+				tile.setInvalidated();
+				if (!tile.getUsed())
+					tile.setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/empty space.png")));
 			}
-		}
-		if(e.getSource() instanceof VerticalWallButton){
+		} else if(e.getSource() instanceof VerticalWallButton){
 			VerticalWallButton verticalWall = (VerticalWallButton)e.getSource();
 			
-			if(verticalWall.getRow()==8)
-				return;
-			if(isLegalMove(verticalWall)){
+			//if(isLegalMove(verticalWall))
+			if (verticalWall.isValidated()) {
 				// highlight the places where the wall would be placed
 
+				verticalWall.setInvalidated();
+			
 				if(!verticalWall.getUsed())
-					verticalWall.setIcon(new ImageIcon(GameBoard.class.getResource("/quoridor images/emptyVerticalWall.png")));
+					verticalWall.setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/emptyVerticalWall.png")));
 				if(verticalWall.getRow()<8){
 					VerticalWallButton lowerWall = verticalWalls[verticalWall.getColumn()][verticalWall.getRow()+1];
 					if(!lowerWall.getUsed())
-						lowerWall.setIcon(new ImageIcon(GameBoard.class.getResource("/quoridor images/emptyVerticalWall.png")));
+						lowerWall.setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/emptyVerticalWall.png")));
 				}
 			}
-		}
-		if(e.getSource() instanceof HorizontalWallButton){
+		} else if(e.getSource() instanceof HorizontalWallButton){
 			HorizontalWallButton horizontalWall = (HorizontalWallButton)e.getSource();
-			if(horizontalWall.getRow()==8)
-				return;
-			if(isLegalMove(horizontalWall)){
+	
+			if (horizontalWall.isValidated()) {
+				horizontalWall.invalidate();
+			//if(isLegalMove(horizontalWall)){
 				// highlight the places where the wall would be placed
 				if(!horizontalWall.getUsed())
-					horizontalWall.setIcon(new ImageIcon(GameBoard.class.getResource("/quoridor images/emptyHorizontalWall.png")));
+					horizontalWall.setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/emptyHorizontalWall.png")));
 				if(horizontalWall.getColumn()<8){
 					HorizontalWallButton rightWall = horizontalWalls[horizontalWall.getColumn()+1][horizontalWall.getRow()];
 					if(!rightWall.getUsed())
-						rightWall.setIcon(new ImageIcon(GameBoard.class.getResource("/quoridor images/emptyHorizontalWall.png")));
+						rightWall.setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/emptyHorizontalWall.png")));
 				}
 			}
 		}
@@ -374,7 +365,7 @@ public class GameBoard extends JFrame implements MouseListener{
 	 * @param tile
 	 * @return
 	 */
-	public boolean isLegalMove(JButton btnOnBoard){
+	/*public boolean isLegalMove(JButton btnOnBoard){
 
 		if(btnOnBoard instanceof SquareButton){
 			SquareButton tile = (SquareButton)btnOnBoard;
@@ -408,7 +399,7 @@ public class GameBoard extends JFrame implements MouseListener{
 
 
 		return false;
-	}
+	}*/
 
 
 }

@@ -38,7 +38,7 @@ public class Players {
 	public void nextPlayer() {
 		currentPlayer++;
 		
-		if (currentPlayer > numPlayers)
+		if (currentPlayer > numPlayers - 1)
 			currentPlayer = 0;
 	}
 }
