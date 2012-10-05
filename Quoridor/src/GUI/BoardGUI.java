@@ -30,8 +30,8 @@ import GameObjects.Coordinates;
 import GameObjects.Players;
 
 public class BoardGUI extends JFrame implements MouseListener{
-	private int currentRow = 8;
-	private int currentColumn = 4;
+	//private int currentRow = 8;
+	//private int currentColumn = 4;
 	private SquareButton [][]tiles = new SquareButton[9][9];  // [columns][rows]
 	private GridBagConstraints[][] squareGridBags= new GridBagConstraints[9][9];
 	private VerticalWallButton[][] verticalWalls = new VerticalWallButton[8][9];
@@ -154,9 +154,17 @@ public class BoardGUI extends JFrame implements MouseListener{
 				}
 			}
 		}
+		
 		// before the user can see the board, set their starting piece on the board
+		
+		// Bottom row player
 		tiles[4][8].setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/blue space.png")));
 		tiles[4][8].setUsed(true);
+		setVisible(true);
+		
+		// Top row player
+		tiles[4][0].setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/blue space.png")));
+		tiles[4][0].setUsed(true);
 		setVisible(true);
 	}
 
@@ -164,29 +172,27 @@ public class BoardGUI extends JFrame implements MouseListener{
 		Coordinates currentCoordinates;
 		Coordinates newCoordinates;
 
-		currentCoordinates = players.getCurrentPlayer().getCoordinates();
-
-		newCoordinates = new Coordinates();
-		newCoordinates.setRow(btn.getRow());
-		newCoordinates.setColumn(btn.getColumn());
-
-		System.out.println("Current pawn coordiates: " + currentCoordinates.getRow() + " " + currentCoordinates.getColumn());
-		System.out.println("Coordiates to move to: " + newCoordinates.getRow() + " " + newCoordinates.getColumn());
+		//System.out.println("Current pawn coordiates: " + currentCoordinates.getRow() + " " + currentCoordinates.getColumn());
+		//System.out.println("Coordiates to move to: " + newCoordinates.getRow() + " " + newCoordinates.getColumn());
 
 		if (btn.isValidated()) {
-			System.out.println("VALID MOVE");
+			currentCoordinates = players.getCurrentPlayer().getCoordinates();
 
+			newCoordinates = new Coordinates();
+			newCoordinates.setRow(btn.getRow());
+			newCoordinates.setColumn(btn.getColumn());
+			
 			btn.setUsed(true);
+			btn.setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/blue space.png")));
+			
+
+			tiles[currentCoordinates.getColumn()][currentCoordinates.getRow()].setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/empty space.png")));
+			tiles[currentCoordinates.getColumn()][currentCoordinates.getRow()].setUsed(false);
+			tiles[currentCoordinates.getColumn()][currentCoordinates.getRow()].setInvalidated();
+			
 			
 			players.getCurrentPlayer().move(newCoordinates);
-			btn.setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/blue space.png")));
-			tiles[currentColumn][currentRow].setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/empty space.png")));
-			tiles[currentColumn][currentRow].setUsed(false);
-			
-			currentColumn = btn.getColumn();
-			currentRow = btn.getRow();
-			
-			// players.nextPlayer();
+			players.nextPlayer();
 		}
 		
 	}
@@ -202,7 +208,7 @@ public class BoardGUI extends JFrame implements MouseListener{
 			verticalWalls[vertWall.getColumn()][vertWall.getRow()+1].setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/blueVerticalWall.png")));
 			verticalWalls[vertWall.getColumn()][vertWall.getRow()+1].setUsed(true);
 			
-			// players.nextPlayer();
+			 players.nextPlayer();
 		} 
 	}
 
@@ -217,7 +223,7 @@ public class BoardGUI extends JFrame implements MouseListener{
 			horizontalWalls[horizWall.getColumn()+1][horizWall.getRow()].setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/blueHorizontalWall.png")));
 			horizontalWalls[horizWall.getColumn()+1][horizWall.getRow()].setUsed(true);
 			
-			// players.nextPlayer();
+			 players.nextPlayer();
 		}
 	}
 
@@ -298,14 +304,12 @@ public class BoardGUI extends JFrame implements MouseListener{
 		if(e.getSource() instanceof SquareButton){
 			SquareButton tile = (SquareButton) e.getSource();
 			if (tile.isValidated() ){
-				
-			//if(isLegalMove(tile)){
+		
 				tile.setInvalidated();
 				if (!tile.getUsed())
 					tile.setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/empty space.png")));
 			}
-		}
-		if(e.getSource() instanceof VerticalWallButton){
+		} else if(e.getSource() instanceof VerticalWallButton){
 			VerticalWallButton verticalWall = (VerticalWallButton)e.getSource();
 			
 			//if(isLegalMove(verticalWall))
@@ -322,8 +326,7 @@ public class BoardGUI extends JFrame implements MouseListener{
 						lowerWall.setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/emptyVerticalWall.png")));
 				}
 			}
-		}
-		if(e.getSource() instanceof HorizontalWallButton){
+		} else if(e.getSource() instanceof HorizontalWallButton){
 			HorizontalWallButton horizontalWall = (HorizontalWallButton)e.getSource();
 	
 			if (horizontalWall.isValidated()) {
@@ -362,7 +365,7 @@ public class BoardGUI extends JFrame implements MouseListener{
 	 * @param tile
 	 * @return
 	 */
-	public boolean isLegalMove(JButton btnOnBoard){
+	/*public boolean isLegalMove(JButton btnOnBoard){
 
 		if(btnOnBoard instanceof SquareButton){
 			SquareButton tile = (SquareButton)btnOnBoard;
@@ -396,7 +399,7 @@ public class BoardGUI extends JFrame implements MouseListener{
 
 
 		return false;
-	}
+	}*/
 
 
 }
