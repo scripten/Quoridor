@@ -10,6 +10,10 @@ public class Board {
 	public enum DIRECTION {
 		UP, DOWN, LEFT, RIGHT
 	}
+	
+	public enum WALL_TYPE {
+		VERTICAL, HORIZONTAL
+	}
 
 	// Fields
 
@@ -58,36 +62,37 @@ public class Board {
 	}
 	
 	public boolean isValidMove(Coordinates currentCoordinates, Coordinates newCoordinates) {
-		int currow; 
-		int curcolumn; 
-		int newrow;
-		int newcolumn;
+		int curRow; 
+		int curColumn; 
+		int newRow;
+		int newColumn;
 		
-		currow = currentCoordinates.getRow();
-		curcolumn = currentCoordinates.getColumn();
+		curRow = currentCoordinates.getRow();
+		curColumn = currentCoordinates.getColumn();
 		
-		newrow = newCoordinates.getRow();
-		newcolumn = newCoordinates.getColumn();
-		if (currow != newrow && curcolumn != newcolumn) {
+		newRow = newCoordinates.getRow();
+		newColumn = newCoordinates.getColumn();
+		
+		if (curRow != newRow && curColumn != newColumn) {
 			// diagonal
 			return false;
-		} else if (currow==newrow && curcolumn==newcolumn){
+		} else if (curRow==newRow && curColumn==newColumn){
 			return false;
-		}else if (currow < newrow) {
+		}else if (curRow < newRow) {
 			// north
-			if (newrow - currow > 1 || board[currow][curcolumn].getBottomWall().isWall()) 
+			if (newRow - curRow > 1 || board[curRow][curColumn].getBottomWall().isWall()) 
 				return false;
-		} else if (currow > newrow ) {
+		} else if (curRow > newRow ) {
 			// south
-			if (currow - newrow  > 1 || board[currow][curcolumn].getTopWall().isWall()) 
+			if (curRow - newRow  > 1 || board[curRow][curColumn].getTopWall().isWall()) 
 				return false;
-		} else if (curcolumn < newcolumn) {
+		} else if (curColumn < newColumn) {
 			// east
-			if (newcolumn - curcolumn > 1 || board[currow][curcolumn].getRightWall().isWall()) 
+			if (newColumn - curColumn > 1 || board[curRow][curColumn].getRightWall().isWall()) 
 				return false;
-		} else if (curcolumn > newcolumn) {
+		} else if (curColumn > newColumn) {
 			// west
-			if (curcolumn - newcolumn > 1 || board[currow][curcolumn].getLeftWall().isWall()) 
+			if (curColumn - newColumn > 1 || board[curRow][curColumn].getLeftWall().isWall()) 
 				return false;
 		} 
 			
@@ -95,14 +100,13 @@ public class Board {
 	}
 
 	public boolean setHorizontalWall(int row, int column) {
-//		if(!isValidWallPlacement(row, column))
-//			return false;
-		if(board[row][column].hasFirstWall(false))
-			return false;
 		if (column < NUM_COLS - 1) {
 			board[row][column].getBottomWall().placeWall();
 			board[row][column + 1].getBottomWall().placeWall();
-			board[row][column].setFirstWall(true);
+			
+			
+			board[row][column].setHorizontalFirstWall();
+			
 			if (row < NUM_ROWS - 1) {
 				board[++row][column].getTopWall().placeWall();
 				board[row][++column].getTopWall().placeWall();
@@ -112,14 +116,12 @@ public class Board {
 	}
 	
 	public boolean setVerticalWall(int row, int column) {
-//		if(!isValidWallPlacement(row, column))
-//			return false;
-		if(board[row][column].hasFirstWall(true))
-			return false;
 		if (row  < NUM_ROWS - 1) {
 			board[row][column].getRightWall().placeWall();
 			board[row+1][column].getRightWall().placeWall();
-			board[row][column].setFirstWall(false);
+			
+			board[row][column].setVerticalFirstWall();
+			
 			if (column < NUM_COLS - 1) {
 				board[row][++column].getLeftWall().placeWall();
 				board[++row][column].getLeftWall().placeWall();
@@ -128,20 +130,29 @@ public class Board {
 		return true;
 	}
 	
-	public boolean isValidWallPlacement(int row, int column) {
-		if (row == NUM_ROWS - 1 || column == NUM_COLS - 1)
-			return false;
-		if (board[row][column].getBottomWall().isWall() || board[row][column + 1].getBottomWall().isWall())
-			return false;
-		if (board[row][column].getTopWall().isWall() || board[row][column + 1].getTopWall().isWall())
-			return false;
-		if (board[row][column].getLeftWall().isWall() || board[row + 1][column].getLeftWall().isWall())
-			return false;
-		if (board[row][column].getRightWall().isWall() || board[row + 1][column].getRightWall().isWall())
-			return false;
-		else 
-			return true;
+	public boolean isValidWallPlacement(int row, int column, WALL_TYPE wallType) {
+		boolean canMove = false;
 		
+		if (row == NUM_ROWS - 1 || column == NUM_COLS - 1)
+			canMove = false;
+		else if (wallType == WALL_TYPE.VERTICAL)
+			if (board[row][column].hasHorizontalFirstWall())
+				canMove =  false;
+			else if (board[row][column].getRightWall().isWall() || board[row + 1][column].getRightWall().isWall())
+				canMove =  false;
+			else 
+				canMove =  true;
+		else if (wallType == WALL_TYPE.HORIZONTAL)
+			if (board[row][column].hasVerticalFirstWall())
+				canMove =  false;
+			else if (board[row][column].getBottomWall().isWall() || board[row][column + 1].getBottomWall().isWall())
+				canMove =  false;
+			else 
+				canMove =  true;
+		else 
+			canMove = true;
+		
+		return canMove;
 		// TODO: determine if placement blocks all available paths
 	}
 	
@@ -182,18 +193,21 @@ public class Board {
 				occupied = true;
 		}
 		
-		public boolean hasFirstWall(boolean horiz) {
-			if(horiz)
-				return hasHorizFirstWall;
-			else
-				return hasVertFirstWall;
+		public boolean hasHorizontalFirstWall() {
+			return hasHorizFirstWall;
 		}
 		
-		public void setFirstWall(boolean horiz) {
-			if(horiz)
-				hasHorizFirstWall = true;
-			else
-				hasVertFirstWall = true;
+		public boolean hasVerticalFirstWall() {
+			return hasVertFirstWall;
+		}
+		
+
+		public void setHorizontalFirstWall() {
+			hasHorizFirstWall = true;
+		}
+		
+		public void setVerticalFirstWall() {
+			hasVertFirstWall = true;
 		}
 	
 		public Wall getTopWall () {

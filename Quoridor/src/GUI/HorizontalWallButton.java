@@ -16,6 +16,7 @@ public class HorizontalWallButton extends JButton {
 	private int row;
 	private int column;
 	private boolean isInUse;
+	private boolean validated;
 	
 	public HorizontalWallButton(){
 		super();
@@ -37,6 +38,18 @@ public class HorizontalWallButton extends JButton {
 		return column;
 	}
 	
+	public boolean isValidated() {
+		return validated;
+	}
+	
+	public void setValidated() {
+		validated = true;
+	}
+	
+	public void setInvalidated() {
+		validated = false;
+	}
+
 	public void setUsed (boolean used){
 		isInUse = used;
 	}

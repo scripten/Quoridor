@@ -25,6 +25,7 @@ import javax.swing.JLayeredPane;
 import javax.swing.SwingConstants;
 
 import GameObjects.Board;
+import GameObjects.Board.WALL_TYPE;
 import GameObjects.Coordinates;
 import GameObjects.Players;
 
@@ -88,6 +89,7 @@ public class BoardGUI extends JFrame implements MouseListener{
 				}
 			}
 		});
+		
 		mnHelp.add(mntmQuoridorWiki);
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0};
@@ -159,11 +161,6 @@ public class BoardGUI extends JFrame implements MouseListener{
 	}
 
 	public void handleSquareButtonPress(SquareButton btn){
-
-		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		// START TEST
-		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
 		Coordinates currentCoordinates;
 		Coordinates newCoordinates;
 
@@ -173,94 +170,55 @@ public class BoardGUI extends JFrame implements MouseListener{
 		newCoordinates.setRow(btn.getRow());
 		newCoordinates.setColumn(btn.getColumn());
 
-
 		System.out.println("Current pawn coordiates: " + currentCoordinates.getRow() + " " + currentCoordinates.getColumn());
 		System.out.println("Coordiates to move to: " + newCoordinates.getRow() + " " + newCoordinates.getColumn());
 
-		if (board.isValidMove(currentCoordinates, newCoordinates)) {
+		if (btn.isValidated()) {
 			System.out.println("VALID MOVE");
 
+			btn.setUsed(true);
+			
 			players.getCurrentPlayer().move(newCoordinates);
 			btn.setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/blue space.png")));
 			tiles[currentColumn][currentRow].setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/empty space.png")));
+			tiles[currentColumn][currentRow].setUsed(false);
+			
 			currentColumn = btn.getColumn();
 			currentRow = btn.getRow();
-			return;
-
+			
 			// players.nextPlayer();
-		} else {
-			System.out.println("INVALID MOVE");
-			return;
 		}
-
-		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		// END TEST
-		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
 		
 	}
 
 	public void handleVerticalWallPress(VerticalWallButton vertWall){
-
-		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		// START TEST
-		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-		/*if(!board.setVerticalWall(vertWall.getRow(), vertWall.getColumn()))
-				System.out.println(vertWall.getRow() + " " + vertWall.getColumn() + " : INVALID WALL");*/
-
-
-		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		// END TEST
-		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-		if(vertWall.getRow()==8)	//FIXME don't allow user to click vertical walls in bottom most column.
-			return;					// is there a better way to handle this?
-		
-		//if(isLegalMove(vertWall)){
-			// update the wall the user clicked
-<<<<<<< HEAD:Quoridor/src/GUI/GameBoard.java
-		if(board.setVerticalWall(vertWall.getRow(), vertWall.getColumn())) {
-			vertWall.setIcon(new ImageIcon(GameBoard.class.getResource("/quoridor images/blueVerticalWall.png")));
-=======
+		if(board.isValidWallPlacement(vertWall.getRow(), vertWall.getColumn(), WALL_TYPE.VERTICAL)) {
+			board.setVerticalWall(vertWall.getRow(), vertWall.getColumn());
+			
 			vertWall.setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/blueVerticalWall.png")));
->>>>>>> 2a72412abbf3a3c2ff38602c55bf793e8b6099d7:Quoridor/src/GUI/BoardGUI.java
+
 			vertWall.setUsed(true);
 			// and also update the vertical wall in the row beneath it
 			verticalWalls[vertWall.getColumn()][vertWall.getRow()+1].setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/blueVerticalWall.png")));
 			verticalWalls[vertWall.getColumn()][vertWall.getRow()+1].setUsed(true);
-		} else
-			System.out.println(vertWall.getRow() + " " + vertWall.getColumn() + " : INVALID WALL");
+			
+			// players.nextPlayer();
+		} 
 	}
 
 	public void handleHorizontalWallPress(HorizontalWallButton horizWall){
-		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		// START TEST
-		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-		/*if(!board.setHorizontalWall(horizWall.getRow(), horizWall.getColumn()))
-			System.out.println(horizWall.getRow() + " " + horizWall.getColumn() + " : INVALID WALL");*/
-
-		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		// END TEST
-		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		
-		if(horizWall.getColumn()==8)  	//FIXME don't allow user to click horizontal walls in right most column.
-			return;						// is there a better way to handle this?
-
-<<<<<<< HEAD:Quoridor/src/GUI/GameBoard.java
-		//if(isLegalMove(horizWall)){
-		if(board.setHorizontalWall(horizWall.getRow(), horizWall.getColumn())) {
-			horizWall.setIcon(new ImageIcon(GameBoard.class.getResource("/quoridor images/blueHorizontalWall.png")));
-=======
-		if(isLegalMove(horizWall)){
+		if(board.isValidWallPlacement(horizWall.getRow(), horizWall.getColumn(), WALL_TYPE.HORIZONTAL)) {
+			board.setHorizontalWall(horizWall.getRow(), horizWall.getColumn());
+			
 			horizWall.setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/blueHorizontalWall.png")));
->>>>>>> 2a72412abbf3a3c2ff38602c55bf793e8b6099d7:Quoridor/src/GUI/BoardGUI.java
+
 			horizWall.setUsed(true);
+			
 			horizontalWalls[horizWall.getColumn()+1][horizWall.getRow()].setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/blueHorizontalWall.png")));
 			horizontalWalls[horizWall.getColumn()+1][horizWall.getRow()].setUsed(true);
-		} else
-			System.out.println(horizWall.getRow() + " " + horizWall.getColumn() + " : INVALID WALL");
+			
+			// players.nextPlayer();
+		}
 	}
 
 
@@ -281,20 +239,28 @@ public class BoardGUI extends JFrame implements MouseListener{
 
 	@Override
 	public void mouseEntered(MouseEvent e) {
-
+		Coordinates currentCoordinates;
+		Coordinates newCoordinates;
+		
 		if(e.getSource() instanceof SquareButton){
+			currentCoordinates = players.getCurrentPlayer().getCoordinates();
+
 			SquareButton tile = (SquareButton) e.getSource();
-			if(isLegalMove(tile)){//FIXME
+	
+			newCoordinates = new Coordinates();
+			newCoordinates.setRow(tile.getRow());
+			newCoordinates.setColumn(tile.getColumn());
+			
+			if (!tile.getUsed() && board.isValidMove(currentCoordinates, newCoordinates)) {
+				tile.setValidated();
 				tile.setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/blue space.png")));
 			}
-		}
-		if(e.getSource() instanceof VerticalWallButton){
+		} else if(e.getSource() instanceof VerticalWallButton) {
 			VerticalWallButton verticalWall = (VerticalWallButton)e.getSource();
 			
-			if(verticalWall.getRow()==8)
-				return;
-			
-			if(isLegalMove(verticalWall)){
+			if(!verticalWall.getUsed() && board.isValidWallPlacement(verticalWall.getRow(), verticalWall.getColumn(), WALL_TYPE.VERTICAL)) {
+				verticalWall.setValidated();
+				
 				// highlight the places where the wall would be placed
 				if(!verticalWall.getUsed())
 					verticalWall.setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/blueVerticalWall.png")));
@@ -304,12 +270,12 @@ public class BoardGUI extends JFrame implements MouseListener{
 						lowerWall.setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/blueVerticalWall.png")));
 				}
 			}
-		}
-		if(e.getSource() instanceof HorizontalWallButton){
+		} else if(e.getSource() instanceof HorizontalWallButton){
 			HorizontalWallButton horizontalWall = (HorizontalWallButton)e.getSource();
-			if(horizontalWall.getColumn()==8)
-				return;
-			if(isLegalMove(horizontalWall)){
+
+			if(!horizontalWall.getUsed() && board.isValidWallPlacement(horizontalWall.getRow(), horizontalWall.getColumn(), WALL_TYPE.HORIZONTAL)) {
+				horizontalWall.setValidated();
+				
 				// highlight the places where the wall would be placed
 				if(!horizontalWall.getUsed())
 					horizontalWall.setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/blueHorizontalWall.png")));
@@ -326,22 +292,28 @@ public class BoardGUI extends JFrame implements MouseListener{
 
 	@Override
 	public void mouseExited(MouseEvent e) {
+	
 		// TODO Auto-generated method stub
 
 		if(e.getSource() instanceof SquareButton){
 			SquareButton tile = (SquareButton) e.getSource();
-			if(isLegalMove(tile)){
-				tile.setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/empty space.png")));
+			if (tile.isValidated() ){
+				
+			//if(isLegalMove(tile)){
+				tile.setInvalidated();
+				if (!tile.getUsed())
+					tile.setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/empty space.png")));
 			}
 		}
 		if(e.getSource() instanceof VerticalWallButton){
 			VerticalWallButton verticalWall = (VerticalWallButton)e.getSource();
 			
-			if(verticalWall.getRow()==8)
-				return;
-			if(isLegalMove(verticalWall)){
+			//if(isLegalMove(verticalWall))
+			if (verticalWall.isValidated()) {
 				// highlight the places where the wall would be placed
 
+				verticalWall.setInvalidated();
+			
 				if(!verticalWall.getUsed())
 					verticalWall.setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/emptyVerticalWall.png")));
 				if(verticalWall.getRow()<8){
@@ -353,9 +325,10 @@ public class BoardGUI extends JFrame implements MouseListener{
 		}
 		if(e.getSource() instanceof HorizontalWallButton){
 			HorizontalWallButton horizontalWall = (HorizontalWallButton)e.getSource();
-			if(horizontalWall.getRow()==8)
-				return;
-			if(isLegalMove(horizontalWall)){
+	
+			if (horizontalWall.isValidated()) {
+				horizontalWall.invalidate();
+			//if(isLegalMove(horizontalWall)){
 				// highlight the places where the wall would be placed
 				if(!horizontalWall.getUsed())
 					horizontalWall.setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/emptyHorizontalWall.png")));

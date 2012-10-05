@@ -16,32 +16,47 @@ public class SquareButton extends JButton {
 	private int row;
 	private int column;
 	private boolean isInUse;
+	private boolean validated;
 	
-	public SquareButton(){
+	public SquareButton() {
 		super();
 		row = -1;
 		column = -1;
 		isInUse = false;
+		validated = false;
 	}
 	
-	public SquareButton(String text, int columns, int rows){
+	public SquareButton(String text, int columns, int rows) {
 		super(text);
 		row = rows;
 		column = columns;
 	}
 	
-	public int getRow(){
+	public int getRow() {
 		return row;
 	}
 	
-	public int getColumn(){
+	public int getColumn() {
 		return column;
 	}
 	
-	public void setUsed (boolean used){
+	public boolean isValidated() {
+		return validated;
+	}
+	
+	public void setValidated() {
+		validated = true;
+	}
+	
+	public void setInvalidated() {
+		validated = false;
+	}
+	
+	
+	public void setUsed(boolean used) {
 		isInUse = used;
 	}
-	public boolean getUsed(){
+	public boolean getUsed() {
 		return isInUse;
 	}
 
