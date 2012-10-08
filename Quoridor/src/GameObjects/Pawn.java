@@ -11,7 +11,8 @@ import GameObjects.Coordinates;
 		// Fields
 		private int wallCount;  // Holds the number of walls this pawn has to use (Full wall placing
 		private Coordinates coord;
-		
+	
+
 		// Constructor
 		public Pawn(int row, int column, int numWalls) {
 			wallCount = numWalls;
