@@ -16,6 +16,7 @@ public class Players {
 			numPlayers = 4;
 			pawns = new Pawn[numPlayers];
 			
+	
 			pawns[0] = new Pawn(8, 4, NUM_WALLS_FOUR_PLAYERS);
 			pawns[1] = new Pawn(0 ,4, NUM_WALLS_FOUR_PLAYERS);
 			pawns[2] = new Pawn(4, 0, NUM_WALLS_FOUR_PLAYERS);
