@@ -53,8 +53,12 @@ public class Board {
 		}
 	}
 	
-	public void switchOccupied(int row, int column) {
-		board[row][column].setOccupied();
+	public void setOccupied(Coordinates currentCoordinates) {
+		board[currentCoordinates.getRow()][currentCoordinates.getColumn()].setOccupied();
+	}
+	
+	public void setUnoccupied(Coordinates currentCoordinates) {
+		board[currentCoordinates.getRow()][currentCoordinates.getColumn()].setUnoccupied();
 	}
 	
 	public boolean isOccupied(int row, int column) {
@@ -66,39 +70,63 @@ public class Board {
 		int curColumn; 
 		int newRow;
 		int newColumn;
+		int jumpInt = 1;
 		
 		curRow = currentCoordinates.getRow();
 		curColumn = currentCoordinates.getColumn();
 		
 		newRow = newCoordinates.getRow();
 		newColumn = newCoordinates.getColumn();
+		/*if(board[newRow][newColumn].isOccupied()) {
+			curRow = newRow;
+			curColumn = newColumn;
+			jumpInt = 2;
+		}*/
 		
-		if (curRow != newRow && curColumn != newColumn) {
-			// diagonal
+		if (curRow != newRow && curColumn != newColumn) // diagonal
 			return false;
-		} else if (curRow==newRow && curColumn==newColumn){
+		else if (curRow==newRow && curColumn==newColumn)
 			return false;
-		}else if (curRow < newRow) {
-			// north
-			if (newRow - curRow > 1 || board[curRow][curColumn].getBottomWall().isWall()) 
+		else if (board[newRow][newColumn].isOccupied())
 				return false;
-		} else if (curRow > newRow ) {
-			// south
-			if (curRow - newRow  > 1 || board[curRow][curColumn].getTopWall().isWall()) 
+		else if (curRow < newRow) {			// south
+			
+			System.out.println("SOUTH");
+			if(board[curRow  + 1][curColumn].isOccupied()) 
+				jumpInt = 2;
+			
+			System.out.println(jumpInt);
+			
+			if (newRow - curRow > jumpInt || board[curRow][curColumn].getBottomWall().isWall()) 
 				return false;
-		} else if (curColumn < newColumn) {
-			// east
-			if (newColumn - curColumn > 1 || board[curRow][curColumn].getRightWall().isWall()) 
+		} else if (curRow > newRow ) {			// north
+			
+			if(board[curRow - 1][curColumn].isOccupied()) 
+				jumpInt = 2;
+			
+			if (curRow - newRow  > jumpInt || board[curRow][curColumn].getTopWall().isWall()) 
 				return false;
-		} else if (curColumn > newColumn) {
-			// west
-			if (curColumn - newColumn > 1 || board[curRow][curColumn].getLeftWall().isWall()) 
+			
+		} else if (curColumn < newColumn) {		// east
+			
+			if(board[curRow][curColumn - 1].isOccupied()) 
+				jumpInt = 2;
+			
+			if (newColumn - curColumn > jumpInt || board[curRow][curColumn].getRightWall().isWall()) 
+				return false;
+			
+		} else if (curColumn > newColumn) {		// west
+			
+			if(board[curRow][curColumn + 1].isOccupied()) 
+				jumpInt = 2;
+			
+			if (curColumn - newColumn > jumpInt || board[curRow][curColumn].getLeftWall().isWall()) 
 				return false;
 		} 
 			
 		return true;
 	}
-
+	
 	public boolean setHorizontalWall(int row, int column) {
 		if (column < NUM_COLS - 1) {
 			board[row][column].getBottomWall().placeWall();
@@ -187,10 +215,11 @@ public class Board {
 		}
 		
 		public void setOccupied() {
-			if(occupied)
-				occupied = false;
-			else
 				occupied = true;
+		}
+		
+		public void setUnoccupied() {
+				occupied = false;
 		}
 		
 		public boolean hasHorizontalFirstWall() {
