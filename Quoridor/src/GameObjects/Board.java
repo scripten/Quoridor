@@ -1,5 +1,7 @@
 package GameObjects;
 
+import static java.lang.Math.abs;
+
 /* This Board object runs the back-end elements of the Quoridor game.
 // So far the initial construction of the board is completed, as
 // is a skeletal system for initial placement and movement of pawns
@@ -66,61 +68,81 @@ public class Board {
 	}
 	
 	public boolean isValidMove(Coordinates currentCoordinates, Coordinates newCoordinates) {
-		int curRow; 
-		int curColumn; 
-		int newRow;
-		int newColumn;
-		int jumpInt = 1;
+		int curRow; 			// Current row
+		int curColumn; 			// Current column
+		int newRow;				// New row
+		int newColumn;			// New column
+		int moveDist = 1;		// Movable distance
 		
 		curRow = currentCoordinates.getRow();
 		curColumn = currentCoordinates.getColumn();
 		
 		newRow = newCoordinates.getRow();
 		newColumn = newCoordinates.getColumn();
-		/*if(board[newRow][newColumn].isOccupied()) {
-			curRow = newRow;
-			curColumn = newColumn;
-			jumpInt = 2;
-		}*/
-		
-		if (curRow != newRow && curColumn != newColumn) // diagonal
-			return false;
-		else if (curRow==newRow && curColumn==newColumn)
+
+	
+		// Determine if a the move is valid
+		if (curRow == newRow && curColumn == newColumn)
 			return false;
 		else if (board[newRow][newColumn].isOccupied())
+			return false;
+		if (curRow != newRow && curColumn != newColumn) {			// Diagonal
+			
+			// Reject diagonal moves that are greater than one in either direction
+			if (abs(curColumn - newColumn) > moveDist || abs(curRow - newRow) > moveDist)
 				return false;
-		else if (curRow < newRow) {			// south
+				
+			// Determine which direction the move is in
+			if (curRow < newRow && curColumn < newColumn) {			// South east
+				// Determine if a south east move is valid
+				if (!board[curRow][curColumn + 1].isOccupied() && !board[curRow + 1][curColumn].isOccupied())
+					return false;
+			} else if (curRow > newRow && curColumn < newColumn) {	// North east
+				// Determine if a north east move is valid
+				if (!board[curRow][curColumn + 1].isOccupied()  && !board[curRow - 1][curColumn].isOccupied())
+					return false;
+			} else if (curRow < newRow && curColumn > newColumn) {	// South west
+				// Determine if a south west move is valid
+				if (!board[curRow][curColumn - 1].isOccupied() && !board[curRow + 1][curColumn].isOccupied())
+					return false;
+			} else if (curRow > newRow && curColumn > newColumn) {	// North west
+				// Determine if a north west move is valid
+				if (!board[curRow][curColumn - 1].isOccupied() && !board[curRow - 1][curColumn].isOccupied())
+					return false;
+			}
 			
-			System.out.println("SOUTH");
-			if(board[curRow  + 1][curColumn].isOccupied()) 
-				jumpInt = 2;
+		} else if (curRow < newRow) {								// South
+			// Determine if the southern tile can be jumped
+			if(board[curRow + 1][curColumn].isOccupied()) 
+				moveDist = 2;
 			
-			System.out.println(jumpInt);
-			
-			if (newRow - curRow > jumpInt || board[curRow][curColumn].getBottomWall().isWall()) 
+			// Reject the move if the move distance is too big or if a wall is in place
+			if (newRow - curRow > moveDist || board[curRow][curColumn].getBottomWall().isWall()) 
 				return false;
-		} else if (curRow > newRow ) {			// north
 			
+		} else if (curRow > newRow ) {								// North
+			// Determine if the northern tile can be jumped
 			if(board[curRow - 1][curColumn].isOccupied()) 
-				jumpInt = 2;
-			
-			if (curRow - newRow  > jumpInt || board[curRow][curColumn].getTopWall().isWall()) 
+				moveDist = 2;
+	
+			// Reject the move if the move distance is too big or if a wall is in place
+			if (curRow - newRow  > moveDist || board[curRow][curColumn].getTopWall().isWall()) 
 				return false;
-			
-		} else if (curColumn < newColumn) {		// east
-			
-			if(board[curRow][curColumn - 1].isOccupied()) 
-				jumpInt = 2;
-			
-			if (newColumn - curColumn > jumpInt || board[curRow][curColumn].getRightWall().isWall()) 
-				return false;
-			
-		} else if (curColumn > newColumn) {		// west
-			
+		} else if (curColumn < newColumn) {							// East
+			// Determine if the eastern tile can be jumped
 			if(board[curRow][curColumn + 1].isOccupied()) 
-				jumpInt = 2;
+				moveDist = 2;
 			
-			if (curColumn - newColumn > jumpInt || board[curRow][curColumn].getLeftWall().isWall()) 
+			// Reject the move if the move distance is too big or if a wall is in place
+			if (newColumn - curColumn > moveDist || board[curRow][curColumn].getRightWall().isWall()) 
+				return false;
+		} else if (curColumn > newColumn) {							// West
+			// Determine if the western tile can be jumped
+			if(board[curRow][curColumn - 1].isOccupied()) 
+				moveDist = 2;
+	
+			// Reject the move if the move distance is too big or if a wall is in place
+			if (curColumn - newColumn > moveDist || board[curRow][curColumn].getLeftWall().isWall()) 
 				return false;
 		} 
 			
