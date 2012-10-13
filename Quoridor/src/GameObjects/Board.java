@@ -8,17 +8,12 @@ import static java.lang.Math.abs;
 */
 
 public class Board {
-
-	public enum DIRECTION {
-		UP, DOWN, LEFT, RIGHT
-	}
 	
 	public enum WALL_TYPE {
 		VERTICAL, HORIZONTAL
 	}
 
 	// Fields
-
 	private final static int NUM_ROWS = 9;
 	private final static int NUM_COLS = 9;
 	
@@ -79,7 +74,6 @@ public class Board {
 		
 		newRow = newCoordinates.getRow();
 		newColumn = newCoordinates.getColumn();
-
 	
 		// Determine if a the move is valid
 		if (curRow == newRow && curColumn == newColumn)
@@ -94,24 +88,60 @@ public class Board {
 				
 			// Determine which direction the move is in
 			if (curRow < newRow && curColumn < newColumn) {			// South east
-				// Determine if a south east move is valid
-				if (!board[curRow][curColumn + 1].isOccupied() && !board[curRow + 1][curColumn].isOccupied())
+			
+				// Determine if a north west move is valid
+				if (board[curRow][curColumn + 1].isOccupied()) {
+					// Determine if a wall is blocking the move
+					if (board[curRow][curColumn + 1].getLeftWall().isWall())
+						return false;
+				} else if (board[curRow + 1][curColumn].isOccupied()) {
+					// Determine if a wall is blocking move
+					if (board[curRow + 1][curColumn].getTopWall().isWall())
+						return false;
+				} else
 					return false;
 			} else if (curRow > newRow && curColumn < newColumn) {	// North east
-				// Determine if a north east move is valid
-				if (!board[curRow][curColumn + 1].isOccupied()  && !board[curRow - 1][curColumn].isOccupied())
+				
+				// Determine if a north west move is valid
+				if (board[curRow][curColumn + 1].isOccupied()) {
+					// Determine if a wall is blocking the move
+					if (board[curRow][curColumn + 1].getLeftWall().isWall())
+						return false;
+				} else if (board[curRow - 1][curColumn].isOccupied()) {
+					// Determine if a wall is blocking move
+					if (board[curRow - 1][curColumn].getBottomWall().isWall())
+						return false;
+				} else
 					return false;
 			} else if (curRow < newRow && curColumn > newColumn) {	// South west
-				// Determine if a south west move is valid
-				if (!board[curRow][curColumn - 1].isOccupied() && !board[curRow + 1][curColumn].isOccupied())
+				
+				// Determine if a north west move is valid
+				if (board[curRow][curColumn - 1].isOccupied()) {
+					// Determine if a wall is blocking the move
+					if (board[curRow][curColumn - 1].getRightWall().isWall())
+						return false;
+				} else if (board[curRow + 1][curColumn].isOccupied()) {
+					// Determine if a wall is blocking move
+					if (board[curRow + 1][curColumn].getTopWall().isWall())
+						return false;
+				} else
 					return false;
 			} else if (curRow > newRow && curColumn > newColumn) {	// North west
+				
 				// Determine if a north west move is valid
-				if (!board[curRow][curColumn - 1].isOccupied() && !board[curRow - 1][curColumn].isOccupied())
+				if (board[curRow][curColumn - 1].isOccupied()) {
+					// Determine if a wall is blocking the move
+					if (board[curRow][curColumn - 1].getRightWall().isWall())
+						return false;
+				} else if (board[curRow - 1][curColumn].isOccupied()) {
+					// Determine if a wall is blocking move
+					if (board[curRow - 1][curColumn].getBottomWall().isWall())
+						return false;
+				} else
 					return false;
 			}
-			
 		} else if (curRow < newRow) {								// South
+			
 			// Determine if the southern tile can be jumped
 			if(board[curRow + 1][curColumn].isOccupied()) 
 				moveDist = 2;
@@ -121,6 +151,7 @@ public class Board {
 				return false;
 			
 		} else if (curRow > newRow ) {								// North
+			
 			// Determine if the northern tile can be jumped
 			if(board[curRow - 1][curColumn].isOccupied()) 
 				moveDist = 2;
@@ -129,6 +160,7 @@ public class Board {
 			if (curRow - newRow  > moveDist || board[curRow][curColumn].getTopWall().isWall()) 
 				return false;
 		} else if (curColumn < newColumn) {							// East
+			
 			// Determine if the eastern tile can be jumped
 			if(board[curRow][curColumn + 1].isOccupied()) 
 				moveDist = 2;
@@ -137,6 +169,7 @@ public class Board {
 			if (newColumn - curColumn > moveDist || board[curRow][curColumn].getRightWall().isWall()) 
 				return false;
 		} else if (curColumn > newColumn) {							// West
+			
 			// Determine if the western tile can be jumped
 			if(board[curRow][curColumn - 1].isOccupied()) 
 				moveDist = 2;
