@@ -29,4 +29,21 @@ public class Coordinates {
 	public int getColumn() {
 		return column;
 	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		// Determine if the nodes are equal
+		if (obj == this) 
+	        return true;
+	    else if (obj == null || obj.getClass() != this.getClass()) 
+	        return false;
+	    else {
+	    	Coordinates coord = (Coordinates)obj;
+	    	
+	    	if (coord.getRow() == row && coord.getColumn() == column)
+	    		return true;
+	    	else
+	    		return false;
+	    }
+	}
 }

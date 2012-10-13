@@ -5,6 +5,7 @@ import javax.swing.JFrame;
 import javax.swing.JMenuBar;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JToggleButton;
 
 import java.awt.Desktop;
@@ -30,8 +31,6 @@ import GameObjects.Coordinates;
 import GameObjects.Players;
 
 public class BoardGUI extends JFrame implements MouseListener{
-	//private int currentRow = 8;
-	//private int currentColumn = 4;
 	private SquareButton [][]tiles = new SquareButton[9][9];  // [columns][rows]
 	private GridBagConstraints[][] squareGridBags= new GridBagConstraints[9][9];
 	private VerticalWallButton[][] verticalWalls = new VerticalWallButton[8][9];
@@ -39,10 +38,9 @@ public class BoardGUI extends JFrame implements MouseListener{
 	private HorizontalWallButton[][] horizontalWalls = new HorizontalWallButton[9][8];
 	private GridBagConstraints[][] horizontalWallGridBags= new GridBagConstraints[9][8];
 
-
 	private Board board = new Board();
 	private Players players = new Players(false);
-
+	private boolean playGame;
 
 	public BoardGUI() {
 		setResizable(false);
@@ -166,16 +164,15 @@ public class BoardGUI extends JFrame implements MouseListener{
 		tiles[4][0].setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/red space.png")));
 		tiles[4][0].setUsed(true);
 		setVisible(true);
+		
+		playGame = true;
 	}
 
 	public void handleSquareButtonPress(SquareButton btn){
 		Coordinates currentCoordinates;
 		Coordinates newCoordinates;
 
-		//System.out.println("Current pawn coordiates: " + currentCoordinates.getRow() + " " + currentCoordinates.getColumn());
-		//System.out.println("Coordiates to move to: " + newCoordinates.getRow() + " " + newCoordinates.getColumn());
-
-		if (btn.isValidated()) {
+		if (playGame && btn.isValidated()) {
 			currentCoordinates = players.getCurrentPlayer().getCoordinates();
 
 			newCoordinates = new Coordinates();
@@ -183,9 +180,10 @@ public class BoardGUI extends JFrame implements MouseListener{
 			newCoordinates.setColumn(btn.getColumn());
 			
 			btn.setUsed(true);
-			if(players.currentPlayer==0)
+			
+			if(players.getCurrentPlayerID() == 0)
 				btn.setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/blue space.png")));
-			else if(players.currentPlayer==1)
+			else if(players.getCurrentPlayerID() == 1)
 				btn.setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/red space.png")));
 			
 
@@ -194,61 +192,69 @@ public class BoardGUI extends JFrame implements MouseListener{
 			tiles[currentCoordinates.getColumn()][currentCoordinates.getRow()].setInvalidated();
 			
 			board.setUnoccupied(currentCoordinates);
-			System.out.println("Unoccupied");
 			board.setOccupied(newCoordinates);
-			System.out.println("Occupied");
-			
+
 			players.getCurrentPlayer().move(newCoordinates);
 			
-			players.nextPlayer();
+			if (players.isWinner()) {
+				playGame = false;
+
+				JOptionPane.showMessageDialog(this, String.format("Player %s has won the game.", players.getCurrentPlayerID() + 1));
+				System.out.format("Player %s has won the game.", players.getCurrentPlayerID() + 1);
+			} else
+				players.nextPlayer();
 		}
 		
 	}
 
-	public void handleVerticalWallPress(VerticalWallButton vertWall){
-		if(board.isValidWallPlacement(vertWall.getRow(), vertWall.getColumn(), WALL_TYPE.VERTICAL)) {
+	public void handleVerticalWallPress(VerticalWallButton vertWall) {
+		
+		if (playGame && vertWall.isValidated()) {
 			board.setVerticalWall(vertWall.getRow(), vertWall.getColumn());
 			
-			if(players.currentPlayer==0)
+			players.getCurrentPlayer().useWall();
+			
+			if(players.getCurrentPlayerID() == 0)
 				vertWall.setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/blueVerticalWall.png")));
-			else if (players.currentPlayer==1)
+			else if (players.getCurrentPlayerID() == 1)
 				vertWall.setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/redVerticalWall.png")));
 	
-			
-			
 			vertWall.setUsed(true);
-			// and also update the vertical wall in the row beneath it
-			if(players.currentPlayer==0)
-			verticalWalls[vertWall.getColumn()][vertWall.getRow()+1].setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/blueVerticalWall.png")));
-			else if (players.currentPlayer==1)
-				verticalWalls[vertWall.getColumn()][vertWall.getRow()+1].setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/redVerticalWall.png")));
-	
-			verticalWalls[vertWall.getColumn()][vertWall.getRow()+1].setUsed(true);
 			
-			 players.nextPlayer();
+			// and also update the vertical wall in the row beneath it
+			if(players.getCurrentPlayerID() == 0)
+				verticalWalls[vertWall.getColumn()][vertWall.getRow() + 1].setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/blueVerticalWall.png")));
+			else if (players.getCurrentPlayerID() == 1)
+				verticalWalls[vertWall.getColumn()][vertWall.getRow() + 1].setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/redVerticalWall.png")));
+	
+			verticalWalls[vertWall.getColumn()][vertWall.getRow() + 1].setUsed(true);
+			
+			players.nextPlayer();
 		} 
 	}
 
 	public void handleHorizontalWallPress(HorizontalWallButton horizWall){
-		if(board.isValidWallPlacement(horizWall.getRow(), horizWall.getColumn(), WALL_TYPE.HORIZONTAL)) {
+		
+		if(playGame && horizWall.isValidated()) {
 			board.setHorizontalWall(horizWall.getRow(), horizWall.getColumn());
 			
-			if(players.currentPlayer==0)
-			horizWall.setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/blueHorizontalWall.png")));
-			else if(players.currentPlayer==1)
+			players.getCurrentPlayer().useWall();
+			
+			if (players.getCurrentPlayerID() == 0)
+				horizWall.setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/blueHorizontalWall.png")));
+			else if(players.getCurrentPlayerID() == 1)
 				horizWall.setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/redHorizontalWall.png")));
-
-
+			
 			horizWall.setUsed(true);
 			
-			if(players.currentPlayer==0)
-			horizontalWalls[horizWall.getColumn()+1][horizWall.getRow()].setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/blueHorizontalWall.png")));
-			else if (players.currentPlayer==1)
-				horizontalWalls[horizWall.getColumn()+1][horizWall.getRow()].setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/redHorizontalWall.png")));
+			if (players.getCurrentPlayerID() == 0)
+				horizontalWalls[horizWall.getColumn() + 1][horizWall.getRow()].setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/blueHorizontalWall.png")));
+			else if (players.getCurrentPlayerID() == 1)
+				horizontalWalls[horizWall.getColumn() + 1][horizWall.getRow()].setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/redHorizontalWall.png")));
 
-			horizontalWalls[horizWall.getColumn()+1][horizWall.getRow()].setUsed(true);
+			horizontalWalls[horizWall.getColumn() + 1][horizWall.getRow()].setUsed(true);
 			
-			 players.nextPlayer();
+			players.nextPlayer();
 		}
 	}
 
@@ -267,11 +273,13 @@ public class BoardGUI extends JFrame implements MouseListener{
 
 	}
 
-
 	@Override
 	public void mouseEntered(MouseEvent e) {
 		Coordinates currentCoordinates;
 		Coordinates newCoordinates;
+		
+		if (!playGame)
+			return;
 		
 		if(e.getSource() instanceof SquareButton){
 			currentCoordinates = players.getCurrentPlayer().getCoordinates();
@@ -283,62 +291,62 @@ public class BoardGUI extends JFrame implements MouseListener{
 			newCoordinates.setColumn(tile.getColumn());
 			
 			if (!tile.getUsed() && board.isValidMove(currentCoordinates, newCoordinates)) {
-				System.out.println("valid move");
+	
 				tile.setValidated();
 				
-				if(players.currentPlayer==0)
+				if(players.getCurrentPlayerID()==0)
 				tile.setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/blue space.png")));
-				else if(players.currentPlayer==1)
+				else if(players.getCurrentPlayerID()==1)
 					tile.setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/red space.png")));
 
-			} else
-				System.out.println("invalid move");
+			} 
 			
 		} else if(e.getSource() instanceof VerticalWallButton) {
 			VerticalWallButton verticalWall = (VerticalWallButton)e.getSource();
 			
-			if(!verticalWall.getUsed() && board.isValidWallPlacement(verticalWall.getRow(), verticalWall.getColumn(), WALL_TYPE.VERTICAL)) {
+			if(players.getCurrentPlayer().hasAvailableWalls() && !verticalWall.getUsed() && board.isValidWallPlacement(verticalWall.getRow(), verticalWall.getColumn(), WALL_TYPE.VERTICAL)) {
 				verticalWall.setValidated();
 				
 				// highlight the places where the wall would be placed
 				if(!verticalWall.getUsed()){
-					if(players.currentPlayer==0)
+					if(players.getCurrentPlayerID()==0)
 					verticalWall.setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/blueVerticalWall.png")));
-					else if(players.currentPlayer==1)
+					else if(players.getCurrentPlayerID()==1)
 						verticalWall.setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/redVerticalWall.png")));
 				}
 
 				if(verticalWall.getRow()<8){
 					VerticalWallButton lowerWall = verticalWalls[verticalWall.getColumn()][verticalWall.getRow()+1];
 					if(!lowerWall.getUsed()){
-						if(players.currentPlayer==0)
+						if(players.getCurrentPlayerID()==0)
 						lowerWall.setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/blueVerticalWall.png")));
-						else if(players.currentPlayer==1)
+						else if(players.getCurrentPlayerID()==1)
 							lowerWall.setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/redVerticalWall.png")));
 
 					}
 				}
 			}
+			
 		} else if(e.getSource() instanceof HorizontalWallButton){
 			HorizontalWallButton horizontalWall = (HorizontalWallButton)e.getSource();
 
-			if(!horizontalWall.getUsed() && board.isValidWallPlacement(horizontalWall.getRow(), horizontalWall.getColumn(), WALL_TYPE.HORIZONTAL)) {
+			if(players.getCurrentPlayer().hasAvailableWalls() && !horizontalWall.getUsed() && board.isValidWallPlacement(horizontalWall.getRow(), horizontalWall.getColumn(), WALL_TYPE.HORIZONTAL)) {
 				horizontalWall.setValidated();
 				
 				// highlight the places where the wall would be placed
 				if(!horizontalWall.getUsed()){
-					if(players.currentPlayer==0)
+					if(players.getCurrentPlayerID()==0)
 					horizontalWall.setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/blueHorizontalWall.png")));
-					else if (players.currentPlayer==1)
+					else if (players.getCurrentPlayerID()==1)
 						horizontalWall.setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/redHorizontalWall.png")));
 
 				}
 				if(horizontalWall.getColumn()<8){
 					HorizontalWallButton rightWall = horizontalWalls[horizontalWall.getColumn()+1][horizontalWall.getRow()];
 					if(!rightWall.getUsed()){
-						if(players.currentPlayer==0)
+						if(players.getCurrentPlayerID()==0)
 						rightWall.setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/blueHorizontalWall.png")));
-						else if(players.currentPlayer==1)
+						else if(players.getCurrentPlayerID()==1)
 							rightWall.setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/redHorizontalWall.png")));
 
 					}
@@ -354,9 +362,12 @@ public class BoardGUI extends JFrame implements MouseListener{
 	
 		// TODO Auto-generated method stub
 
-		if(e.getSource() instanceof SquareButton){
+		if (!playGame)
+			return;
+		
+		if (e.getSource() instanceof SquareButton){
 			SquareButton tile = (SquareButton) e.getSource();
-			if (tile.isValidated() ){
+			if (tile.isValidated()){
 		
 				tile.setInvalidated();
 				if (!tile.getUsed())
@@ -365,7 +376,6 @@ public class BoardGUI extends JFrame implements MouseListener{
 		} else if(e.getSource() instanceof VerticalWallButton){
 			VerticalWallButton verticalWall = (VerticalWallButton)e.getSource();
 			
-			//if(isLegalMove(verticalWall))
 			if (verticalWall.isValidated()) {
 				// highlight the places where the wall would be placed
 
@@ -384,7 +394,7 @@ public class BoardGUI extends JFrame implements MouseListener{
 	
 			if (horizontalWall.isValidated()) {
 				horizontalWall.invalidate();
-			//if(isLegalMove(horizontalWall)){
+			
 				// highlight the places where the wall would be placed
 				if(!horizontalWall.getUsed())
 					horizontalWall.setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/emptyHorizontalWall.png")));

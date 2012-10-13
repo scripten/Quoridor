@@ -4,26 +4,30 @@ import GameObjects.Coordinates;
 
 //Pawn is a private class used by the board object to keep track of the status of each player
 	public class Pawn {
-		// Constants
-		public final static int FOUR_PLAYER_MAX_WALLS = 5;
-		public final static int TWO_PLAYER_MAX_WALLS = 10; 
+		
+		public enum DESTINATION {
+			FIRST_ROW, LAST_ROW, FIRST_COLUMN, LAST_COLUMN
+		}
 		
 		// Fields
 		private int wallCount;  // Holds the number of walls this pawn has to use (Full wall placing
 		private Coordinates coord;
-		private Coordinates targetCoord;
-	
-
+		private DESTINATION dest;
+		
 		// Constructor
-		public Pawn(int row, int column, int numWalls) {
+		public Pawn(int startRow, int startColumn, DESTINATION destintation, int numWalls) {
 			wallCount = numWalls;
-			coord = new Coordinates(row, column);
-			//targetCoord = new Coordinates(targetRow, targetCol);
+			coord = new Coordinates(startRow, startColumn);
+			dest = destintation;
 		}
 		
 		// Methods
 		public Coordinates getCoordinates() {
 			return coord;
+		}
+		
+		public DESTINATION getDestination() {
+			return dest;
 		}
 
 		public void move(Coordinates newCoordinates) {
