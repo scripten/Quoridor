@@ -174,6 +174,7 @@ public class BoardGUI extends JFrame implements MouseListener{
 		
 		playGame = true;
 		playCPU = true;
+		//CPUTurn();
 	}
 
 	public void handleSquareButtonPress(SquareButton btn){
@@ -453,23 +454,25 @@ public class BoardGUI extends JFrame implements MouseListener{
 		
 		nextMove = Search.aStar(curState, goal, stateGen, heuristic);
 		
-	
+		if (nextMove == null) {
+			System.out.println("AI did not find a path.");
+			return;
+		}
+		
 		while (nextMove.getParent() != curState) 
 			nextMove = nextMove.getParent();
 		
-
 		System.out.format("AI move (%d, %d)\n", 
 				nextMove.getState().getPawn().getCoordinates().getRow(), 
 				nextMove.getState().getPawn().getCoordinates().getColumn());
 			
 		if (board.isValidMove(players.getCurrentPlayer().getCoordinates(), nextMove.getState().getPawn().getCoordinates())) {
 			
-
 			System.out.format("Path cost: %d\n", nextMove.getCost());
 			System.out.println("Valid AI move");
 			
+			
 			if(players.getCurrentPlayerID() == 0)
-	
 				tiles[nextMove.getState().getPawn().getCoordinates().getColumn()][nextMove.getState().getPawn().getCoordinates().getRow()].setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/blue space.png")));
 			else if(players.getCurrentPlayerID() == 1)
 				tiles[nextMove.getState().getPawn().getCoordinates().getColumn()][nextMove.getState().getPawn().getCoordinates().getRow()].setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/red space.png")));
@@ -488,9 +491,7 @@ public class BoardGUI extends JFrame implements MouseListener{
 				playGame = false;
 
 				JOptionPane.showMessageDialog(this, String.format("Player %s has won the game.", players.getCurrentPlayerID() + 1));
-
 				System.out.format("Player %s has won the game.\n", players.getCurrentPlayerID() + 1);
-
 			} else 
 				players.nextPlayer();
 		} else 

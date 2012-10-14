@@ -20,8 +20,6 @@ public class Node<T> {
 	public Node(T t) {
 		state = t;
 	}
-	
-
 
 	public void setState(T t) {
 		state = t;
