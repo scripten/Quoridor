@@ -457,23 +457,16 @@ public class BoardGUI extends JFrame implements MouseListener{
 		while (nextMove.getParent() != curState) 
 			nextMove = nextMove.getParent();
 		
-<<<<<<< HEAD
+
 		System.out.format("AI move (%d, %d)\n", 
-=======
-		System.out.format("AI move (%d, %d).", 
->>>>>>> da1cc3e32e69072571ce6d95c986f0c98dd3af55
 				nextMove.getState().getPawn().getCoordinates().getRow(), 
 				nextMove.getState().getPawn().getCoordinates().getColumn());
 			
 		if (board.isValidMove(players.getCurrentPlayer().getCoordinates(), nextMove.getState().getPawn().getCoordinates())) {
 			
-<<<<<<< HEAD
+
 			System.out.format("Path cost: %d\n", nextMove.getCost());
-=======
-			System.out.format("Path cost: %d:", nextMove.getCost());
->>>>>>> da1cc3e32e69072571ce6d95c986f0c98dd3af55
 			System.out.println("Valid AI move");
-			
 			
 			if(players.getCurrentPlayerID() == 0)
 	
@@ -495,11 +488,9 @@ public class BoardGUI extends JFrame implements MouseListener{
 				playGame = false;
 
 				JOptionPane.showMessageDialog(this, String.format("Player %s has won the game.", players.getCurrentPlayerID() + 1));
-<<<<<<< HEAD
+
 				System.out.format("Player %s has won the game.\n", players.getCurrentPlayerID() + 1);
-=======
-				System.out.format("Player %s has won the game.", players.getCurrentPlayerID() + 1);
->>>>>>> da1cc3e32e69072571ce6d95c986f0c98dd3af55
+
 			} else 
 				players.nextPlayer();
 		} else 
