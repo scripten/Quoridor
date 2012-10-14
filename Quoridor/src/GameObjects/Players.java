@@ -9,7 +9,7 @@ public class Players {
 	private final static int NUM_WALLS_FOUR_PLAYERS = 5;
 	private final static int NUM_WALLS_TWO_PLAYERS = 10;
 	
-	private Pawn[] pawns;
+	public Pawn[] pawns;
 	private int currentPlayer;
 	private int numPlayers;
 	
