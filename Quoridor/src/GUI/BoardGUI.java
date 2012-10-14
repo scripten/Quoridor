@@ -25,6 +25,12 @@ import java.awt.Insets;
 import javax.swing.JLayeredPane;
 import javax.swing.SwingConstants;
 
+import AI.GoalEval;
+import AI.Node;
+import AI.State;
+import AI.Search;
+import AI.StateGen;
+import AI.StateHeuristic;
 import GameObjects.Board;
 import GameObjects.Board.WALL_TYPE;
 import GameObjects.Coordinates;
@@ -41,6 +47,7 @@ public class BoardGUI extends JFrame implements MouseListener{
 	private Board board = new Board();
 	private Players players = new Players(false);
 	private boolean playGame;
+	private boolean playCPU;
 
 	public BoardGUI() {
 		setResizable(false);
@@ -166,6 +173,7 @@ public class BoardGUI extends JFrame implements MouseListener{
 		setVisible(true);
 		
 		playGame = true;
+		playCPU = true;
 	}
 
 	public void handleSquareButtonPress(SquareButton btn){
@@ -201,8 +209,12 @@ public class BoardGUI extends JFrame implements MouseListener{
 
 				JOptionPane.showMessageDialog(this, String.format("Player %s has won the game.", players.getCurrentPlayerID() + 1));
 				System.out.format("Player %s has won the game.", players.getCurrentPlayerID() + 1);
-			} else
+			} else {
 				players.nextPlayer();
+				
+				if (playCPU) 
+					CPUTurn();
+			}
 		}
 		
 	}
@@ -230,6 +242,9 @@ public class BoardGUI extends JFrame implements MouseListener{
 			verticalWalls[vertWall.getColumn()][vertWall.getRow() + 1].setUsed(true);
 			
 			players.nextPlayer();
+
+			if (playCPU) 
+				CPUTurn();
 		} 
 	}
 
@@ -255,6 +270,9 @@ public class BoardGUI extends JFrame implements MouseListener{
 			horizontalWalls[horizWall.getColumn() + 1][horizWall.getRow()].setUsed(true);
 			
 			players.nextPlayer();
+
+			if (playCPU) 
+				CPUTurn();
 		}
 	}
 
@@ -422,5 +440,59 @@ public class BoardGUI extends JFrame implements MouseListener{
 
 	}
 
+	
+	public void CPUTurn() {
+		Node<State> curState = new Node<State>(null);
+		
+		curState.setState(new State(board, players.getCurrentPlayer()));
+		
+		GoalEval goal = new GoalEval();
+		StateGen stateGen = new StateGen();
+		StateHeuristic heuristic = new StateHeuristic();
+		Node<State> nextMove;
+		
+		nextMove = Search.aStar(curState, goal, stateGen, heuristic);
+		
+	
+		while (nextMove.getParent() != curState) 
+			nextMove = nextMove.getParent();
+		
+		System.out.format("AI move (%d, %d)\n", 
+				nextMove.getState().getPawn().getCoordinates().getRow(), 
+				nextMove.getState().getPawn().getCoordinates().getColumn());
+			
+		if (board.isValidMove(players.getCurrentPlayer().getCoordinates(), nextMove.getState().getPawn().getCoordinates())) {
+			
+			System.out.format("Path cost: %d\n", nextMove.getCost());
+			System.out.println("Valid AI move");
+			
+			
+			if(players.getCurrentPlayerID() == 0)
+	
+				tiles[nextMove.getState().getPawn().getCoordinates().getColumn()][nextMove.getState().getPawn().getCoordinates().getRow()].setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/blue space.png")));
+			else if(players.getCurrentPlayerID() == 1)
+				tiles[nextMove.getState().getPawn().getCoordinates().getColumn()][nextMove.getState().getPawn().getCoordinates().getRow()].setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/red space.png")));
+			
+			tiles[players.getCurrentPlayer().getCoordinates().getColumn()][players.getCurrentPlayer().getCoordinates().getRow()].setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/empty space.png")));
+			tiles[players.getCurrentPlayer().getCoordinates().getColumn()][players.getCurrentPlayer().getCoordinates().getRow()].setUsed(false);
+			tiles[players.getCurrentPlayer().getCoordinates().getColumn()][players.getCurrentPlayer().getCoordinates().getRow()].setInvalidated();
+			
+			board.setUnoccupied(players.getCurrentPlayer().getCoordinates());
+			board.setOccupied(nextMove.getState().getPawn().getCoordinates());
+
+			players.getCurrentPlayer().move(nextMove.getState().getPawn().getCoordinates());
+			
+			
+			if (players.isWinner()) {
+				playGame = false;
+
+				JOptionPane.showMessageDialog(this, String.format("Player %s has won the game.", players.getCurrentPlayerID() + 1));
+				System.out.format("Player %s has won the game.\n", players.getCurrentPlayerID() + 1);
+			} else 
+				players.nextPlayer();
+		} else 
+			System.out.println("Invalid AI move");
+		
+	}
 	
 }

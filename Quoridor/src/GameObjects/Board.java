@@ -14,8 +14,8 @@ public class Board {
 	}
 
 	// Fields
-	private final static int NUM_ROWS = 9;
-	private final static int NUM_COLS = 9;
+	public final static int NUM_ROWS = 9;
+	public final static int NUM_COLS = 9;
 	
 	private Tile[][] board = new Tile[NUM_ROWS][NUM_COLS];											 
 
