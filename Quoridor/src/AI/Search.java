@@ -68,16 +68,16 @@ public class Search {
 					Iterator<Node<T>> queueIt = frontier.iterator();			// Queue iterator
 					
 					// Iterate through each item in the frontier
-					//while (queueIt.hasNext()) {  
+					while (queueIt.hasNext()) {  
 						Node<T> queueNode = queueIt.next();					// Node at queue iterator
 						
 						// Replace node if it is the same as the child but with larger cost
-						//if (queueNode.equals(child) && queueNode.getGCost() > child.getGCost()) {
-						//	frontier.remove(queueNode);
-						//	frontier.add(child);
-						//	break;
-						//}
-					//}
+						if (queueNode.equals(child) && queueNode.getGCost() > child.getGCost()) {
+							frontier.remove(queueNode);
+							frontier.add(child);
+							break;
+						}
+					}
 				}
 				
 				stateGenerator.nextState();
