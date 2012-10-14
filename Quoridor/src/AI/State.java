@@ -7,12 +7,10 @@ import GameObjects.Pawn;
 public class State {
 	private Board gb;
 	private Pawn pawn;
-	private Coordinates previousCoord;
 	
 	public State(Board gameBoard, Pawn player) {
 		gb = gameBoard;
 		pawn = player;
-		previousCoord = new Coordinates();
 	}
 	
 	public Board getGameBoard() {
@@ -31,11 +29,11 @@ public class State {
 		if (newCoord.getRow() > 0) {
 			newCoord.setRow(newCoord.getRow() - 1);
 			
-			if (previousCoord.equals(newCoord))
-				return false;
-			
 			if (gb.isOccupied(newCoord.getRow(), newCoord.getColumn()) && newCoord.getRow() > 1) 
 				newCoord.setRow(pawn.getCoordinates().getRow() - 2);
+			
+			if (pawn.hasTraveled(newCoord))
+				return false;
 			
 			return gb.isValidMove(pawn.getCoordinates(), newCoord);
 		} else
@@ -50,11 +48,11 @@ public class State {
 		if (newCoord.getRow() < 8) {
 			newCoord.setRow(newCoord.getRow() + 1);
 			
-			if (previousCoord.equals(newCoord))
-				return false;
-			
 			if (gb.isOccupied(newCoord.getRow(), newCoord.getColumn()) && newCoord.getRow() < 7) 
 				newCoord.setRow(pawn.getCoordinates().getRow() + 2);
+			
+			if (pawn.hasTraveled(newCoord))
+				return false;
 			
 			return gb.isValidMove(pawn.getCoordinates(), newCoord);
 		} else
@@ -75,10 +73,10 @@ public class State {
 			if (gb.isOccupied(newCoord.getRow(), newCoord.getColumn()) && newCoord.getColumn() < 7) 
 				newCoord.setColumn(pawn.getCoordinates().getColumn() + 2);
 			
-			
-			if (previousCoord.equals(newCoord))
+			if (pawn.hasTraveled(newCoord))
 				return false;
-			System.out.println(previousCoord.getRow() + " " + previousCoord.getColumn() + " " + newCoord.getRow() + " " + newCoord.getColumn());
+			
+			//System.out.println(previousCoord.getRow() + " " + previousCoord.getColumn() + " " + newCoord.getRow() + " " + newCoord.getColumn());
 			
 			return gb.isValidMove(pawn.getCoordinates(), newCoord);
 		} else
@@ -93,15 +91,13 @@ public class State {
 		if (newCoord.getColumn() > 0) {
 			newCoord.setColumn(newCoord.getColumn() - 1);
 		
-			
-			
 			if (gb.isOccupied(newCoord.getRow(), newCoord.getColumn()) && newCoord.getColumn() > 1) 
 				newCoord.setColumn(pawn.getCoordinates().getColumn() - 2);
 			
-			if (previousCoord.equals(newCoord))
+			if (pawn.hasTraveled(newCoord))
 				return false;
-			
-			System.out.println(previousCoord.getRow() + " " + previousCoord.getColumn() + " " + newCoord.getRow() + " " + newCoord.getColumn());
+
+			//System.out.println(previousCoord.getRow() + " " + previousCoord.getColumn() + " " + newCoord.getRow() + " " + newCoord.getColumn());
 			
 			return gb.isValidMove(pawn.getCoordinates(), newCoord);
 		} else
@@ -118,9 +114,8 @@ public class State {
 			newCoord.setRow(newCoord.getRow() - 1);
 			newCoord.setColumn(newCoord.getColumn() + 1);
 
-			
-			if (previousCoord.equals(newCoord))
-				return false;
+			if (pawn.hasTraveled(newCoord))
+				return false;;
 			
 			return gb.isValidMove(pawn.getCoordinates(), newCoord);
 		} else
@@ -136,7 +131,7 @@ public class State {
 			newCoord.setRow(newCoord.getRow() - 1);
 			newCoord.setColumn(newCoord.getColumn() - 1);
 			
-			if (previousCoord.equals(newCoord))
+			if (pawn.hasTraveled(newCoord))
 				return false;
 			
 			return gb.isValidMove(pawn.getCoordinates(), newCoord);
@@ -153,7 +148,7 @@ public class State {
 			newCoord.setRow(newCoord.getRow() + 1);
 			newCoord.setColumn(newCoord.getColumn() - 1);
  			
-			if (previousCoord.equals(newCoord))
+			if (pawn.hasTraveled(newCoord))
 				return false;
 			
 			return gb.isValidMove(pawn.getCoordinates(), newCoord);
@@ -171,7 +166,7 @@ public class State {
 			newCoord.setRow(newCoord.getRow() + 1);
 			newCoord.setColumn(newCoord.getColumn() + 1);
 			
-			if (previousCoord.equals(newCoord))
+			if (pawn.hasTraveled(newCoord))
 				return false;
 			
 			return gb.isValidMove(pawn.getCoordinates(), newCoord);
@@ -183,25 +178,23 @@ public class State {
 		Coordinates newCoord;
 		
 		newCoord = Coordinates.clone(pawn.getCoordinates());
-		previousCoord = Coordinates.clone(pawn.getCoordinates());
-		
+
 		newCoord.setRow(newCoord.getRow() - 1);
 		
 		if (gb.isOccupied(newCoord.getRow(), newCoord.getColumn()))
 			newCoord.setRow(newCoord.getRow() - 1);
 		
-		pawn.move(newCoord);
-		
 		gb.setUnoccupied(pawn.getCoordinates());
 		gb.setOccupied(newCoord);
+		
+		pawn.move(newCoord);
 	}
 	
 	public void moveSouth() {
 		Coordinates newCoord;
 		
 		newCoord = Coordinates.clone(pawn.getCoordinates());
-		previousCoord = Coordinates.clone(pawn.getCoordinates());
-		
+
 		newCoord.setRow(newCoord.getRow() + 1);
 		
 		if (gb.isOccupied(newCoord.getRow(), newCoord.getColumn()))
@@ -217,8 +210,7 @@ public class State {
 		Coordinates newCoord;
 		
 		newCoord = Coordinates.clone(pawn.getCoordinates());
-		previousCoord = Coordinates.clone(pawn.getCoordinates());
-		
+
 		newCoord.setColumn(newCoord.getColumn() + 1);
 		
 		if (gb.isOccupied(newCoord.getRow(), newCoord.getColumn()))
@@ -234,8 +226,7 @@ public class State {
 		Coordinates newCoord;
 		
 		newCoord = Coordinates.clone(pawn.getCoordinates());
-		previousCoord = Coordinates.clone(pawn.getCoordinates());
-		
+
 		newCoord.setColumn(newCoord.getColumn() - 1);
 		
 		if (gb.isOccupied(newCoord.getRow(), newCoord.getColumn()))
@@ -246,15 +237,14 @@ public class State {
 		
 		pawn.move(newCoord);
 		
-		System.out.println(previousCoord.getRow() + " " + previousCoord.getColumn() + " " + newCoord.getRow() + " " + newCoord.getColumn());
+		//System.out.println(previousCoord.getRow() + " " + previousCoord.getColumn() + " " + newCoord.getRow() + " " + newCoord.getColumn());
 	}
 	
 	public void moveNorthEast() {
 		Coordinates newCoord;
 		
 		newCoord = Coordinates.clone(pawn.getCoordinates());
-		previousCoord = Coordinates.clone(pawn.getCoordinates());
-		
+
 		newCoord.setRow(newCoord.getRow() - 1);
 		newCoord.setColumn(newCoord.getColumn() + 1);
 
@@ -268,8 +258,7 @@ public class State {
 		Coordinates newCoord;
 		
 		newCoord = Coordinates.clone(pawn.getCoordinates());
-		previousCoord = Coordinates.clone(pawn.getCoordinates());
-		
+
 		newCoord.setRow(newCoord.getRow() - 1);
 		newCoord.setColumn(newCoord.getColumn() - 1);
 
@@ -283,8 +272,7 @@ public class State {
 		Coordinates newCoord;
 		
 		newCoord = Coordinates.clone(pawn.getCoordinates());
-		previousCoord = Coordinates.clone(pawn.getCoordinates());
-		
+
 		newCoord.setRow(newCoord.getRow() + 1);
 		newCoord.setColumn(newCoord.getColumn() - 1);
 
@@ -298,8 +286,7 @@ public class State {
 		Coordinates newCoord;
 		
 		newCoord = Coordinates.clone(pawn.getCoordinates());
-		previousCoord = Coordinates.clone(pawn.getCoordinates());
-		
+
 		newCoord.setRow(newCoord.getRow() + 1);
 		newCoord.setColumn(newCoord.getColumn() + 1);
 
@@ -312,7 +299,6 @@ public class State {
 	public static State clone(State curState) {
 		State res;
 		res = new State(Board.clone(curState.gb), Pawn.clone(curState.getPawn()));
-		res.previousCoord = Coordinates.clone(curState.previousCoord);
 		return res;
 	}
 	

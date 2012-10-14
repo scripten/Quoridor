@@ -456,6 +456,7 @@ public class BoardGUI extends JFrame implements MouseListener{
 		
 		if (nextMove == null) {
 			System.out.println("AI did not find a path.");
+			players.nextPlayer();
 			return;
 		}
 		
@@ -486,17 +487,18 @@ public class BoardGUI extends JFrame implements MouseListener{
 
 			players.getCurrentPlayer().move(nextMove.getState().getPawn().getCoordinates());
 			
-			
 			if (players.isWinner()) {
 				playGame = false;
 
 				JOptionPane.showMessageDialog(this, String.format("Player %s has won the game.", players.getCurrentPlayerID() + 1));
 				System.out.format("Player %s has won the game.\n", players.getCurrentPlayerID() + 1);
-			} else 
-				players.nextPlayer();
+			} 
+			
+			
 		} else 
 			System.out.println("Invalid AI move");
 		
+		players.nextPlayer();
 	}
 	
 }

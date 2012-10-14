@@ -1,7 +1,7 @@
 package AI;
 
 public class StateGen {
-	private final int MAX_STATES = 8;
+	private final int MAX_STATES = 6;
 	
 	State[] states;		// Generated sates
 	int index = 0;		// Current index
@@ -18,7 +18,7 @@ public class StateGen {
 		curState = (State)t;
 		index = 0;
 		count = 0;
-		
+
 		// Move pawn north east
 		if (curState.canMoveNorthEast()) {
 			newState = State.clone(curState);
@@ -68,7 +68,7 @@ public class StateGen {
 			count++;
 		}
 		
-		// Move pawn west
+	  // Move pawn west
 		if (curState.canMoveWest()) {
 			newState = State.clone(curState);
 			newState.moveWest();

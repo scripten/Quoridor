@@ -1,5 +1,7 @@
 package GameObjects;
 
+import java.util.ArrayList;
+
 import AI.State;
 import GameObjects.Coordinates;
 
@@ -14,12 +16,16 @@ import GameObjects.Coordinates;
 		private int wallCount;  // Holds the number of walls this pawn has to use (Full wall placing
 		private Coordinates coord;
 		private DESTINATION dest;
+		private ArrayList<Coordinates> path;
 		
 		// Constructor
 		public Pawn(int startRow, int startColumn, DESTINATION destintation, int numWalls) {
 			wallCount = numWalls;
 			coord = new Coordinates(startRow, startColumn);
 			dest = destintation;
+			path = new ArrayList<Coordinates>();
+			
+			path.add(Coordinates.clone(coord));
 		}
 		
 		// Methods
@@ -34,6 +40,7 @@ import GameObjects.Coordinates;
 		public void move(Coordinates newCoordinates) {
 			coord.setRow(newCoordinates.getRow());
 			coord.setColumn(newCoordinates.getColumn());
+			path.add(Coordinates.clone(coord));
 		}
 		
 		public int getWallCount() {
@@ -46,6 +53,17 @@ import GameObjects.Coordinates;
 		
 		public boolean hasAvailableWalls() {
 			return wallCount != 0;
+		}
+		
+		public boolean hasTraveled(Coordinates newCoord) {
+			for (int i = 0; i < path.size(); i++) {
+				if (path.get(i).equals(coord)) {
+					if (i + 1 < path.size() && path.get(i + 1).equals(newCoord)) 
+						return true;
+				}
+			}
+			
+			return false;
 		}
 		
 		@Override 
@@ -75,6 +93,12 @@ import GameObjects.Coordinates;
 		public static Pawn clone(Pawn toClone) {
 			Pawn res;
 			res = new Pawn(toClone.getCoordinates().getRow(), toClone.getCoordinates().getColumn(), toClone.dest, toClone.wallCount);
+			
+			res.path.clear();
+
+			for (int i = 0; i < toClone.path.size(); i++)
+				res.path.add(Coordinates.clone(toClone.path.get(i)));
+
 			return res;
 		}
 	}
