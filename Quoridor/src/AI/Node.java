@@ -2,6 +2,7 @@
 package AI;
 
 import GameObjects.Board;
+import GameObjects.Pawn;
 
 public class Node<T> {
 	Node<T> parent;				// Parent of the node
@@ -20,6 +21,8 @@ public class Node<T> {
 		state = t;
 	}
 	
+
+
 	public void setState(T t) {
 		state = t;
 	}
@@ -104,6 +107,7 @@ public class Node<T> {
 	 */
 	@Override 
 	public boolean equals(Object obj) { 
+		//System.out.println("SDF");
 		// Determine if the nodes are equal
 		if (obj == this) 
             return true;
@@ -111,7 +115,7 @@ public class Node<T> {
             return false;
         else {
         	Node<T> node = (Node<T>)obj;
-        	return this.equals(node);
+        	return getState().equals(node.getState());
         }
 	}
 

@@ -12,21 +12,20 @@ import AI.NodeComparator;
 import AI.StateHeuristic; 
 
 public class Search {
-	public <T> void AStar(Node<T> start, GoalEval goal, StateGen stateGenerator, StateHeuristic heuristic) {
+	public static <T> Node<T> aStar(Node<T> start, GoalEval goal, StateGen stateGenerator, StateHeuristic heuristic) {
 		Comparator<Node<T>> comparator = new NodeComparator(); 							// Comparator for frontier
-		PriorityQueue<Node<T>> frontier =  new PriorityQueue<Node<T>>(10, comparator); 	// Nodes to search
+ 		PriorityQueue<Node<T>> frontier =  new PriorityQueue<Node<T>>(10, comparator); 	// Nodes to search
 		
 		ArrayList<Node<T>> explored = new ArrayList<Node<T>>();							// Searched nodes
-		Node<T> parent;															// Parent node
-		//Node<T> child = null;															// Child node
+		Node<T> parent;																	// Parent node
+		Node<T> child = null;															// Child node
 
 		parent = start;
 		
 		heuristic.setCurrentState(start.getState());
-		heuristic.setGoalState(start.getState());
-		
 	
 		start.setGCost(0);
+		heuristic.generateHeurstic();
 		start.setHCost(heuristic.getHeuristic());
 
 		frontier.add(start);
@@ -36,15 +35,10 @@ public class Search {
 			parent = frontier.poll();
             
 			// Determine if the parent is the goal state
-			if (goal.test(parent))
-			{
-				//pathInfo.setFound();
-				//pathInfo.store(parent);
-				return;
-			}
-			
+			if (goal.test(parent.getState()))
+				return parent;
+		
 			explored.add(parent);
-			
 			
 			stateGenerator.setState(parent.getState());
 			stateGenerator.firstState();
@@ -53,12 +47,13 @@ public class Search {
 			while (!stateGenerator.endOfStates()) {
 				
 				
-				Node<T> child = new Node<T>(null);
+				child = new Node<T>(null);
 				
 				child.setState((T) stateGenerator.getCurrentState());
 				child.setParent(parent);
 				
 				heuristic.setCurrentState(child.getState());
+				heuristic.generateHeurstic();
 				
 				child.setGCost(child.getParent().getGCost() + 1);
 				child.setGCost(child.getGCost() + 1);
@@ -73,16 +68,16 @@ public class Search {
 					Iterator<Node<T>> queueIt = frontier.iterator();			// Queue iterator
 					
 					// Iterate through each item in the frontier
-					while (queueIt.hasNext()) {  
+					//while (queueIt.hasNext()) {  
 						Node<T> queueNode = queueIt.next();					// Node at queue iterator
 						
 						// Replace node if it is the same as the child but with larger cost
-						if (queueNode.equals(child) && queueNode.getGCost() > child.getGCost()) {
-							frontier.remove(queueNode);
-							frontier.add(child);
-							break;
-						}
-					}
+						//if (queueNode.equals(child) && queueNode.getGCost() > child.getGCost()) {
+						//	frontier.remove(queueNode);
+						//	frontier.add(child);
+						//	break;
+						//}
+					//}
 				}
 				
 				stateGenerator.nextState();
@@ -90,6 +85,6 @@ public class Search {
 		} while (frontier.size() > 0);
 		
 
-		return;
+		return null;
 	}
 }
