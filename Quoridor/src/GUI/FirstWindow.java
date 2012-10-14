@@ -21,8 +21,6 @@ import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.RowSpec;
 import com.jgoodies.forms.factories.FormFactory;
 import javax.swing.GroupLayout.Alignment;
-import java.awt.event.ItemListener;
-import java.awt.event.ItemEvent;
 
 
 
@@ -51,8 +49,6 @@ public class FirstWindow extends JFrame{
 
 	private boolean visible;
 	
-	private boolean playAI = false;
-	
 	public FirstWindow() {
 		
 		super();
@@ -79,7 +75,7 @@ public class FirstWindow extends JFrame{
 			public void mousePressed(MouseEvent e) {
 				// Close the welcome menu and bring up the game board
 				dispose();
-				BoardGUI gameBoard = new BoardGUI(playAI);	
+				BoardGUI gameBoard = new BoardGUI();	
 			}
 		});
 		mntmNewGame.setHorizontalAlignment(SwingConstants.LEFT);
@@ -119,12 +115,6 @@ public class FirstWindow extends JFrame{
 		});
 		mnHelp.add(mntmQuoridorWiki);
 		
-		JCheckBox chckbxAI = new JCheckBox("Play Computer");
-		chckbxAI.addItemListener(new ItemListener() {
-			public void itemStateChanged(ItemEvent arg0) {
-				playAI = !playAI;
-			}
-		});
 		// Adding a button to the frame
 		JButton btnNewGame = new JButton("New Game"); // sets the text
 		btnNewGame.addMouseListener(new MouseAdapter() {
@@ -132,7 +122,7 @@ public class FirstWindow extends JFrame{
 			public void mouseClicked(MouseEvent arg0) {
 				// Close the welcome menu and bring up the game board
 				dispose();
-				BoardGUI gameBoard = new BoardGUI(playAI);	
+				BoardGUI gameBoard = new BoardGUI();	
 			}
 		});
 		btnNewGame.setName("btnNewGame");
@@ -141,8 +131,6 @@ public class FirstWindow extends JFrame{
 		JLabel lblWelcomeToQuoridor = new JLabel(INITIAL_MESSAGE);
 		lblWelcomeToQuoridor.setFont(new Font("Tahoma", Font.BOLD, 18));
 		lblWelcomeToQuoridor.setName(LABEL_NAME);
-		
-		
 		
 		// set the layout of the frame to be a GroupLayout and arrange the components
 		GroupLayout groupLayout = new GroupLayout(getContentPane());
@@ -155,11 +143,8 @@ public class FirstWindow extends JFrame{
 							.addComponent(btnNewGame, GroupLayout.PREFERRED_SIZE, 151, GroupLayout.PREFERRED_SIZE))
 						.addGroup(groupLayout.createSequentialGroup()
 							.addGap(214)
-							.addComponent(lblWelcomeToQuoridor))
-						.addGroup(groupLayout.createSequentialGroup()
-							.addGap(263)
-							.addComponent(chckbxAI)))
-					.addContainerGap(208, Short.MAX_VALUE))
+							.addComponent(lblWelcomeToQuoridor)))
+					.addContainerGap(214, Short.MAX_VALUE))
 		);
 		groupLayout.setVerticalGroup(
 			groupLayout.createParallelGroup(Alignment.LEADING)
@@ -168,9 +153,7 @@ public class FirstWindow extends JFrame{
 					.addComponent(lblWelcomeToQuoridor)
 					.addGap(32)
 					.addComponent(btnNewGame, GroupLayout.PREFERRED_SIZE, 47, GroupLayout.PREFERRED_SIZE)
-					.addGap(18)
-					.addComponent(chckbxAI)
-					.addContainerGap(268, Short.MAX_VALUE))
+					.addContainerGap(317, Short.MAX_VALUE))
 		);
 		getContentPane().setLayout(groupLayout);
 	

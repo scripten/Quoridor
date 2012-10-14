@@ -35,8 +35,6 @@ import GameObjects.Board;
 import GameObjects.Board.WALL_TYPE;
 import GameObjects.Coordinates;
 import GameObjects.Players;
-import javax.swing.JLabel;
-import java.awt.Font;
 
 public class BoardGUI extends JFrame implements MouseListener{
 	private SquareButton [][]tiles = new SquareButton[9][9];  // [columns][rows]
@@ -45,62 +43,39 @@ public class BoardGUI extends JFrame implements MouseListener{
 	private GridBagConstraints[][] verticalWallGridBags= new GridBagConstraints[8][9];
 	private HorizontalWallButton[][] horizontalWalls = new HorizontalWallButton[9][8];
 	private GridBagConstraints[][] horizontalWallGridBags= new GridBagConstraints[9][8];
-	private JLabel lblPlayer1Walls;
-	private JLabel lblPlayer2Walls;
-
 
 	private Board board = new Board();
 	private Players players = new Players(false);
 	private boolean playGame;
 	private boolean playCPU;
 
-	public BoardGUI(boolean playAI) {
-		playCPU = playAI;
+	public BoardGUI() {
 		setResizable(false);
-		setSize(685, 540);
+		setSize(570, 540);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setTitle("Quoridor");
 		setName("Quoridor");
 
-		//Adding the menu bar
 		JMenuBar menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
-		
-		//Adding the 'file' menu
+
 		JMenu mnFile = new JMenu("File");
 		menuBar.add(mnFile);
 
-		//add the New Game menu item to the file menu
-		JMenuItem mntmNewGame = new JMenuItem("New Game");
-		// add functionality to the menu item
-		mntmNewGame.addMouseListener(new MouseAdapter() {
-			// Add actions to be preformed when the item is clicked here
-			@Override
-			public void mousePressed(MouseEvent e) {
-				// Close the welcome menu and bring up the game board
-				dispose();
-				BoardGUI gameBoard = new BoardGUI(playCPU);	
-			}
-		});
-		mnFile.add(mntmNewGame);
+		JMenuItem mntmSave = new JMenuItem("Save");
+		mnFile.add(mntmSave);
 
-		//add the Exit menu item to the file menu
 		JMenuItem mntmExit = new JMenuItem("Exit");
 		mnFile.add(mntmExit);
 
-		//add the 'help' menu
 		JMenu mnHelp = new JMenu("Help");
 		mnHelp.setHorizontalTextPosition(SwingConstants.RIGHT);
 		mnHelp.setHorizontalAlignment(SwingConstants.RIGHT);
 		menuBar.add(mnHelp);
 
-		//add the Wiki menu item to the help menu
 		JMenuItem mntmQuoridorWiki = new JMenuItem("Quoridor Wiki");
 		mntmQuoridorWiki.setName("Quoridor Wiki");
 		mntmQuoridorWiki.addMouseListener(new MouseAdapter() {
-			
-			
-			//when the Wiki menu item is pressed open the computer's default browser and go to the wiki page
 			@Override
 			public void mousePressed(MouseEvent arg0) {
 				URI url = null;
@@ -122,37 +97,12 @@ public class BoardGUI extends JFrame implements MouseListener{
 		
 		mnHelp.add(mntmQuoridorWiki);
 		GridBagLayout gridBagLayout = new GridBagLayout();
-		gridBagLayout.columnWidths = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-		gridBagLayout.rowHeights = new int[]{10, 10};
+		gridBagLayout.columnWidths = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0};
+		gridBagLayout.rowHeights = new int[]{0, 0};
 		gridBagLayout.columnWeights = new double[]{1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 		gridBagLayout.rowWeights = new double[]{1.0, Double.MIN_VALUE};
 		getContentPane().setLayout(gridBagLayout);
-		
-		
-		
-		lblPlayer1Walls = new JLabel("Player 1 Walls: "+players.pawns[0].getWallCount());
-		lblPlayer1Walls.setIconTextGap(0);
-		lblPlayer1Walls.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		GridBagConstraints gbc_lblPlayer1Walls = new GridBagConstraints();
-		gbc_lblPlayer1Walls.insets = new Insets(0, 0, 0, 5);
-		gbc_lblPlayer1Walls.gridx = 18;
-		gbc_lblPlayer1Walls.gridy = 2;
-		getContentPane().add(lblPlayer1Walls, gbc_lblPlayer1Walls);
-		
-		
 
-		
-	
-		lblPlayer2Walls = new JLabel("Player 2 Walls: \n"+players.pawns[1].getWallCount());
-		lblPlayer2Walls.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		GridBagConstraints gbc_lblPlayer2Walls = new GridBagConstraints();
-		gbc_lblPlayer2Walls.insets = new Insets(0, 0, 0, 5);
-		gbc_lblPlayer2Walls.gridx = 18;
-		gbc_lblPlayer2Walls.gridy = 8;
-		getContentPane().add(lblPlayer2Walls, gbc_lblPlayer2Walls);
-		
-		
-		
 		for(int row=0; row<9; row++){
 			//show row of empty spaces and vertical walls
 			for(int column=0; column<9; column++){
@@ -208,8 +158,6 @@ public class BoardGUI extends JFrame implements MouseListener{
 					getContentPane().add(horizontalWalls[column][row], horizontalWallGridBags[column][row]);	
 				}
 			}
-			
-			//getContentPane().add(comp)
 		}
 		
 		// before the user can see the board, set their starting piece on the board
@@ -225,6 +173,7 @@ public class BoardGUI extends JFrame implements MouseListener{
 		setVisible(true);
 		
 		playGame = true;
+		playCPU = true;
 		//CPUTurn();
 	}
 
@@ -271,7 +220,6 @@ public class BoardGUI extends JFrame implements MouseListener{
 		
 	}
 
-
 	public void handleVerticalWallPress(VerticalWallButton vertWall) {
 		
 		if (playGame && vertWall.isValidated()) {
@@ -293,9 +241,6 @@ public class BoardGUI extends JFrame implements MouseListener{
 				verticalWalls[vertWall.getColumn()][vertWall.getRow() + 1].setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/redVerticalWall.png")));
 	
 			verticalWalls[vertWall.getColumn()][vertWall.getRow() + 1].setUsed(true);
-			
-			lblPlayer1Walls.setText("Player 1 Walls: "+players.pawns[0].getWallCount());
-			lblPlayer2Walls.setText("Player 2 Walls: "+players.pawns[1].getWallCount());
 			
 			players.nextPlayer();
 
@@ -324,9 +269,6 @@ public class BoardGUI extends JFrame implements MouseListener{
 				horizontalWalls[horizWall.getColumn() + 1][horizWall.getRow()].setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/redHorizontalWall.png")));
 
 			horizontalWalls[horizWall.getColumn() + 1][horizWall.getRow()].setUsed(true);
-			
-			lblPlayer1Walls.setText("Player 1 Walls: "+players.pawns[0].getWallCount());
-			lblPlayer2Walls.setText("Player 2 Walls: "+players.pawns[1].getWallCount());
 			
 			players.nextPlayer();
 
@@ -454,8 +396,7 @@ public class BoardGUI extends JFrame implements MouseListener{
 			VerticalWallButton verticalWall = (VerticalWallButton)e.getSource();
 			
 			if (verticalWall.isValidated()) {
-				
-			// highlight the places where the wall would be placed
+				// highlight the places where the wall would be placed
 
 				verticalWall.setInvalidated();
 			
