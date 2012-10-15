@@ -23,9 +23,9 @@ public class Search {
 		parent = start;
 		
 		heuristic.setCurrentState(start.getState());
-	
-		start.setGCost(0);
 		heuristic.generateHeurstic();
+		
+		start.setGCost(0);
 		start.setHCost(heuristic.getHeuristic());
 
 		frontier.add(start);
@@ -43,6 +43,7 @@ public class Search {
 			stateGenerator.setState(parent.getState());
 			stateGenerator.firstState();
 
+	
 			// Iterate through each generated puzzle
 			while (!stateGenerator.endOfStates()) {
 				
@@ -56,10 +57,9 @@ public class Search {
 				heuristic.generateHeurstic();
 				
 				child.setGCost(child.getParent().getGCost() + 1);
-				child.setGCost(child.getGCost() + 1);
 				child.setHCost(heuristic.getHeuristic());
 				
-
+				//System.out.println(child.getHCost());
 				// Determine if the child should be added to the frontier or 
 				// if it is in the frontier will a higher cost
 				if (!explored.contains(child) && !frontier.contains(child)) {
@@ -72,7 +72,7 @@ public class Search {
 						Node<T> queueNode = queueIt.next();					// Node at queue iterator
 						
 						// Replace node if it is the same as the child but with larger cost
-						if (queueNode.equals(child) && queueNode.getGCost() > child.getGCost()) {
+						if (queueNode.equals(child) && queueNode.getCost() > child.getCost()) {
 							frontier.remove(queueNode);
 							frontier.add(child);
 							break;

@@ -10,11 +10,9 @@ public class StateHeuristic {
 		curState = (State)t;
 	}
 	
-
-	
 	public void generateHeurstic() {
 		heuristic = 0;
-		
+
 		switch (curState.getPawn().getDestination()) {
 			case FIRST_ROW: {
 				heuristic = curState.getPawn().getCoordinates().getRow();
@@ -29,9 +27,12 @@ public class StateHeuristic {
 				heuristic = Board.NUM_COLS - 1 - curState.getPawn().getCoordinates().getColumn();
 				break;
 			} default: {
+				
 				break;
 			}
 		}
+		
+		
 	}
 	
 	public int getHeuristic() {

@@ -1,7 +1,7 @@
 package AI;
 
 public class StateGen {
-	private final int MAX_STATES = 6;
+	private final int MAX_STATES = 8;
 	
 	State[] states;		// Generated sates
 	int index = 0;		// Current index

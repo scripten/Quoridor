@@ -37,6 +37,10 @@ public class Coordinates {
 	}
 	
 	@Override
+	public String toString() {
+		return String.format("Row: %s Column: %s", row, column);
+	}
+	@Override
 	public boolean equals(Object obj) {
 		// Determine if the nodes are equal
 		if (obj == this) 

@@ -41,13 +41,19 @@ public class Board {
 	// Returns a tile at a given row and column value. If the given coordinates are outside of the grid
 	// bounds, nothing happens beside a short print message and a null Tile being returned (This
 	// may throw an exception in the future)
+	
 	public Tile getTile(int row, int column) {
-		try {
+		//try {
 			return board[row][column];
-		} catch (ArrayIndexOutOfBoundsException e) {
-			System.out.println("That coordinate is outside the grid.");
-			throw e;
-		}
+		//} catch (ArrayIndexOutOfBoundsException e) {
+		//	System.out.println("That coordinate is outside the grid.");
+		//	throw e;
+		//}
+	}
+	
+
+	public boolean hasBottomWall(int row, int column) {
+		return board[row][column].getBottomWall().isWall();
 	}
 	
 	public void setOccupied(Coordinates currentCoordinates) {
@@ -279,8 +285,10 @@ public class Board {
 		for (int i = 0; i < NUM_ROWS; i++) {
 			for (int j = 0; j < NUM_COLS; j++) {
 				res.board[i][j].occupied = toClone.board[i][j].occupied;
-				//res.board[i][j] = toClone.board[i][j].occupied;
-				
+				res.board[i][j].topWall = toClone.board[i][j].topWall;
+				res.board[i][j].bottomWall = toClone.board[i][j].bottomWall;
+				res.board[i][j].leftWall = toClone.board[i][j].leftWall;
+				res.board[i][j].rightWall = toClone.board[i][j].rightWall;
 			}
 		}
 		return res;
