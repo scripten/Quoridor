@@ -14,8 +14,8 @@ public class Board {
 	}
 
 	// Fields
-	private final static int NUM_ROWS = 9;
-	private final static int NUM_COLS = 9;
+	public final static int NUM_ROWS = 9;
+	public final static int NUM_COLS = 9;
 	
 	private Tile[][] board = new Tile[NUM_ROWS][NUM_COLS];											 
 
@@ -41,13 +41,19 @@ public class Board {
 	// Returns a tile at a given row and column value. If the given coordinates are outside of the grid
 	// bounds, nothing happens beside a short print message and a null Tile being returned (This
 	// may throw an exception in the future)
+	
 	public Tile getTile(int row, int column) {
-		try {
+		//try {
 			return board[row][column];
-		} catch (ArrayIndexOutOfBoundsException e) {
-			System.out.println("That coordinate is outside the grid.");
-			throw e;
-		}
+		//} catch (ArrayIndexOutOfBoundsException e) {
+		//	System.out.println("That coordinate is outside the grid.");
+		//	throw e;
+		//}
+	}
+	
+
+	public boolean hasBottomWall(int row, int column) {
+		return board[row][column].getBottomWall().isWall();
 	}
 	
 	public void setOccupied(Coordinates currentCoordinates) {
@@ -94,22 +100,29 @@ public class Board {
 					// Determine if a wall is blocking the move
 					if (board[curRow][curColumn + 1].getLeftWall().isWall())
 						return false;
+					else if (board[curRow][curColumn + 1].getBottomWall().isWall())
+						return false;
 				} else if (board[curRow + 1][curColumn].isOccupied()) {
 					// Determine if a wall is blocking move
 					if (board[curRow + 1][curColumn].getTopWall().isWall())
 						return false;
+					else if (board[curRow + 1][curColumn].getRightWall().isWall())
+						return false;
 				} else
 					return false;
 			} else if (curRow > newRow && curColumn < newColumn) {	// North east
-				
 				// Determine if a north west move is valid
 				if (board[curRow][curColumn + 1].isOccupied()) {
 					// Determine if a wall is blocking the move
 					if (board[curRow][curColumn + 1].getLeftWall().isWall())
 						return false;
+					else if (board[curRow][curColumn + 1].getTopWall().isWall())
+						return false;
 				} else if (board[curRow - 1][curColumn].isOccupied()) {
 					// Determine if a wall is blocking move
 					if (board[curRow - 1][curColumn].getBottomWall().isWall())
+						return false;
+					else if (board[curRow - 1][curColumn].getRightWall().isWall())
 						return false;
 				} else
 					return false;
@@ -120,9 +133,13 @@ public class Board {
 					// Determine if a wall is blocking the move
 					if (board[curRow][curColumn - 1].getRightWall().isWall())
 						return false;
+					else if (board[curRow][curColumn - 1].getTopWall().isWall())
+						return false;
 				} else if (board[curRow + 1][curColumn].isOccupied()) {
 					// Determine if a wall is blocking move
 					if (board[curRow + 1][curColumn].getTopWall().isWall())
+						return false;
+					else if (board[curRow + 1][curColumn].getLeftWall().isWall())
 						return false;
 				} else
 					return false;
@@ -133,9 +150,13 @@ public class Board {
 					// Determine if a wall is blocking the move
 					if (board[curRow][curColumn - 1].getRightWall().isWall())
 						return false;
+					else if (board[curRow][curColumn - 1].getTopWall().isWall())
+							return false;
 				} else if (board[curRow - 1][curColumn].isOccupied()) {
 					// Determine if a wall is blocking move
 					if (board[curRow - 1][curColumn].getBottomWall().isWall())
+						return false;
+					else if (board[curRow - 1][curColumn].getLeftWall().isWall())
 						return false;
 				} else
 					return false;
@@ -143,8 +164,12 @@ public class Board {
 		} else if (curRow < newRow) {								// South
 			
 			// Determine if the southern tile can be jumped
-			if(board[curRow + 1][curColumn].isOccupied()) 
+			if(board[curRow + 1][curColumn].isOccupied()) {
 				moveDist = 2;
+				
+				if (board[curRow + 1][curColumn].getBottomWall().isWall())
+					return false;
+			}
 			
 			// Reject the move if the move distance is too big or if a wall is in place
 			if (newRow - curRow > moveDist || board[curRow][curColumn].getBottomWall().isWall()) 
@@ -153,8 +178,12 @@ public class Board {
 		} else if (curRow > newRow ) {								// North
 			
 			// Determine if the northern tile can be jumped
-			if(board[curRow - 1][curColumn].isOccupied()) 
+			if(board[curRow - 1][curColumn].isOccupied()) {
 				moveDist = 2;
+			
+				if (board[curRow - 1][curColumn].getTopWall().isWall())
+					return false;
+			}
 	
 			// Reject the move if the move distance is too big or if a wall is in place
 			if (curRow - newRow  > moveDist || board[curRow][curColumn].getTopWall().isWall()) 
@@ -162,8 +191,13 @@ public class Board {
 		} else if (curColumn < newColumn) {							// East
 			
 			// Determine if the eastern tile can be jumped
-			if(board[curRow][curColumn + 1].isOccupied()) 
+			if(board[curRow][curColumn + 1].isOccupied()) {
 				moveDist = 2;
+
+				if (board[curRow][curColumn + 1].getRightWall().isWall())
+					return false;
+			}
+	
 			
 			// Reject the move if the move distance is too big or if a wall is in place
 			if (newColumn - curColumn > moveDist || board[curRow][curColumn].getRightWall().isWall()) 
@@ -171,8 +205,13 @@ public class Board {
 		} else if (curColumn > newColumn) {							// West
 			
 			// Determine if the western tile can be jumped
-			if(board[curRow][curColumn - 1].isOccupied()) 
+			if(board[curRow][curColumn - 1].isOccupied()) {
 				moveDist = 2;
+
+				if (board[curRow][curColumn - 1].getLeftWall().isWall())
+					return false;
+			}
+	
 	
 			// Reject the move if the move distance is too big or if a wall is in place
 			if (curColumn - newColumn > moveDist || board[curRow][curColumn].getLeftWall().isWall()) 
@@ -239,6 +278,21 @@ public class Board {
 		// TODO: determine if placement blocks all available paths
 	}
 	
+	public static Board clone(Board toClone) {
+		Board res;
+		
+		res = new Board();
+		for (int i = 0; i < NUM_ROWS; i++) {
+			for (int j = 0; j < NUM_COLS; j++) {
+				res.board[i][j].occupied = toClone.board[i][j].occupied;
+				res.board[i][j].topWall = toClone.board[i][j].topWall;
+				res.board[i][j].bottomWall = toClone.board[i][j].bottomWall;
+				res.board[i][j].leftWall = toClone.board[i][j].leftWall;
+				res.board[i][j].rightWall = toClone.board[i][j].rightWall;
+			}
+		}
+		return res;
+	}
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	
 	private class Tile {
