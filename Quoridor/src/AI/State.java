@@ -32,8 +32,8 @@ public class State {
 			if (gb.isOccupied(newCoord.getRow(), newCoord.getColumn()) && newCoord.getRow() > 1) 
 				newCoord.setRow(pawn.getCoordinates().getRow() - 2);
 			
-			if (pawn.hasTraveled(newCoord))
-				return false;
+			//if (pawn.hasTraveled(newCoord))
+			//	return false;
 			
 			return gb.isValidMove(pawn.getCoordinates(), newCoord);
 		} else
@@ -76,8 +76,6 @@ public class State {
 			//if (pawn.hasTraveled(newCoord))
 			//	return false;
 			
-			//System.out.println(previousCoord.getRow() + " " + previousCoord.getColumn() + " " + newCoord.getRow() + " " + newCoord.getColumn());
-			
 			return gb.isValidMove(pawn.getCoordinates(), newCoord);
 		} else
 			return false;
@@ -94,11 +92,9 @@ public class State {
 			if (gb.isOccupied(newCoord.getRow(), newCoord.getColumn()) && newCoord.getColumn() > 1) 
 				newCoord.setColumn(pawn.getCoordinates().getColumn() - 2);
 			
-			if (pawn.hasTraveled(newCoord))
-				return false;
+			//if (pawn.hasTraveled(newCoord))
+			//	return false;
 
-			//System.out.println(previousCoord.getRow() + " " + previousCoord.getColumn() + " " + newCoord.getRow() + " " + newCoord.getColumn());
-			
 			return gb.isValidMove(pawn.getCoordinates(), newCoord);
 		} else
 			return false;
@@ -114,8 +110,8 @@ public class State {
 			newCoord.setRow(newCoord.getRow() - 1);
 			newCoord.setColumn(newCoord.getColumn() + 1);
 
-			if (pawn.hasTraveled(newCoord))
-				return false;;
+			//if (pawn.hasTraveled(newCoord))
+			//	return false;;
 			
 			return gb.isValidMove(pawn.getCoordinates(), newCoord);
 		} else
@@ -131,8 +127,8 @@ public class State {
 			newCoord.setRow(newCoord.getRow() - 1);
 			newCoord.setColumn(newCoord.getColumn() - 1);
 			
-			if (pawn.hasTraveled(newCoord))
-				return false;
+			//if (pawn.hasTraveled(newCoord))
+			//	return false;
 			
 			return gb.isValidMove(pawn.getCoordinates(), newCoord);
 		} else
@@ -148,8 +144,8 @@ public class State {
 			newCoord.setRow(newCoord.getRow() + 1);
 			newCoord.setColumn(newCoord.getColumn() - 1);
  			
-			if (pawn.hasTraveled(newCoord))
-				return false;
+			//if (pawn.hasTraveled(newCoord))
+			//	return false;
 			
 			return gb.isValidMove(pawn.getCoordinates(), newCoord);
 		} else
@@ -166,8 +162,8 @@ public class State {
 			newCoord.setRow(newCoord.getRow() + 1);
 			newCoord.setColumn(newCoord.getColumn() + 1);
 			
-			if (pawn.hasTraveled(newCoord))
-				return false;
+			//if (pawn.hasTraveled(newCoord))
+			//	return false;
 			
 			return gb.isValidMove(pawn.getCoordinates(), newCoord);
 		} else

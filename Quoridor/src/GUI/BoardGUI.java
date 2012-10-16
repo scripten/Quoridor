@@ -182,6 +182,8 @@ public class BoardGUI extends JFrame implements MouseListener{
 		Coordinates newCoordinates;
 
 		if (playGame && btn.isValidated()) {
+			btn.setInvalidated();
+			
 			currentCoordinates = players.getCurrentPlayer().getCoordinates();
 
 			newCoordinates = new Coordinates();
@@ -223,6 +225,8 @@ public class BoardGUI extends JFrame implements MouseListener{
 	public void handleVerticalWallPress(VerticalWallButton vertWall) {
 		
 		if (playGame && vertWall.isValidated()) {
+			vertWall.setInvalidated();
+			
 			board.setVerticalWall(vertWall.getRow(), vertWall.getColumn());
 			
 			players.getCurrentPlayer().useWall();
@@ -252,6 +256,8 @@ public class BoardGUI extends JFrame implements MouseListener{
 	public void handleHorizontalWallPress(HorizontalWallButton horizWall){
 		
 		if(playGame && horizWall.isValidated()) {
+			horizWall.setInvalidated();
+			
 			board.setHorizontalWall(horizWall.getRow(), horizWall.getColumn());
 			
 			players.getCurrentPlayer().useWall();
