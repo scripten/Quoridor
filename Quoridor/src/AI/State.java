@@ -2,40 +2,43 @@ package AI;
 
 import GameObjects.Board;
 import GameObjects.Coordinates;
-import GameObjects.Pawn;
+import GameObjects.Pawn.DESTINATION;
 
 public class State {
 	private Board gb;
-	private Pawn pawn;
+	private Coordinates curCoord;
+	private DESTINATION dest;
 	
-	public State(Board gameBoard, Pawn player) {
-		gb = gameBoard;
-		pawn = player;
+	public State(Board gameBoard, Coordinates coordinates, DESTINATION destination) {
+		gb = Board.clone(gameBoard);
+		curCoord = Coordinates.clone(coordinates);
+		dest = destination;
 	}
 	
 	public Board getGameBoard() {
 		return gb;
 	}
 	
-	public Pawn getPawn() {
-		return pawn;
+	public Coordinates getCoordinates() {
+		return curCoord;
+	}
+	
+	public DESTINATION getDestination() {
+		return dest;
 	}
 	
 	public boolean canMoveNorth() {
 		Coordinates newCoord;
 		
-		newCoord = Coordinates.clone(pawn.getCoordinates());
+		newCoord = Coordinates.clone(curCoord);
 		
 		if (newCoord.getRow() > 0) {
 			newCoord.setRow(newCoord.getRow() - 1);
 			
 			if (gb.isOccupied(newCoord.getRow(), newCoord.getColumn()) && newCoord.getRow() > 1) 
-				newCoord.setRow(pawn.getCoordinates().getRow() - 2);
+				newCoord.setRow(curCoord.getRow() - 2);
 			
-			//if (pawn.hasTraveled(newCoord))
-			//	return false;
-			
-			return gb.isValidMove(pawn.getCoordinates(), newCoord);
+			return gb.isValidMove(curCoord, newCoord);
 		} else
 			return false;
 	}
@@ -43,18 +46,15 @@ public class State {
 	public boolean canMoveSouth() {
 		Coordinates newCoord;
 		
-		newCoord = Coordinates.clone(pawn.getCoordinates());
+		newCoord = Coordinates.clone(curCoord);
 		
 		if (newCoord.getRow() < 8) {
 			newCoord.setRow(newCoord.getRow() + 1);
 			
 			if (gb.isOccupied(newCoord.getRow(), newCoord.getColumn()) && newCoord.getRow() < 7) 
-				newCoord.setRow(pawn.getCoordinates().getRow() + 2);
+				newCoord.setRow(curCoord.getRow() + 2);
 			
-			//if (pawn.hasTraveled(newCoord))
-			//	return false;
-			
-			return gb.isValidMove(pawn.getCoordinates(), newCoord);
+			return gb.isValidMove(curCoord, newCoord);
 		} else
 			return false;
 		
@@ -64,19 +64,16 @@ public class State {
 	public boolean canMoveEast() {
 		Coordinates newCoord;
 		
-		newCoord = Coordinates.clone(pawn.getCoordinates());
+		newCoord = Coordinates.clone(curCoord);
 		
 		if (newCoord.getColumn() < 8) {
 			newCoord.setColumn(newCoord.getColumn() + 1);
 		
 
 			if (gb.isOccupied(newCoord.getRow(), newCoord.getColumn()) && newCoord.getColumn() < 7) 
-				newCoord.setColumn(pawn.getCoordinates().getColumn() + 2);
+				newCoord.setColumn(curCoord.getColumn() + 2);
 			
-			//if (pawn.hasTraveled(newCoord))
-			//	return false;
-			
-			return gb.isValidMove(pawn.getCoordinates(), newCoord);
+			return gb.isValidMove(curCoord, newCoord);
 		} else
 			return false;
 	}
@@ -84,18 +81,15 @@ public class State {
 	public boolean canMoveWest() {
 		Coordinates newCoord;
 
-		newCoord = Coordinates.clone(pawn.getCoordinates());
+		newCoord = Coordinates.clone(curCoord);
 		
 		if (newCoord.getColumn() > 0) {
 			newCoord.setColumn(newCoord.getColumn() - 1);
 		
 			if (gb.isOccupied(newCoord.getRow(), newCoord.getColumn()) && newCoord.getColumn() > 1) 
-				newCoord.setColumn(pawn.getCoordinates().getColumn() - 2);
-			
-			//if (pawn.hasTraveled(newCoord))
-			//	return false;
+				newCoord.setColumn(curCoord.getColumn() - 2);
 
-			return gb.isValidMove(pawn.getCoordinates(), newCoord);
+			return gb.isValidMove(curCoord, newCoord);
 		} else
 			return false;
 	}
@@ -104,16 +98,13 @@ public class State {
 	public boolean canMoveNorthEast() {
 		Coordinates newCoord;
 
-		newCoord = Coordinates.clone(pawn.getCoordinates());
+		newCoord = Coordinates.clone(curCoord);
 		
 		if (newCoord.getRow() > 0 && newCoord.getColumn() < 8) {
 			newCoord.setRow(newCoord.getRow() - 1);
 			newCoord.setColumn(newCoord.getColumn() + 1);
 
-			//if (pawn.hasTraveled(newCoord))
-			//	return false;;
-			
-			return gb.isValidMove(pawn.getCoordinates(), newCoord);
+			return gb.isValidMove(curCoord, newCoord);
 		} else
 			return false;
 	}
@@ -121,16 +112,13 @@ public class State {
 	public boolean canMoveNorthWest() {
 		Coordinates newCoord;
 
-		newCoord = Coordinates.clone(pawn.getCoordinates());
+		newCoord = Coordinates.clone(curCoord);
 		
 		if (newCoord.getRow() > 0 && newCoord.getColumn() > 0) {
 			newCoord.setRow(newCoord.getRow() - 1);
 			newCoord.setColumn(newCoord.getColumn() - 1);
 			
-			//if (pawn.hasTraveled(newCoord))
-			//	return false;
-			
-			return gb.isValidMove(pawn.getCoordinates(), newCoord);
+			return gb.isValidMove(curCoord, newCoord);
 		} else
 			return false;
 	}
@@ -138,16 +126,13 @@ public class State {
 	public boolean canMoveSouthWest() {
 		Coordinates newCoord;
 
-		newCoord = Coordinates.clone(pawn.getCoordinates());
+		newCoord = Coordinates.clone(curCoord);
 		
 		if (newCoord.getRow() < 8 && newCoord.getColumn() > 0) {
 			newCoord.setRow(newCoord.getRow() + 1);
 			newCoord.setColumn(newCoord.getColumn() - 1);
  			
-			//if (pawn.hasTraveled(newCoord))
-			//	return false;
-			
-			return gb.isValidMove(pawn.getCoordinates(), newCoord);
+			return gb.isValidMove(curCoord, newCoord);
 		} else
 			return false;
 	}
@@ -156,16 +141,13 @@ public class State {
 	public boolean canMoveSouthEast() {
 		Coordinates newCoord;
 
-		newCoord = Coordinates.clone(pawn.getCoordinates());
+		newCoord = Coordinates.clone(curCoord);
 		
 		if (newCoord.getRow() < 8 && newCoord.getColumn() < 8) {
 			newCoord.setRow(newCoord.getRow() + 1);
 			newCoord.setColumn(newCoord.getColumn() + 1);
 			
-			//if (pawn.hasTraveled(newCoord))
-			//	return false;
-			
-			return gb.isValidMove(pawn.getCoordinates(), newCoord);
+			return gb.isValidMove(curCoord, newCoord);
 		} else
 			return false;
 	}
@@ -173,128 +155,127 @@ public class State {
 	public void moveNorth() {
 		Coordinates newCoord;
 		
-		newCoord = Coordinates.clone(pawn.getCoordinates());
+		newCoord = Coordinates.clone(curCoord);
 
 		newCoord.setRow(newCoord.getRow() - 1);
 		
 		if (gb.isOccupied(newCoord.getRow(), newCoord.getColumn()))
 			newCoord.setRow(newCoord.getRow() - 1);
 		
-		gb.setUnoccupied(pawn.getCoordinates());
+		gb.setUnoccupied(curCoord);
 		gb.setOccupied(newCoord);
 		
-		pawn.move(newCoord);
+		curCoord = Coordinates.clone(newCoord);
 	}
 	
 	public void moveSouth() {
 		Coordinates newCoord;
 		
-		newCoord = Coordinates.clone(pawn.getCoordinates());
+		newCoord = Coordinates.clone(curCoord);
 
 		newCoord.setRow(newCoord.getRow() + 1);
 		
 		if (gb.isOccupied(newCoord.getRow(), newCoord.getColumn()))
 			newCoord.setRow(newCoord.getRow() + 1);
 		
-		gb.setUnoccupied(pawn.getCoordinates());
+		gb.setUnoccupied(curCoord);
 		gb.setOccupied(newCoord);
 		
-		pawn.move(newCoord);
+		curCoord = Coordinates.clone(newCoord);
 	}
 	
 	public void moveEast() {
 		Coordinates newCoord;
 		
-		newCoord = Coordinates.clone(pawn.getCoordinates());
+		newCoord = Coordinates.clone(curCoord);
 
 		newCoord.setColumn(newCoord.getColumn() + 1);
 		
 		if (gb.isOccupied(newCoord.getRow(), newCoord.getColumn()))
 			newCoord.setColumn(newCoord.getColumn() + 1);
 		
-		gb.setUnoccupied(pawn.getCoordinates());
+		gb.setUnoccupied(curCoord);
 		gb.setOccupied(newCoord);
 		
-		pawn.move(newCoord);
+		curCoord = Coordinates.clone(newCoord);
 	}
 	
 	public void moveWest() {
 		Coordinates newCoord;
 		
-		newCoord = Coordinates.clone(pawn.getCoordinates());
+		newCoord = Coordinates.clone(curCoord);
 
 		newCoord.setColumn(newCoord.getColumn() - 1);
 		
 		if (gb.isOccupied(newCoord.getRow(), newCoord.getColumn()))
 			newCoord.setColumn(newCoord.getColumn() - 1);
 		
-		gb.setUnoccupied(pawn.getCoordinates());
+		gb.setUnoccupied(curCoord);
 		gb.setOccupied(newCoord);
 		
-		pawn.move(newCoord);
+		curCoord = Coordinates.clone(newCoord);
 		
-		//System.out.println(previousCoord.getRow() + " " + previousCoord.getColumn() + " " + newCoord.getRow() + " " + newCoord.getColumn());
 	}
 	
 	public void moveNorthEast() {
 		Coordinates newCoord;
 		
-		newCoord = Coordinates.clone(pawn.getCoordinates());
+		newCoord = Coordinates.clone(curCoord);
 
 		newCoord.setRow(newCoord.getRow() - 1);
 		newCoord.setColumn(newCoord.getColumn() + 1);
 
-		gb.setUnoccupied(pawn.getCoordinates());
+		gb.setUnoccupied(curCoord);
 		gb.setOccupied(newCoord);
 		
-		pawn.move(newCoord);
+		curCoord = Coordinates.clone(newCoord);
 	}
 	
 	public void moveNorthWest() {
 		Coordinates newCoord;
 		
-		newCoord = Coordinates.clone(pawn.getCoordinates());
+		newCoord = Coordinates.clone(curCoord);
 
 		newCoord.setRow(newCoord.getRow() - 1);
 		newCoord.setColumn(newCoord.getColumn() - 1);
 
-		gb.setUnoccupied(pawn.getCoordinates());
+		gb.setUnoccupied(curCoord);
 		gb.setOccupied(newCoord);
 		
-		pawn.move(newCoord);
+		curCoord = Coordinates.clone(newCoord);
 	}
 	
 	public void moveSouthWest() {
 		Coordinates newCoord;
 		
-		newCoord = Coordinates.clone(pawn.getCoordinates());
+		newCoord = Coordinates.clone(curCoord);
 
 		newCoord.setRow(newCoord.getRow() + 1);
 		newCoord.setColumn(newCoord.getColumn() - 1);
 
-		gb.setUnoccupied(pawn.getCoordinates());
+		gb.setUnoccupied(curCoord);
 		gb.setOccupied(newCoord);
 		
-		pawn.move(newCoord);
+		curCoord = Coordinates.clone(newCoord);
 	}
 	
 	public void moveSouthEast() {
 		Coordinates newCoord;
 		
-		newCoord = Coordinates.clone(pawn.getCoordinates());
+		newCoord = Coordinates.clone(curCoord);
 
 		newCoord.setRow(newCoord.getRow() + 1);
 		newCoord.setColumn(newCoord.getColumn() + 1);
 
-		gb.setUnoccupied(pawn.getCoordinates());
+		gb.setUnoccupied(curCoord);
 		gb.setOccupied(newCoord);
 		
-		pawn.move(newCoord);
+		curCoord = Coordinates.clone(newCoord);
 	}
 	
 	public static State clone(State curState) {
 		State res;
-		res = new State(Board.clone(curState.gb), Pawn.clone(curState.getPawn()));
+		res = new State(curState.gb, curState.curCoord, curState.dest);
 		return res;
 	}
 	
@@ -308,7 +289,7 @@ public class State {
         else {
         	State state = (State)obj;
         	
-        	if (!pawn.getCoordinates().equals(state.getPawn().getCoordinates()))
+        	if (!curCoord.equals(state.curCoord))
         		return false;
         	else
         		return true;

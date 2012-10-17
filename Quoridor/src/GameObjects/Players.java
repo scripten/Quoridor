@@ -1,5 +1,7 @@
 package GameObjects;
 
+import java.util.ArrayList;
+
 import GameObjects.Pawn;
 import GameObjects.Pawn.DESTINATION;
 
@@ -49,6 +51,10 @@ public class Players {
 			currentPlayer = 0;
 	}
 	
+	public int getNumberOfPlayers() {
+		return numPlayers;
+	}
+	
 	public boolean isWinner() {
 		switch (pawns[currentPlayer].getDestination()) {
 			case FIRST_ROW: {
@@ -61,9 +67,29 @@ public class Players {
 				return pawns[currentPlayer].getCoordinates().getColumn() == 8;
 			} default: {
 				break;
-			}	
+			}
 		}
 		
 		return false;
+	}
+	
+	public ArrayList<Coordinates> getPlayersCoordinates() {
+		ArrayList<Coordinates> res;
+		
+		res = new ArrayList<Coordinates>(numPlayers);
+		for (int i = 0; i < numPlayers; i++)
+			res.add(pawns[i].getCoordinates());
+		
+		return res;
+	}
+	
+	public ArrayList<DESTINATION> getPlayersDestinations() {
+		ArrayList<DESTINATION> res;
+		
+		res = new ArrayList<DESTINATION>(numPlayers);
+		for (int i = 0; i < numPlayers; i++)
+			res.add(pawns[i].getDestination());
+		
+		return res;
 	}
 }

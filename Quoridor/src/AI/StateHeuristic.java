@@ -13,18 +13,18 @@ public class StateHeuristic {
 	public void generateHeurstic() {
 		heuristic = 0;
 
-		switch (curState.getPawn().getDestination()) {
+		switch (curState.getDestination()) {
 			case FIRST_ROW: {
-				heuristic = curState.getPawn().getCoordinates().getRow();
+				heuristic = curState.getCoordinates().getRow();
 				break;
 			} case LAST_ROW: {
-				heuristic = Board.NUM_ROWS - 1 - curState.getPawn().getCoordinates().getRow();
+				heuristic = Board.NUM_ROWS - 1 - curState.getCoordinates().getRow();
 				break;
 			} case FIRST_COLUMN: {
-				heuristic = curState.getPawn().getCoordinates().getColumn() ;
+				heuristic = curState.getCoordinates().getColumn() ;
 				break;
 			} case LAST_COLUMN: {
-				heuristic = Board.NUM_COLS - 1 - curState.getPawn().getCoordinates().getColumn();
+				heuristic = Board.NUM_COLS - 1 - curState.getCoordinates().getColumn();
 				break;
 			} default: {
 				
