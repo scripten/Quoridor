@@ -13,24 +13,24 @@ public class StateHeuristic {
 	public void generateHeurstic() {
 		heuristic = 0;
 
-		//switch (curState.getDestination()) {
-		//	case FIRST_ROW: {
-		//		heuristic = curState.getCoordinates().getRow();
-		//		break;
-		//	} case LAST_ROW: {
+		switch (curState.getDestination()) {
+			case FIRST_ROW: {
+				heuristic = curState.getCoordinates().getRow();
+				break;
+			} case LAST_ROW: {
 				heuristic = Board.NUM_ROWS - 1 - curState.getCoordinates().getRow();
-		//		break;
-		//	} case FIRST_COLUMN: {
-		//		heuristic = curState.getCoordinates().getColumn() ;
-		//		break;
-		//	} case LAST_COLUMN: {
-		//		heuristic = Board.NUM_COLS - 1 - curState.getCoordinates().getColumn();
-		//		break;
-		//	} default: {
-		//		
-		//		break;
-		//	}
-		//}
+				break;
+			} case FIRST_COLUMN: {
+				heuristic = curState.getCoordinates().getColumn() ;
+				break;
+			} case LAST_COLUMN: {
+				heuristic = Board.NUM_COLS - 1 - curState.getCoordinates().getColumn();
+				break;
+			} default: {
+				
+				break;
+			}
+		}
 		
 		
 	}

@@ -2,15 +2,17 @@ package AI;
 
 import GameObjects.Board;
 import GameObjects.Coordinates;
-import GameObjects.Pawn;
+import GameObjects.Pawn.DESTINATION;
 
 public class State {
 	private Board gb;
 	private Coordinates curCoord;
+	private DESTINATION dest;
 	
-	public State(Board gameBoard, Coordinates coordinates) {
-		gb = gameBoard;
+	public State(Board gameBoard, Coordinates coordinates, DESTINATION destination) {
+		gb = Board.clone(gameBoard);
 		curCoord = Coordinates.clone(coordinates);
+		dest = destination;
 	}
 	
 	public Board getGameBoard() {
@@ -19,6 +21,10 @@ public class State {
 	
 	public Coordinates getCoordinates() {
 		return curCoord;
+	}
+	
+	public DESTINATION getDestination() {
+		return dest;
 	}
 	
 	public boolean canMoveNorth() {
@@ -31,9 +37,6 @@ public class State {
 			
 			if (gb.isOccupied(newCoord.getRow(), newCoord.getColumn()) && newCoord.getRow() > 1) 
 				newCoord.setRow(curCoord.getRow() - 2);
-			
-			//if (pawn.hasTraveled(newCoord))
-			//	return false;
 			
 			return gb.isValidMove(curCoord, newCoord);
 		} else
@@ -50,9 +53,6 @@ public class State {
 			
 			if (gb.isOccupied(newCoord.getRow(), newCoord.getColumn()) && newCoord.getRow() < 7) 
 				newCoord.setRow(curCoord.getRow() + 2);
-			
-			//if (pawn.hasTraveled(newCoord))
-			//	return false;
 			
 			return gb.isValidMove(curCoord, newCoord);
 		} else
@@ -73,9 +73,6 @@ public class State {
 			if (gb.isOccupied(newCoord.getRow(), newCoord.getColumn()) && newCoord.getColumn() < 7) 
 				newCoord.setColumn(curCoord.getColumn() + 2);
 			
-			//if (pawn.hasTraveled(newCoord))
-			//	return false;
-			
 			return gb.isValidMove(curCoord, newCoord);
 		} else
 			return false;
@@ -91,9 +88,6 @@ public class State {
 		
 			if (gb.isOccupied(newCoord.getRow(), newCoord.getColumn()) && newCoord.getColumn() > 1) 
 				newCoord.setColumn(curCoord.getColumn() - 2);
-			
-			//if (pawn.hasTraveled(newCoord))
-			//	return false;
 
 			return gb.isValidMove(curCoord, newCoord);
 		} else
@@ -110,9 +104,6 @@ public class State {
 			newCoord.setRow(newCoord.getRow() - 1);
 			newCoord.setColumn(newCoord.getColumn() + 1);
 
-			//if (pawn.hasTraveled(newCoord))
-			//	return false;;
-			
 			return gb.isValidMove(curCoord, newCoord);
 		} else
 			return false;
@@ -126,9 +117,6 @@ public class State {
 		if (newCoord.getRow() > 0 && newCoord.getColumn() > 0) {
 			newCoord.setRow(newCoord.getRow() - 1);
 			newCoord.setColumn(newCoord.getColumn() - 1);
-			
-			//if (pawn.hasTraveled(newCoord))
-			//	return false;
 			
 			return gb.isValidMove(curCoord, newCoord);
 		} else
@@ -144,9 +132,6 @@ public class State {
 			newCoord.setRow(newCoord.getRow() + 1);
 			newCoord.setColumn(newCoord.getColumn() - 1);
  			
-			//if (pawn.hasTraveled(newCoord))
-			//	return false;
-			
 			return gb.isValidMove(curCoord, newCoord);
 		} else
 			return false;
@@ -161,9 +146,6 @@ public class State {
 		if (newCoord.getRow() < 8 && newCoord.getColumn() < 8) {
 			newCoord.setRow(newCoord.getRow() + 1);
 			newCoord.setColumn(newCoord.getColumn() + 1);
-			
-			//if (pawn.hasTraveled(newCoord))
-			//	return false;
 			
 			return gb.isValidMove(curCoord, newCoord);
 		} else
@@ -232,6 +214,7 @@ public class State {
 		gb.setOccupied(newCoord);
 		
 		curCoord = Coordinates.clone(newCoord);
+		
 	}
 	
 	public void moveNorthEast() {
@@ -292,7 +275,7 @@ public class State {
 	
 	public static State clone(State curState) {
 		State res;
-		res = new State(Board.clone(curState.gb), Coordinates.clone(curState.curCoord));
+		res = new State(curState.gb, curState.curCoord, curState.dest);
 		return res;
 	}
 	
