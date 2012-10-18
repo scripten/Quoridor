@@ -27,7 +27,14 @@ public class State {
 		return dest;
 	}
 	
-	public boolean canMoveNorth() {
+	public void move(Coordinates newCoordinates) {
+		gb.setUnoccupied(curCoord);
+		gb.setOccupied(newCoordinates);
+		
+		curCoord = Coordinates.clone(newCoordinates);
+	}
+	
+	/*public boolean canMoveNorth() {
 		Coordinates newCoord;
 		
 		newCoord = Coordinates.clone(curCoord);
@@ -41,9 +48,9 @@ public class State {
 			return gb.isValidMove(curCoord, newCoord);
 		} else
 			return false;
-	}
+	}*/
 	
-	public boolean canMoveSouth() {
+	/*public boolean canMoveSouth() {
 		Coordinates newCoord;
 		
 		newCoord = Coordinates.clone(curCoord);
@@ -59,9 +66,9 @@ public class State {
 			return false;
 		
 		
-	}
+	}*/
 	
-	public boolean canMoveEast() {
+	/*public boolean canMoveEast() {
 		Coordinates newCoord;
 		
 		newCoord = Coordinates.clone(curCoord);
@@ -76,9 +83,9 @@ public class State {
 			return gb.isValidMove(curCoord, newCoord);
 		} else
 			return false;
-	}
+	}*/
 	
-	public boolean canMoveWest() {
+	/*public boolean canMoveWest() {
 		Coordinates newCoord;
 
 		newCoord = Coordinates.clone(curCoord);
@@ -92,7 +99,7 @@ public class State {
 			return gb.isValidMove(curCoord, newCoord);
 		} else
 			return false;
-	}
+	}*/
 	
 	
 	public boolean canMoveNorthEast() {

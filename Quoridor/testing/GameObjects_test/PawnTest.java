@@ -25,8 +25,8 @@ public class PawnTest {
 	
 	@Test
 	public void testDefaultCoordinates() {
-		assertThat(pawn.getCoordinates().getX(), is(DEFAULT_X));
-		assertThat(pawn.getCoordinates().getY(), is(DEFAULT_Y));
+		assertThat(pawn.getCoordinates().getRow(), is(DEFAULT_X));
+		assertThat(pawn.getCoordinates().getColumn(), is(DEFAULT_Y));
 	}
 	
 	@Test
@@ -35,8 +35,8 @@ public class PawnTest {
 		
 		pawn.move(coord);
 		
-		assertThat(pawn.getCoordinates().getX(), is(coord.getX()));
-		assertThat(pawn.getCoordinates().getY(), is(coord.getY()));
+		assertThat(pawn.getCoordinates().getRow(), is(coord.getRow()));
+		assertThat(pawn.getCoordinates().getColumn(), is(coord.getColumn()));
 	}
 	
 	@Test

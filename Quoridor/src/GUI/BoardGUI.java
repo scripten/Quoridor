@@ -473,9 +473,10 @@ public class BoardGUI extends JFrame implements MouseListener{
 		// TODO Auto-generated method stub
 
 	}
-
 	
 	public void CPUTurn() {
+		//if (players.getCurrentPlayerID() != 3)
+		//	return;
 		Node<State> curState = new Node<State>(null);
 		
 		curState.setState(new State(board, players.getCurrentPlayer().getCoordinates(), players.getCurrentPlayer().getDestination()));

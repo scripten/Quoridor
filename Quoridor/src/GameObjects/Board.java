@@ -453,6 +453,7 @@ public class Board {
 			else if (board[row][column].getRightWall().isWall() || board[row + 1][column].getRightWall().isWall())
 				canMove =  false;
 			else {
+				
 				for (int i = 0; i < allPlayerCoordinates.size(); i++) {
 					Node<State> curState = new Node<State>(null);
 					Board boardCopy = clone(this);
@@ -481,6 +482,7 @@ public class Board {
 			else if (board[row][column].getBottomWall().isWall() || board[row][column + 1].getBottomWall().isWall())
 				canMove =  false;
 			else {
+				
 				for (int i = 0; i < allPlayerCoordinates.size(); i++) {
 					Node<State> curState = new Node<State>(null);
 					Board boardCopy = clone(this);

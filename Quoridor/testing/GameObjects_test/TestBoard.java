@@ -6,6 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import GameObjects.Board;
+import GameObjects.Coordinates;
 
 public class TestBoard {
 	Board board;
@@ -20,7 +21,8 @@ public class TestBoard {
 		
 		for (int i = 0; i < 9; i++) {
 			for (int j = 0; j < 9; j++) {
-				board.setUnoccupied(i, j);
+				Coordinates curCoord = new Coordinates(i, j);
+				board.setUnoccupied(curCoord);
 				assertTrue(!board.isOccupied(i, j));
 			}
 		}
@@ -30,7 +32,8 @@ public class TestBoard {
 	public void testSetOccupied() {
 		for (int i = 0; i < 9; i++) {
 			for (int j = 0; j < 9; j++) {
-				board.setOccupied(i, j);
+				Coordinates curCoord = new Coordinates(i, j);
+				board.setUnoccupied(curCoord);
 				assertTrue(board.isOccupied(i, j));
 			}
 		}

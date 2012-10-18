@@ -20,14 +20,39 @@ public class StateGen {
 	public <T> void setState(T t) {
 		
 		State newState;
-		Coordinates newCoord = null;
-		
+	
 		curState = (State)t;
 		
 		curCoord = Coordinates.clone(curState.getCoordinates());
 		index = 0;
 		count = 0;
 
+		tryMove(getNorthMove());
+		tryMove(getSouthMove());
+		tryMove(getEastMove());
+		tryMove(getWestMove());
+		
+
+		
+		
+		
+		
+		
+		/*newCoord = getNorthEastMove();
+		
+		if (newCoord != null) {
+			newState = State.clone(curState);
+			newState.move(newCoord);
+			
+			states[count] = newState;
+			count++;
+		}*/
+		
+		
+		
+		
+		
+		
 		// Move pawn north east
 		if (curState.canMoveNorthEast()) {
 			newState = State.clone(curState);
@@ -62,44 +87,38 @@ public class StateGen {
 		}
 		
 		// Move pawn north
-		if (curState.canMoveNorth()) {
+		/*if (curState.canMoveNorth()) {
 			newState = State.clone(curState);
 			newState.moveNorth();
 			states[count] = newState;
 			count++;
-		}
-		/*newCoord = getNorthMove();git 
-		
-		if (newCoord != null) {
-			newState = State.clone(curState);
-			newState.getGameBoard().mo
-			states[count] = newState;
-			count++;
 		}*/
 		
-		// Move pawn south
+
+		
+		/*// Move pawn south
 		if (curState.canMoveSouth()) {
 			newState = State.clone(curState);
 			newState.moveSouth();
 			states[count] = newState;
 			count++;
-		}
+		}*/
 		
 	  // Move pawn west
-		if (curState.canMoveWest()) {
+	/*if (curState.canMoveWest()) {
 			newState = State.clone(curState);
 			newState.moveWest();
 			states[count] = newState;
 			count++;
-		}
+		}*/
 		
-		// Move pawn east
+		/*// Move pawn east
 		if (curState.canMoveEast()) {
 			newState = State.clone(curState);
 			newState.moveEast();
 			states[count] = newState;
 			count++;
-		}
+		}*/
 		
 		// TODO: move diagonal for jumps
 	}
@@ -126,6 +145,18 @@ public class StateGen {
 		//TODO: index out of bounds exception
 	}
 	
+	public void tryMove(Coordinates newCoordinates) {
+		State newState;
+		
+		// Move if newCoordiantes is not null
+		if (newCoordinates != null) {
+			newState = State.clone(curState);
+			newState.move(newCoordinates);
+			
+			states[count] = newState;
+			count++;
+		}
+	}
 	
 	public Coordinates getNorthMove() {
 		Coordinates newCoord;
@@ -135,12 +166,61 @@ public class StateGen {
 		if (newCoord.getRow() > 0) {
 			newCoord.setRow(newCoord.getRow() - 1);
 			
-			if (curState.getGameBoard().isOccupied(newCoord.getRow(), newCoord.getColumn()) && newCoord.getRow() > 1) 
-				newCoord.setRow(curCoord.getRow() - 2);
+			while (curState.getGameBoard().isOccupied(newCoord.getRow(), newCoord.getColumn()) && newCoord.getRow() >= 1) 
+				newCoord.setRow(newCoord.getRow() - 1);
 			
 			return newCoord;
 		} else
 			return null;
 	}
+	
+	public Coordinates getSouthMove() {
+		Coordinates newCoord;
+		
+		newCoord = Coordinates.clone(curCoord);
+		
+		if (newCoord.getRow() < 8) {
+			newCoord.setRow(newCoord.getRow() + 1);
+			
+			while (curState.getGameBoard().isOccupied(newCoord.getRow(), newCoord.getColumn()) && newCoord.getRow() <= 7) 
+				newCoord.setRow(newCoord.getRow() + 1);
+			
+			return newCoord;
+		} else
+			return null;
+	}
+	
+	public Coordinates getEastMove() {
+		Coordinates newCoord;
+		
+		newCoord = Coordinates.clone(curCoord);
+		if (newCoord.getColumn() < 8) {
+			newCoord.setColumn(newCoord.getColumn() + 1);
+		
+
+			while (curState.getGameBoard().isOccupied(newCoord.getRow(), newCoord.getColumn()) && newCoord.getColumn() <= 7) 
+				newCoord.setColumn(newCoord.getColumn() + 1);
+			
+			return newCoord;
+		} else
+			return null;
+	}
+	
+	public Coordinates getWestMove() {
+		Coordinates newCoord;
+		
+		newCoord = Coordinates.clone(curCoord);
+		if (newCoord.getColumn() > 0) {
+			newCoord.setColumn(newCoord.getColumn() - 1);
+		
+			while (curState.getGameBoard().isOccupied(newCoord.getRow(), newCoord.getColumn()) && newCoord.getColumn() >= 1) 
+				newCoord.setColumn(newCoord.getColumn() - 1);
+			
+			return newCoord;
+		} else
+			return null;
+	}
+	
+	
 
 }
