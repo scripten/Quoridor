@@ -68,7 +68,7 @@ public class StateGen {
 			states[count] = newState;
 			count++;
 		}
-		/*newCoord = getNorthMove();
+		/*newCoord = getNorthMove();git 
 		
 		if (newCoord != null) {
 			newState = State.clone(curState);
