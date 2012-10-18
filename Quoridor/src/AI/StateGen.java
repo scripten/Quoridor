@@ -1,21 +1,29 @@
 package AI;
 
+import java.util.ArrayList;
+
+import GameObjects.Coordinates;
+
 public class StateGen {
 	private final int MAX_STATES = 8;
 	
 	State[] states;		// Generated sates
 	int index = 0;		// Current index
 	int count = 0;		// Number of generated states
+	State curState;
+	Coordinates curCoord;
 	
 	public StateGen() {
 		states = new State[MAX_STATES];
 	}
 	
 	public <T> void setState(T t) {
-		State curState;
+		
 		State newState;
 		
 		curState = (State)t;
+		
+		curCoord = Coordinates.clone(curState.getCoordinates());
 		index = 0;
 		count = 0;
 
@@ -109,5 +117,22 @@ public class StateGen {
 		//TODO: index out of bounds exception
 	}
 	
+	
+	public ArrayList<Coordinates> getNorthMoves() {
+		ArrayList<Coordinates> res = null;
+		Coordinates newCoord;
+		
+		newCoord = Coordinates.clone(curCoord);
+		
+		if (newCoord.getRow() > 0) {
+			newCoord.setRow(newCoord.getRow() - 1);
+			
+			if (gb.isOccupied(newCoord.getRow(), newCoord.getColumn()) && newCoord.getRow() > 1) 
+				newCoord.setRow(curCoord.getRow() - 2);
+			
+			return gb.isValidMove(curCoord, newCoord);
+		} else
+			return res;
+	}
 
 }

@@ -184,7 +184,7 @@ public class BoardGUI extends JFrame implements MouseListener{
 		setVisible(true);
 		
 		playGame = true;
-		playCPU = false;
+		playCPU = true;
 		//CPUTurn();
 	}
 
