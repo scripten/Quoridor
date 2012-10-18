@@ -273,6 +273,8 @@ public class State {
 		curCoord = Coordinates.clone(newCoord);
 	}
 	
+	
+	
 	public static State clone(State curState) {
 		State res;
 		res = new State(curState.gb, curState.curCoord, curState.dest);

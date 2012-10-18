@@ -20,6 +20,7 @@ public class StateGen {
 	public <T> void setState(T t) {
 		
 		State newState;
+		Coordinates newCoord = null;
 		
 		curState = (State)t;
 		
@@ -67,6 +68,14 @@ public class StateGen {
 			states[count] = newState;
 			count++;
 		}
+		/*newCoord = getNorthMove();
+		
+		if (newCoord != null) {
+			newState = State.clone(curState);
+			newState.getGameBoard().mo
+			states[count] = newState;
+			count++;
+		}*/
 		
 		// Move pawn south
 		if (curState.canMoveSouth()) {
@@ -118,8 +127,7 @@ public class StateGen {
 	}
 	
 	
-	public ArrayList<Coordinates> getNorthMoves() {
-		ArrayList<Coordinates> res = null;
+	public Coordinates getNorthMove() {
 		Coordinates newCoord;
 		
 		newCoord = Coordinates.clone(curCoord);
@@ -127,12 +135,12 @@ public class StateGen {
 		if (newCoord.getRow() > 0) {
 			newCoord.setRow(newCoord.getRow() - 1);
 			
-			if (gb.isOccupied(newCoord.getRow(), newCoord.getColumn()) && newCoord.getRow() > 1) 
+			if (curState.getGameBoard().isOccupied(newCoord.getRow(), newCoord.getColumn()) && newCoord.getRow() > 1) 
 				newCoord.setRow(curCoord.getRow() - 2);
 			
-			return gb.isValidMove(curCoord, newCoord);
+			return newCoord;
 		} else
-			return res;
+			return null;
 	}
 
 }
