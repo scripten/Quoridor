@@ -12,6 +12,7 @@ import java.awt.Desktop;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.image.TileObserver;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -173,18 +174,18 @@ public class BoardGUI extends JFrame implements MouseListener{
 		setVisible(true);
 		
 		// Left column player
-		tiles[0][4].setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/red space.png")));
+		tiles[0][4].setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/green space.png")));
 		tiles[0][4].setUsed(true);
 		setVisible(true);
 		
 		
 		// Right column player
-		tiles[8][4].setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/red space.png")));
+		tiles[8][4].setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/yellow space.png")));
 		tiles[8][4].setUsed(true);
 		setVisible(true);
 		
 		playGame = true;
-		playCPU = true;
+		playCPU = true;    //FIXME
 		//CPUTurn();
 	}
 
@@ -202,16 +203,10 @@ public class BoardGUI extends JFrame implements MouseListener{
 			newCoordinates.setColumn(btn.getColumn());
 			
 			btn.setUsed(true);
-			
-			if(players.getCurrentPlayerID() == 0)
-				btn.setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/blue space.png")));
-			else if(players.getCurrentPlayerID() == 1)
-				btn.setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/red space.png")));
-			
 
-			tiles[currentCoordinates.getColumn()][currentCoordinates.getRow()].setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/empty space.png")));
-			tiles[currentCoordinates.getColumn()][currentCoordinates.getRow()].setUsed(false);
-			tiles[currentCoordinates.getColumn()][currentCoordinates.getRow()].setInvalidated();
+            setTileIcon(btn , players.getCurrentPlayerID()) ;
+			
+            setTileIcon(tiles[currentCoordinates.getColumn()][currentCoordinates.getRow()], -1);
 			
 			board.setUnoccupied(currentCoordinates);
 			board.setOccupied(newCoordinates);
@@ -241,20 +236,15 @@ public class BoardGUI extends JFrame implements MouseListener{
 			board.setVerticalWall(vertWall.getRow(), vertWall.getColumn());
 			
 			players.getCurrentPlayer().useWall();
-			
-			if(players.getCurrentPlayerID() == 0)
-				vertWall.setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/blueVerticalWall.png")));
-			else if (players.getCurrentPlayerID() == 1)
-				vertWall.setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/redVerticalWall.png")));
+
+            setVerticalWallIcon(vertWall , players.getCurrentPlayerID() );
 	
 			vertWall.setUsed(true);
 			
 			// and also update the vertical wall in the row beneath it
-			if(players.getCurrentPlayerID() == 0)
-				verticalWalls[vertWall.getColumn()][vertWall.getRow() + 1].setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/blueVerticalWall.png")));
-			else if (players.getCurrentPlayerID() == 1)
-				verticalWalls[vertWall.getColumn()][vertWall.getRow() + 1].setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/redVerticalWall.png")));
-	
+
+            setVerticalWallIcon(verticalWalls[vertWall.getColumn()][vertWall.getRow() + 1], players.getCurrentPlayerID() );
+
 			verticalWalls[vertWall.getColumn()][vertWall.getRow() + 1].setUsed(true);
 			
 			players.nextPlayer();
@@ -272,19 +262,11 @@ public class BoardGUI extends JFrame implements MouseListener{
 			board.setHorizontalWall(horizWall.getRow(), horizWall.getColumn());
 			
 			players.getCurrentPlayer().useWall();
-			
-			if (players.getCurrentPlayerID() == 0)
-				horizWall.setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/blueHorizontalWall.png")));
-			else if(players.getCurrentPlayerID() == 1)
-				horizWall.setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/redHorizontalWall.png")));
+
+            setHorizontalWallIcon(horizWall , players.getCurrentPlayerID());
 			
 			horizWall.setUsed(true);
-			
-			if (players.getCurrentPlayerID() == 0)
-				horizontalWalls[horizWall.getColumn() + 1][horizWall.getRow()].setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/blueHorizontalWall.png")));
-			else if (players.getCurrentPlayerID() == 1)
-				horizontalWalls[horizWall.getColumn() + 1][horizWall.getRow()].setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/redHorizontalWall.png")));
-
+			setHorizontalWallIcon(horizontalWalls[horizWall.getColumn() + 1][horizWall.getRow()], players.getCurrentPlayerID() )  ;
 			horizontalWalls[horizWall.getColumn() + 1][horizWall.getRow()].setUsed(true);
 			
 			players.nextPlayer();
@@ -329,16 +311,7 @@ public class BoardGUI extends JFrame implements MouseListener{
 			if (!tile.getUsed() && board.isValidMove(currentCoordinates, newCoordinates)) {
 	
 				tile.setValidated();
-				
-				if (players.getCurrentPlayerID() == 0)
-					tile.setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/blue space.png")));
-				else if(players.getCurrentPlayerID() == 1)
-					tile.setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/red space.png")));
-				else if(players.getCurrentPlayerID() == 2)
-					tile.setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/red space.png")));
-				else if(players.getCurrentPlayerID() == 3)
-					tile.setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/red space.png")));
-
+                setTileIcon(tile , players.getCurrentPlayerID());
 			} 
 			
 		} else if(e.getSource() instanceof VerticalWallButton) {
@@ -352,28 +325,13 @@ public class BoardGUI extends JFrame implements MouseListener{
 				
 				// highlight the places where the wall would be placed
 				if(!verticalWall.getUsed()){
-					if (players.getCurrentPlayerID() == 0)
-						verticalWall.setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/blueVerticalWall.png")));
-					else if(players.getCurrentPlayerID() == 1)
-						verticalWall.setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/redVerticalWall.png")));
-					else if(players.getCurrentPlayerID() == 2)
-						verticalWall.setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/redVerticalWall.png")));
-					else if(players.getCurrentPlayerID() == 3)
-						verticalWall.setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/redVerticalWall.png")));
+                    setVerticalWallIcon(verticalWall , players.getCurrentPlayerID())  ;
 				}
 
 				if(verticalWall.getRow()<8){
 					VerticalWallButton lowerWall = verticalWalls[verticalWall.getColumn()][verticalWall.getRow()+1];
 					if(!lowerWall.getUsed()){
-						if (players.getCurrentPlayerID() == 0)
-							lowerWall.setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/blueVerticalWall.png")));
-						else if(players.getCurrentPlayerID() == 1)
-							lowerWall.setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/redVerticalWall.png")));
-						else if(players.getCurrentPlayerID() == 2)
-							lowerWall.setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/redVerticalWall.png")));
-						else if(players.getCurrentPlayerID() == 3)
-							lowerWall.setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/redVerticalWall.png")));
-
+                        setVerticalWallIcon(lowerWall , players.getCurrentPlayerID())  ;
 					}
 				}
 			}
@@ -387,20 +345,12 @@ public class BoardGUI extends JFrame implements MouseListener{
 				
 				// highlight the places where the wall would be placed
 				if(!horizontalWall.getUsed()){
-					if(players.getCurrentPlayerID()==0)
-					horizontalWall.setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/blueHorizontalWall.png")));
-					else if (players.getCurrentPlayerID()==1)
-						horizontalWall.setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/redHorizontalWall.png")));
-
+                    setHorizontalWallIcon(horizontalWall , players.getCurrentPlayerID())  ;
 				}
 				if(horizontalWall.getColumn()<8){
 					HorizontalWallButton rightWall = horizontalWalls[horizontalWall.getColumn()+1][horizontalWall.getRow()];
 					if(!rightWall.getUsed()){
-						if(players.getCurrentPlayerID()==0)
-						rightWall.setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/blueHorizontalWall.png")));
-						else if(players.getCurrentPlayerID()==1)
-							rightWall.setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/redHorizontalWall.png")));
-
+                        setHorizontalWallIcon(rightWall, players.getCurrentPlayerID())  ;
 					}
 				}
 			}
@@ -423,7 +373,7 @@ public class BoardGUI extends JFrame implements MouseListener{
 		
 				tile.setInvalidated();
 				if (!tile.getUsed())
-					tile.setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/empty space.png")));
+					setTileIcon(tile , -1);
 			}
 		} else if(e.getSource() instanceof VerticalWallButton){
 			VerticalWallButton verticalWall = (VerticalWallButton)e.getSource();
@@ -434,11 +384,11 @@ public class BoardGUI extends JFrame implements MouseListener{
 				verticalWall.setInvalidated();
 			
 				if(!verticalWall.getUsed())
-					verticalWall.setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/emptyVerticalWall.png")));
+					setVerticalWallIcon(verticalWall, -1);
 				if(verticalWall.getRow()<8){
 					VerticalWallButton lowerWall = verticalWalls[verticalWall.getColumn()][verticalWall.getRow()+1];
 					if(!lowerWall.getUsed())
-						lowerWall.setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/emptyVerticalWall.png")));
+						setVerticalWallIcon(lowerWall, -1) ;
 				}
 			}
 		} else if(e.getSource() instanceof HorizontalWallButton){
@@ -506,16 +456,10 @@ public class BoardGUI extends JFrame implements MouseListener{
 			System.out.println("Valid AI move");
 			
 			
-			if(players.getCurrentPlayerID() == 0)
-				tiles[nextMove.getState().getCoordinates().getColumn()][nextMove.getState().getCoordinates().getRow()].setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/blue space.png")));
-			else if(players.getCurrentPlayerID() == 1)
-				tiles[nextMove.getState().getCoordinates().getColumn()][nextMove.getState().getCoordinates().getRow()].setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/red space.png")));
-			else if(players.getCurrentPlayerID() == 2)
-				tiles[nextMove.getState().getCoordinates().getColumn()][nextMove.getState().getCoordinates().getRow()].setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/red space.png")));
-			else if(players.getCurrentPlayerID() == 3)
-				tiles[nextMove.getState().getCoordinates().getColumn()][nextMove.getState().getCoordinates().getRow()].setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/red space.png")));
-			
-			tiles[players.getCurrentPlayer().getCoordinates().getColumn()][players.getCurrentPlayer().getCoordinates().getRow()].setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/empty space.png")));
+
+			setTileIcon(tiles[nextMove.getState().getCoordinates().getColumn()][nextMove.getState().getCoordinates().getRow()],players.getCurrentPlayerID()) ;
+
+			setTileIcon(tiles[players.getCurrentPlayer().getCoordinates().getColumn()][players.getCurrentPlayer().getCoordinates().getRow() ], -1);
 			tiles[players.getCurrentPlayer().getCoordinates().getColumn()][players.getCurrentPlayer().getCoordinates().getRow()].setUsed(false);
 			tiles[players.getCurrentPlayer().getCoordinates().getColumn()][players.getCurrentPlayer().getCoordinates().getRow()].setInvalidated();
 			
@@ -541,5 +485,42 @@ public class BoardGUI extends JFrame implements MouseListener{
 			CPUTurn();
 			
 	}
+
+    public void setHorizontalWallIcon(HorizontalWallButton btn, int player){
+        if(player == 0)
+            btn.setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/blueHorizontalWall.png")));
+        else if(player == 1)
+            btn.setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/redHorizontalWall.png")));
+        else if(player == 2)
+            btn.setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/greenHorizontalWall.png")));
+        else if(player == 3)
+            btn.setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/yellowHorizontalWall.png")));
+        else
+            btn.setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/emptyHorizontalWall.png")));
+    }
+    public void setVerticalWallIcon(VerticalWallButton btn, int player){
+        if(player == 0)
+            btn.setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/blueVerticalWall.png")));
+        else if(player == 1)
+            btn.setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/redVerticalWall.png")));
+        else if(player == 2)
+            btn.setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/greenVerticalWall.png")));
+        else if(player == 3)
+            btn.setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/yellowVerticalWall.png")));
+        else
+            btn.setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/emptyVerticalWall.png")));
+    }
+    public void setTileIcon(SquareButton btn, int player){
+        if(player == 0)
+            btn.setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/blue space.png")));
+        else if(player == 1)
+            btn.setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/red space.png")));
+        else if(player == 2)
+            btn.setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/green space.png")));
+        else if(player == 3)
+            btn.setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/yellow space.png")));
+        else
+            btn.setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/empty space.png")));
+    }
 	
 }
