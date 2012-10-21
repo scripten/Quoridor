@@ -36,6 +36,8 @@ import GameObjects.Board;
 import GameObjects.Board.WALL_TYPE;
 import GameObjects.Coordinates;
 import GameObjects.Players;
+import javax.swing.JPanel;
+import javax.swing.JLabel;
 
 public class BoardGUI extends JFrame implements MouseListener{
 	private SquareButton [][]tiles = new SquareButton[9][9];  // [columns][rows]
@@ -46,13 +48,24 @@ public class BoardGUI extends JFrame implements MouseListener{
 	private GridBagConstraints[][] horizontalWallGridBags= new GridBagConstraints[9][8];
 
 	private Board board = new Board();
-	private Players players = new Players(true);
+	private Players players ;
 	private boolean playGame;
 	private boolean playCPU;
+	private JLabel lblPlayer1Walls;
+	private JLabel lblPlayer2Walls;
+	private JLabel lblPlayer3Walls;
+	private JLabel lblPlayer4Walls;
+	private JLabel lblCurrentPlayer;
+	private SquareButton btnCurrentPlayer;
 
-	public BoardGUI() {
+	public BoardGUI(boolean playCPU, boolean fourPlayers) {
+		players = new Players(fourPlayers);
+		playGame = true;
+		this.playCPU = playCPU;
+		//CPUTurn();
+		
 		setResizable(false);
-		setSize(570, 540);
+		setSize(695, 540);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setTitle("Quoridor");
 		setName("Quoridor");
@@ -98,11 +111,66 @@ public class BoardGUI extends JFrame implements MouseListener{
 		
 		mnHelp.add(mntmQuoridorWiki);
 		GridBagLayout gridBagLayout = new GridBagLayout();
-		gridBagLayout.columnWidths = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0};
-		gridBagLayout.rowHeights = new int[]{0, 0};
-		gridBagLayout.columnWeights = new double[]{1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
-		gridBagLayout.rowWeights = new double[]{1.0, Double.MIN_VALUE};
+		gridBagLayout.columnWidths = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+		gridBagLayout.rowHeights = new int[]{136, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+		gridBagLayout.columnWeights = new double[]{1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, Double.MIN_VALUE};
+		gridBagLayout.rowWeights = new double[]{1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
 		getContentPane().setLayout(gridBagLayout);
+		
+		
+		lblPlayer1Walls = new JLabel("Player 1 Walls: "+players.pawns[0].getWallCount());
+		GridBagConstraints gbc_lblPlayer1Walls = new GridBagConstraints();
+		gbc_lblPlayer1Walls.insets = new Insets(0, 0, 0, 5);
+		gbc_lblPlayer1Walls.gridx = 18;
+		gbc_lblPlayer1Walls.gridy = 2;
+		getContentPane().add(lblPlayer1Walls, gbc_lblPlayer1Walls);
+		
+		lblPlayer2Walls = new JLabel("Player 2 Walls: "+players.pawns[1].getWallCount());
+		GridBagConstraints gbc_lblPlayer2Walls = new GridBagConstraints();
+		gbc_lblPlayer2Walls.insets = new Insets(0, 0, 0, 5);
+		gbc_lblPlayer2Walls.gridx = 18;
+		gbc_lblPlayer2Walls.gridy = 4;
+		getContentPane().add(lblPlayer2Walls, gbc_lblPlayer2Walls);
+		
+		if(players.getNumberOfPlayers()==4){
+		lblPlayer3Walls = new JLabel("Player 3 Walls: "+players.pawns[2].getWallCount());
+		GridBagConstraints gbc_lblPlayer3Walls = new GridBagConstraints();
+		gbc_lblPlayer3Walls.insets = new Insets(0, 0, 0, 5);
+		gbc_lblPlayer3Walls.gridx = 18;
+		gbc_lblPlayer3Walls.gridy = 6;
+		getContentPane().add(lblPlayer3Walls, gbc_lblPlayer3Walls);
+		
+		lblPlayer4Walls = new JLabel("Player 4 Walls: "+players.pawns[3].getWallCount());
+		GridBagConstraints gbc_lblPlayer4Walls = new GridBagConstraints();
+		gbc_lblPlayer4Walls.insets = new Insets(0, 0, 0, 5);
+		gbc_lblPlayer4Walls.gridx = 18;
+		gbc_lblPlayer4Walls.gridy = 8;
+		getContentPane().add(lblPlayer4Walls, gbc_lblPlayer4Walls);
+		}
+		
+		lblCurrentPlayer = new JLabel("Current Player: "+(players.getCurrentPlayerID()+1));
+		GridBagConstraints gbc_lblCurrentPlayer = new GridBagConstraints();
+		gbc_lblCurrentPlayer.insets = new Insets(0, 0, 0, 5);
+		gbc_lblCurrentPlayer.gridx = 18;
+		gbc_lblCurrentPlayer.gridy = 10;
+		getContentPane().add(lblCurrentPlayer, gbc_lblCurrentPlayer);
+		
+		btnCurrentPlayer = new SquareButton("", 0, 0);
+		btnCurrentPlayer.setFocusPainted(false);
+		btnCurrentPlayer.setFocusTraversalKeysEnabled(false);
+		btnCurrentPlayer.setFocusable(false);
+		btnCurrentPlayer.setDefaultCapable(false);
+		btnCurrentPlayer.setIconTextGap(0);
+		btnCurrentPlayer.setMargin(new Insets(0, 0, 0, 0));
+		setTileIcon(btnCurrentPlayer , players.getCurrentPlayerID());
+		GridBagConstraints gbc_btnCurrentPlayer = new GridBagConstraints();
+		gbc_btnCurrentPlayer.anchor = GridBagConstraints.SOUTH;
+		gbc_btnCurrentPlayer.insets = new Insets(0, 0, 0, 5);
+		gbc_btnCurrentPlayer.gridx = 18;
+		gbc_btnCurrentPlayer.gridy = 12;
+		getContentPane().add(btnCurrentPlayer, gbc_btnCurrentPlayer);
+		
+		
 
 		for(int row=0; row<9; row++){
 			//show row of empty spaces and vertical walls
@@ -172,7 +240,7 @@ public class BoardGUI extends JFrame implements MouseListener{
 		tiles[4][0].setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/red space.png")));
 		tiles[4][0].setUsed(true);
 		setVisible(true);
-		
+		if(players.getNumberOfPlayers()==4){
 		// Left column player
 		tiles[0][4].setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/green space.png")));
 		tiles[0][4].setUsed(true);
@@ -183,10 +251,8 @@ public class BoardGUI extends JFrame implements MouseListener{
 		tiles[8][4].setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/yellow space.png")));
 		tiles[8][4].setUsed(true);
 		setVisible(true);
+		}
 		
-		playGame = true;
-		playCPU = true;    //FIXME
-		//CPUTurn();
 	}
 
 	public void handleSquareButtonPress(SquareButton btn){
@@ -220,12 +286,10 @@ public class BoardGUI extends JFrame implements MouseListener{
 
 				JOptionPane.showMessageDialog(this, String.format("Player %s has won the game.", players.getCurrentPlayerID() + 1));
 				System.out.format("Player %s has won the game.", players.getCurrentPlayerID() + 1);
-			} else {
-				players.nextPlayer();
-				
-				if (playCPU) 
-					CPUTurn();
-			}
+			} 
+			players.nextPlayer();
+			lblCurrentPlayer.setText("Current Player: "+(players.getCurrentPlayerID()+1));
+			setTileIcon(btnCurrentPlayer , players.getCurrentPlayerID()) ;
 		}
 		
 	}
@@ -248,11 +312,10 @@ public class BoardGUI extends JFrame implements MouseListener{
             setVerticalWallIcon(verticalWalls[vertWall.getColumn()][vertWall.getRow() + 1], players.getCurrentPlayerID() );
 
 			verticalWalls[vertWall.getColumn()][vertWall.getRow() + 1].setUsed(true);
-			
-			players.nextPlayer();
 
-			if (playCPU) 
-				CPUTurn();
+			players.nextPlayer();
+			lblCurrentPlayer.setText("Current Player: "+(players.getCurrentPlayerID()+1));
+			setTileIcon(btnCurrentPlayer , players.getCurrentPlayerID()) ;
 		} 
 	}
 
@@ -272,9 +335,8 @@ public class BoardGUI extends JFrame implements MouseListener{
 			horizontalWalls[horizWall.getColumn() + 1][horizWall.getRow()].setUsed(true);
 			
 			players.nextPlayer();
-
-			if (playCPU) 
-				CPUTurn();
+			lblCurrentPlayer.setText("Current Player: "+(players.getCurrentPlayerID()+1));
+			setTileIcon(btnCurrentPlayer , players.getCurrentPlayerID()) ;
 		}
 	}
 
@@ -290,7 +352,9 @@ public class BoardGUI extends JFrame implements MouseListener{
 		}else if(e.getSource() instanceof HorizontalWallButton){
 			handleHorizontalWallPress((HorizontalWallButton)e.getSource());
 		}
-
+		
+		
+		
 	}
 
 	@Override
@@ -484,8 +548,12 @@ public class BoardGUI extends JFrame implements MouseListener{
 			System.out.println("Invalid AI move");
 		
 		players.nextPlayer();
-		if (players.getCurrentPlayerID() != 0)
+		
+		if (players.getCurrentPlayerID() != 0){
 			CPUTurn();
+			lblCurrentPlayer.setText("Current Player: "+(players.getCurrentPlayerID()+1));
+			setTileIcon(btnCurrentPlayer , players.getCurrentPlayerID()) ;
+		}
 			
 	}
 
@@ -525,5 +593,16 @@ public class BoardGUI extends JFrame implements MouseListener{
         else
             btn.setIcon(new ImageIcon(BoardGUI.class.getResource("/quoridor images/empty space.png")));
     }
-	
+    
+    public void nextTurn(){
+    	lblCurrentPlayer.setText("Current Player: "+(players.getCurrentPlayerID()+1));
+		setTileIcon(btnCurrentPlayer , players.getCurrentPlayerID()) ;
+		players.nextPlayer();
+
+		if (playCPU){ 
+			CPUTurn();
+			lblCurrentPlayer.setText("Current Player: "+(players.getCurrentPlayerID()+1));
+			setTileIcon(btnCurrentPlayer , players.getCurrentPlayerID()) ;
+		}
+    }	
 }
