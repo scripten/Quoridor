@@ -286,10 +286,15 @@ public class BoardGUI extends JFrame implements MouseListener{
 
 				JOptionPane.showMessageDialog(this, String.format("Player %s has won the game.", players.getCurrentPlayerID() + 1));
 				System.out.format("Player %s has won the game.", players.getCurrentPlayerID() + 1);
+				dispose();
+				FirstWindow mainMenu = new FirstWindow();
+				
 			} 
 			players.nextPlayer();
 			lblCurrentPlayer.setText("Current Player: "+(players.getCurrentPlayerID()+1));
 			setTileIcon(btnCurrentPlayer , players.getCurrentPlayerID()) ;
+			if(playCPU && playGame)
+				CPUTurn();
 		}
 		
 	}
@@ -316,6 +321,8 @@ public class BoardGUI extends JFrame implements MouseListener{
 			players.nextPlayer();
 			lblCurrentPlayer.setText("Current Player: "+(players.getCurrentPlayerID()+1));
 			setTileIcon(btnCurrentPlayer , players.getCurrentPlayerID()) ;
+			if(playCPU)
+				CPUTurn();
 		} 
 	}
 
@@ -337,6 +344,8 @@ public class BoardGUI extends JFrame implements MouseListener{
 			players.nextPlayer();
 			lblCurrentPlayer.setText("Current Player: "+(players.getCurrentPlayerID()+1));
 			setTileIcon(btnCurrentPlayer , players.getCurrentPlayerID()) ;
+			if(playCPU)
+				CPUTurn();
 		}
 	}
 
@@ -540,7 +549,8 @@ public class BoardGUI extends JFrame implements MouseListener{
 
 				JOptionPane.showMessageDialog(this, String.format("Player %s has won the game.", players.getCurrentPlayerID() + 1));
 				System.out.format("Player %s has won the game.\n", players.getCurrentPlayerID() + 1);
-				return;
+				dispose();
+				FirstWindow mainMenu = new FirstWindow();
 			} 
 			
 			
