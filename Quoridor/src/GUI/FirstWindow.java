@@ -136,6 +136,7 @@ public class FirstWindow extends JFrame{
 		
 		// Checkbox for selecting to play the AI
 		JCheckBox chckbxAI = new JCheckBox("Play AI");
+		chckbxAI.setName("aiCheckBox");
 		chckbxAI.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent arg0) {
 				playAI = !playAI;
@@ -143,6 +144,7 @@ public class FirstWindow extends JFrame{
 		});
 		
 		JRadioButton rdbtn4Players = new JRadioButton("4 Players");
+		rdbtn4Players.setName("4Player");
 		rdbtn4Players.setSelected(true);
 		rdbtn4Players.addMouseListener(new MouseAdapter() {
 			@Override
@@ -152,6 +154,7 @@ public class FirstWindow extends JFrame{
 		});
 		
 		JRadioButton rdbtn2Players = new JRadioButton("2 Players");
+		rdbtn2Players.setName("2Player");
 		rdbtn2Players.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
