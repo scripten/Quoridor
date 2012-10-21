@@ -18,6 +18,9 @@ import java.awt.GridBagConstraints;
 import java.awt.FlowLayout;
 
 import javax.swing.GroupLayout.Alignment;
+import javax.swing.LayoutStyle.ComponentPlacement;
+import java.awt.event.ItemListener;
+import java.awt.event.ItemEvent;
 
 
 
@@ -45,6 +48,8 @@ public class FirstWindow extends JFrame{
 	public final static String NEW_GAME_MESSAGE = "This will eventually start a new game!";
 
 	private boolean visible;
+	private boolean playAI;
+	private boolean fourPlayerGame=true;
 	
 	public FirstWindow() {
 		
@@ -72,7 +77,7 @@ public class FirstWindow extends JFrame{
 			public void mousePressed(MouseEvent e) {
 				// Close the welcome menu and bring up the game board
 				dispose();
-				BoardGUI gameBoard = new BoardGUI();	
+				BoardGUI gameBoard = new BoardGUI(playAI, fourPlayerGame);	
 			}
 		});
 		mntmNewGame.setHorizontalAlignment(SwingConstants.LEFT);
@@ -119,7 +124,7 @@ public class FirstWindow extends JFrame{
 			public void mouseClicked(MouseEvent arg0) {
 				// Close the welcome menu and bring up the game board
 				dispose();
-				BoardGUI gameBoard = new BoardGUI();	
+				BoardGUI gameBoard = new BoardGUI(playAI, fourPlayerGame);	
 			}
 		});
 		btnNewGame.setName("btnNewGame");
@@ -129,28 +134,76 @@ public class FirstWindow extends JFrame{
 		lblWelcomeToQuoridor.setFont(new Font("Tahoma", Font.BOLD, 18));
 		lblWelcomeToQuoridor.setName(LABEL_NAME);
 		
+		// Checkbox for selecting to play the AI
+		JCheckBox chckbxAI = new JCheckBox("Play AI");
+		chckbxAI.setName("aiCheckBox");
+		chckbxAI.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent arg0) {
+				playAI = !playAI;
+			}
+		});
+		
+		JRadioButton rdbtn4Players = new JRadioButton("4 Players");
+		rdbtn4Players.setName("4Player");
+		rdbtn4Players.setSelected(true);
+		rdbtn4Players.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				fourPlayerGame = true;
+			}
+		});
+		
+		JRadioButton rdbtn2Players = new JRadioButton("2 Players");
+		rdbtn2Players.setName("2Player");
+		rdbtn2Players.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				fourPlayerGame = false;
+			}
+		});
+		
+		//Group the radio buttons.
+	    ButtonGroup group = new ButtonGroup();
+	    group.add(rdbtn2Players);
+	    group.add(rdbtn4Players);
+		
 		// set the layout of the frame to be a GroupLayout and arrange the components
 		GroupLayout groupLayout = new GroupLayout(getContentPane());
 		groupLayout.setHorizontalGroup(
-			groupLayout.createParallelGroup(Alignment.LEADING)
+			groupLayout.createParallelGroup(Alignment.TRAILING)
 				.addGroup(groupLayout.createSequentialGroup()
 					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
 						.addGroup(groupLayout.createSequentialGroup()
-							.addGap(237)
-							.addComponent(btnNewGame, GroupLayout.PREFERRED_SIZE, 151, GroupLayout.PREFERRED_SIZE))
-						.addGroup(groupLayout.createSequentialGroup()
 							.addGap(214)
-							.addComponent(lblWelcomeToQuoridor)))
-					.addContainerGap(214, Short.MAX_VALUE))
+							.addComponent(lblWelcomeToQuoridor))
+						.addGroup(groupLayout.createSequentialGroup()
+							.addGap(268)
+							.addComponent(chckbxAI, GroupLayout.PREFERRED_SIZE, 81, GroupLayout.PREFERRED_SIZE)))
+					.addContainerGap(200, Short.MAX_VALUE))
+				.addGroup(groupLayout.createSequentialGroup()
+					.addContainerGap(242, Short.MAX_VALUE)
+					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+						.addComponent(btnNewGame, GroupLayout.PREFERRED_SIZE, 151, GroupLayout.PREFERRED_SIZE)
+						.addGroup(groupLayout.createSequentialGroup()
+							.addComponent(rdbtn4Players)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(rdbtn2Players)))
+					.addGap(216))
 		);
 		groupLayout.setVerticalGroup(
 			groupLayout.createParallelGroup(Alignment.LEADING)
 				.addGroup(groupLayout.createSequentialGroup()
 					.addContainerGap()
 					.addComponent(lblWelcomeToQuoridor)
-					.addGap(32)
+					.addGap(18)
 					.addComponent(btnNewGame, GroupLayout.PREFERRED_SIZE, 47, GroupLayout.PREFERRED_SIZE)
-					.addContainerGap(317, Short.MAX_VALUE))
+					.addGap(16)
+					.addComponent(chckbxAI)
+					.addGap(23)
+					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+						.addComponent(rdbtn2Players)
+						.addComponent(rdbtn4Players))
+					.addContainerGap(242, Short.MAX_VALUE))
 		);
 		getContentPane().setLayout(groupLayout);
 	

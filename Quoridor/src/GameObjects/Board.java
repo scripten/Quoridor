@@ -62,8 +62,20 @@ public class Board {
 	}
 	
 
+	public boolean hasTopWall(int row, int column) {
+		return board[row][column].getTopWall().isWall();
+	}
+	
 	public boolean hasBottomWall(int row, int column) {
 		return board[row][column].getBottomWall().isWall();
+	}
+	
+	public boolean hasLeftWall(int row, int column) {
+		return board[row][column].getLeftWall().isWall();
+	}
+	
+	public boolean hasRightWall(int row, int column) {
+		return board[row][column].getRightWall().isWall();
 	}
 	
 	public void setOccupied(Coordinates currentCoordinates) {
@@ -83,8 +95,7 @@ public class Board {
 		int curColumn; 			// Current column
 		int newRow;				// New row
 		int newColumn;			// New column
-		int moveDist = 1;		// Movable distance
-		
+
 		Coordinates recCoord = Coordinates.clone(currentCoordinates);
 		
 		curRow = currentCoordinates.getRow();
@@ -98,35 +109,29 @@ public class Board {
 		else if (board[newRow][newColumn].isOccupied())
 			return false;
 		if (curRow != newRow && curColumn != newColumn) {			// Diagonal
-			// Reject diagonal moves that are greater than one in either direction
-			//if (abs(curColumn - newColumn) > moveDist || abs(curRow - newRow) > moveDist)
-			//	return false;
-				
+
 			// Determine which direction the move is in
 			if (curRow < newRow && curColumn < newColumn) {			// South east
 				
 				if (board[curRow + 1][curColumn].isOccupied()) {
-					int i = curRow + 1;
-					while (board[i][curColumn].isOccupied()) {
-						recCoord.setRow(i);
+					if (board[curRow + 1][curColumn].isOccupied()) {
+						recCoord.setRow(curRow + 1);
 						
 						// Determine if a wall is blocking move
-						if (board[i][curColumn].getTopWall().isWall())
+						if (board[curRow + 1][curColumn].getTopWall().isWall())
 							return false;
-						else if (board[i][curColumn].getRightWall().isWall())
+						else if (board[curRow + 1][curColumn].getRightWall().isWall())
 							return false;
 						else 
 							return isValidMove(recCoord, newCoordinates);
 					}
 				} else if (board[curRow][curColumn + 1].isOccupied()) {
-					int i = curColumn + 1;
-					while (board[curRow][i].isOccupied()) {
-						recCoord.setColumn(i);
+					if (board[curRow][curColumn + 1].isOccupied()) {
+						recCoord.setColumn(curColumn + 1);
 						
-						
-						if (board[curRow][i].getLeftWall().isWall())
+						if (board[curRow][curColumn + 1].getLeftWall().isWall())
 							return false;
-						else if (board[curRow][i].getBottomWall().isWall())
+						else if (board[curRow][curColumn + 1].getBottomWall().isWall())
 							return false;
 						else 
 							return isValidMove(recCoord, newCoordinates);
@@ -134,26 +139,25 @@ public class Board {
 				} else
 					return false;
 			} else if (curRow > newRow && curColumn < newColumn) {	// North east
+				
 				if (board[curRow - 1][curColumn].isOccupied()) {
-					int i = curRow - 1;
-					while (board[i][curColumn].isOccupied()) {
-						recCoord.setRow(i);
+					if (board[curRow - 1][curColumn].isOccupied()) {
+						recCoord.setRow(curRow - 1);
 						
-						if (board[i][curColumn].getBottomWall().isWall())
+						if (board[curRow - 1][curColumn].getBottomWall().isWall())
 							return false;
-						else if (board[i][curColumn].getRightWall().isWall())
+						else if (board[curRow - 1][curColumn].getRightWall().isWall())
 							return false;
 						else 
 							return isValidMove(recCoord, newCoordinates);
 					}
 				} else if (board[curRow][curColumn + 1].isOccupied()) {
-					 int i = curColumn + 1;
-					while (board[curRow][i].isOccupied()) {
-						recCoord.setColumn(i);
+					if (board[curRow][curColumn + 1].isOccupied()) {
+						recCoord.setColumn(curColumn + 1);
 						
-						if (board[curRow][i].getTopWall().isWall())
+						if (board[curRow][curColumn + 1].getTopWall().isWall())
 							return false;
-						else if (board[curRow][i].getTopWall().isWall())
+						else if (board[curRow][curColumn + 1].getTopWall().isWall())
 							return false;
 						else 
 							return isValidMove(recCoord, newCoordinates);
@@ -161,26 +165,25 @@ public class Board {
 				} else
 					return false;
 			} else if (curRow < newRow && curColumn > newColumn) {	// South west
-				if ((board[curRow + 1][curColumn].isOccupied())) {
-					int i = curRow + 1;
-					while (board[i][curColumn].isOccupied()) {
-						recCoord.setRow(i);
+				
+				if (board[curRow + 1][curColumn].isOccupied()) {
+					if (board[curRow + 1][curColumn].isOccupied()) {
+						recCoord.setRow(curRow + 1);
 						
-						if (board[i][curColumn].getTopWall().isWall())
+						if (board[curRow + 1][curColumn].getTopWall().isWall())
 							return false;
-						else if (board[i][curColumn].getLeftWall().isWall())
+						else if (board[curRow + 1][curColumn].getLeftWall().isWall())
 							return false;
 						else 
 							return isValidMove(recCoord, newCoordinates);
 					}
 				} else if (board[curRow][curColumn - 1].isOccupied()) {
-					int i = curColumn - 1;
-					while (board[curRow][i].isOccupied()) {
-						recCoord.setColumn(i);
+					if (board[curRow][curColumn - 1].isOccupied()) {
+						recCoord.setColumn(curColumn - 1);
 						
-						if (board[curRow][i].getRightWall().isWall())
+						if (board[curRow][curColumn - 1].getRightWall().isWall())
 							return false;
-						else if (board[curRow][i].getTopWall().isWall())
+						else if (board[curRow][curColumn - 1].getTopWall().isWall())
 							return false;
 						else 
 							return isValidMove(recCoord, newCoordinates);
@@ -188,26 +191,25 @@ public class Board {
 				} else
 					return false;
 			} else if (curRow > newRow && curColumn > newColumn) {	// North west
-				if ((board[curRow - 1][curColumn].isOccupied())) {
-					int i = curRow - 1;
-					while (board[i][curColumn].isOccupied()) {
-						recCoord.setRow(i);
+				
+				if (board[curRow - 1][curColumn].isOccupied()) {
+					if (board[curRow - 1][curColumn].isOccupied()) {
+						recCoord.setRow(curRow - 1);
 						
-						if (board[i][curColumn].getBottomWall().isWall())
+						if (board[curRow - 1][curColumn].getBottomWall().isWall())
 							return false;
-						else if (board[i][curColumn].getLeftWall().isWall())
+						else if (board[curRow - 1][curColumn].getLeftWall().isWall())
 							return false;
 						else 
 							return isValidMove(recCoord, newCoordinates);
 					}
 				} else if (board[curRow][curColumn - 1].isOccupied()) {
-					int i = curColumn - 1;
-					while (board[curRow][i].isOccupied()) {
-						recCoord.setColumn(i);
+					if (board[curRow][curColumn - 1].isOccupied()) {
+						recCoord.setColumn(curColumn - 1);
 						
-						if (board[curRow][i].getRightWall().isWall())
+						if (board[curRow][curColumn - 1].getRightWall().isWall())
 							return false;
-						else if (board[curRow][i].getTopWall().isWall())
+						else if (board[curRow][curColumn - 1].getTopWall().isWall())
 							return false;
 						else 
 							return isValidMove(recCoord, newCoordinates);
@@ -218,196 +220,42 @@ public class Board {
 				return false;
 		} else if (curRow < newRow) {								// South
 			// Reject the move if the move distance is too big or if a wall is in place
-			if (board[curRow][curColumn].getBottomWall().isWall()) 
+			if (board[curRow + 1][curColumn].getBottomWall().isWall()) 
 				return false;
-				
-			int i = curRow + 1;
-			while (board[i][curColumn].isOccupied()) {
-				recCoord.setRow(i);
+			else if (board[curRow + 1][curColumn].isOccupied()) {
+				recCoord.setRow(curRow + 1);
 				return isValidMove(recCoord, newCoordinates);
-			}
-			
-			if (newRow - curRow > 1) 
+			} else if (newRow - curRow > 1 || newColumn != curColumn) 
 				return false;
 		} else if (curRow > newRow ) {								// North
 			// Reject the move if the move distance is too big or if a wall is in place
 			if (board[curRow][curColumn].getTopWall().isWall()) 
 				return false;
-				
-			int i = curRow - 1;
-			while (board[i][curColumn].isOccupied()) {
-				recCoord.setRow(i);
+			else if (board[curRow - 1][curColumn].isOccupied()) {
+				recCoord.setRow(curRow - 1);
 				return isValidMove(recCoord, newCoordinates);
-			}
-			
-			if (curRow - newRow > 1)
+			} else if (curRow - newRow > 1 || newColumn != curColumn)
 				return false;
 		} else if (curColumn < newColumn) {							// East
 			// Reject the move if the move distance is too big or if a wall is in place
 			if (board[curRow][curColumn].getRightWall().isWall()) 
 				return false;
-				
-			int i = curColumn + 1;
-			while (board[curRow][i].isOccupied()) {
-				recCoord.setColumn(i);
+			else if (board[curRow][curColumn + 1].isOccupied()) {
+				recCoord.setColumn(curColumn + 1);
 				return isValidMove(recCoord, newCoordinates);
-			}
-			
-			if (newColumn - curColumn > 1)
+			} else if (newColumn - curColumn > 1 || newRow != curRow)
 				return false;
 		} else if (curColumn > newColumn) {							// West
 			// Reject the move if the move distance is too big or if a wall is in place
 			if (board[curRow][curColumn].getLeftWall().isWall()) 
 				return false;
-				
-			int i = curColumn - 1;
-			while (board[curRow][i].isOccupied()) {
-				recCoord.setColumn(i);
+			else if (board[curRow][curColumn - 1].isOccupied()) {
+				recCoord.setColumn(curColumn - 1);
 				return isValidMove(recCoord, newCoordinates);
-			}
-			
-			if (curColumn - newColumn > 1)
+			} else if (curColumn - newColumn > 1 || newRow != curRow)
 				return false;
 		} 
 		
-	
-		/*// Determine if a the move is valid
-		if (curRow == newRow && curColumn == newColumn)
-			return false;
-		else if (board[newRow][newColumn].isOccupied())
-			return false;
-		if (curRow != newRow && curColumn != newColumn) {			// Diagonal
-			
-			// Reject diagonal moves that are greater than one in either direction
-			if (abs(curColumn - newColumn) > moveDist || abs(curRow - newRow) > moveDist)
-				return false;
-				
-			// Determine which direction the move is in
-			if (curRow < newRow && curColumn < newColumn) {			// South east
-			
-				// Determine if a north west move is valid
-				if (board[curRow][curColumn + 1].isOccupied()) {
-					// Determine if a wall is blocking the move
-					if (board[curRow][curColumn + 1].getLeftWall().isWall())
-						return false;
-					else if (board[curRow][curColumn + 1].getBottomWall().isWall())
-						return false;
-				} else if (board[curRow + 1][curColumn].isOccupied()) {
-					// Determine if a wall is blocking move
-					if (board[curRow + 1][curColumn].getTopWall().isWall())
-						return false;
-					else if (board[curRow + 1][curColumn].getRightWall().isWall())
-						return false;
-				} else
-					return false;
-			} else if (curRow > newRow && curColumn < newColumn) {	// North east
-				// Determine if a north west move is valid
-				if (board[curRow][curColumn + 1].isOccupied()) {
-					// Determine if a wall is blocking the move
-					if (board[curRow][curColumn + 1].getLeftWall().isWall())
-						return false;
-					else if (board[curRow][curColumn + 1].getTopWall().isWall())
-						return false;
-				} else if (board[curRow - 1][curColumn].isOccupied()) {
-					// Determine if a wall is blocking move
-					if (board[curRow - 1][curColumn].getBottomWall().isWall())
-						return false;
-					else if (board[curRow - 1][curColumn].getRightWall().isWall())
-						return false;
-				} else
-					return false;
-			} else if (curRow < newRow && curColumn > newColumn) {	// South west
-				
-				// Determine if a north west move is valid
-				if (board[curRow][curColumn - 1].isOccupied()) {
-					// Determine if a wall is blocking the move
-					if (board[curRow][curColumn - 1].getRightWall().isWall())
-						return false;
-					else if (board[curRow][curColumn - 1].getTopWall().isWall())
-						return false;
-				} else if (board[curRow + 1][curColumn].isOccupied()) {
-					// Determine if a wall is blocking move
-					if (board[curRow + 1][curColumn].getTopWall().isWall())
-						return false;
-					else if (board[curRow + 1][curColumn].getLeftWall().isWall())
-						return false;
-				} else
-					return false;
-			} else if (curRow > newRow && curColumn > newColumn) {	// North west
-				
-				// Determine if a north west move is valid
-				if (board[curRow][curColumn - 1].isOccupied()) {
-					// Determine if a wall is blocking the move
-					if (board[curRow][curColumn - 1].getRightWall().isWall())
-						return false;
-					else if (board[curRow][curColumn - 1].getTopWall().isWall())
-							return false;
-				} else if (board[curRow - 1][curColumn].isOccupied()) {
-					// Determine if a wall is blocking move
-					if (board[curRow - 1][curColumn].getBottomWall().isWall())
-						return false;
-					else if (board[curRow - 1][curColumn].getLeftWall().isWall())
-						return false;
-				} else
-					return false;
-			}
-		} else if (curRow < newRow) {								// South
-			
-			// Determine if the southern tile can be jumped
-			if(board[curRow + 1][curColumn].isOccupied()) {
-				moveDist = 2;
-				
-				if (board[curRow + 1][curColumn].getBottomWall().isWall())
-					return false;
-			}
-			
-			// Reject the move if the move distance is too big or if a wall is in place
-			if (newRow - curRow > moveDist || board[curRow][curColumn].getBottomWall().isWall()) 
-				return false;
-			
-		} else if (curRow > newRow ) {								// North
-			
-			// Determine if the northern tile can be jumped
-			if(board[curRow - 1][curColumn].isOccupied()) {
-				moveDist = 2;
-			
-				if (board[curRow - 1][curColumn].getTopWall().isWall())
-					return false;
-			}
-	
-			// Reject the move if the move distance is too big or if a wall is in place
-			if (curRow - newRow  > moveDist || board[curRow][curColumn].getTopWall().isWall()) 
-				return false;
-		} else if (curColumn < newColumn) {							// East
-			
-			// Determine if the eastern tile can be jumped
-			if(board[curRow][curColumn + 1].isOccupied()) {
-				moveDist = 2;
-
-				if (board[curRow][curColumn + 1].getRightWall().isWall())
-					return false;
-			}
-	
-			
-			// Reject the move if the move distance is too big or if a wall is in place
-			if (newColumn - curColumn > moveDist || board[curRow][curColumn].getRightWall().isWall()) 
-				return false;
-		} else if (curColumn > newColumn) {							// West
-			
-			// Determine if the western tile can be jumped
-			if(board[curRow][curColumn - 1].isOccupied()) {
-				moveDist = 2;
-
-				if (board[curRow][curColumn - 1].getLeftWall().isWall())
-					return false;
-			}
-	
-	
-			// Reject the move if the move distance is too big or if a wall is in place
-			if (curColumn - newColumn > moveDist || board[curRow][curColumn].getLeftWall().isWall()) 
-				return false;
-		} 
-			*/
 		return true;
 	}
 	
