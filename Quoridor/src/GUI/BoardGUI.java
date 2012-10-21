@@ -207,7 +207,9 @@ public class BoardGUI extends JFrame implements MouseListener{
             setTileIcon(btn , players.getCurrentPlayerID()) ;
 			
             setTileIcon(tiles[currentCoordinates.getColumn()][currentCoordinates.getRow()], -1);
-			
+            
+            tiles[currentCoordinates.getColumn()][currentCoordinates.getRow()].setUsed(false);
+            
 			board.setUnoccupied(currentCoordinates);
 			board.setOccupied(newCoordinates);
 
@@ -237,7 +239,7 @@ public class BoardGUI extends JFrame implements MouseListener{
 			
 			players.getCurrentPlayer().useWall();
 
-            setVerticalWallIcon(vertWall , players.getCurrentPlayerID() );
+            setVerticalWallIcon(vertWall , players.getCurrentPlayerID());
 	
 			vertWall.setUsed(true);
 			
@@ -309,9 +311,8 @@ public class BoardGUI extends JFrame implements MouseListener{
 			newCoordinates.setColumn(tile.getColumn());
 			
 			if (!tile.getUsed() && board.isValidMove(currentCoordinates, newCoordinates)) {
-	
 				tile.setValidated();
-                setTileIcon(tile , players.getCurrentPlayerID());
+                setTileIcon(tile, players.getCurrentPlayerID());
 			} 
 			
 		} else if(e.getSource() instanceof VerticalWallButton) {
@@ -427,6 +428,7 @@ public class BoardGUI extends JFrame implements MouseListener{
 	public void CPUTurn() {
 		//if (players.getCurrentPlayerID() != 3)
 		//	return;
+
 		Node<State> curState = new Node<State>(null);
 		
 		curState.setState(new State(board, players.getCurrentPlayer().getCoordinates(), players.getCurrentPlayer().getDestination()));
