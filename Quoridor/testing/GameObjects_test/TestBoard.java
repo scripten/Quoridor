@@ -1,4 +1,4 @@
-package GameObject_test;
+package GameObjects_test;
 
 import static org.junit.Assert.*;
 
@@ -34,7 +34,7 @@ public class TestBoard {
 			for (int j = 0; j < 9; j++) {
 				Coordinates curCoord = new Coordinates(i, j);
 				board.setUnoccupied(curCoord);
-				assertTrue(board.isOccupied(i, j));
+				assertTrue(!board.isOccupied(i, j));
 			}
 		}
 	}
@@ -56,4 +56,37 @@ public class TestBoard {
 	}
 	
 	
+
+	
+	@Test
+	public void testhasBottomWall() {
+		
+		for (int i = 0; i < 9; i++) {
+			for (int j = 0; j < 9; j++) {
+				board.setHorizontalWall(i, j);
+				board.hasBottomWall(i, j);
+				//board.getTile(i, j).getBottomWall().
+				assertTrue(board.hasBottomWall(i, j));
+				
+			}
+		}
+		
+		
+	}
+	
+	@Test
+	public void testhasRightWall() {
+		
+		for (int i = 0; i < 9; i++) {
+			for (int j = 0; j < 9; j++) {
+				board.setVerticalWall(i, j);
+				
+				//board.getTile(i, j).getBottomWall().
+				assertTrue(board.hasRightWall(i, j));
+				
+			}
+		}
+		
+		
+	}
 }
