@@ -13,6 +13,7 @@ public class MoveServer {
 	private int port;			 // Port number for connection
 	private int numPlayers;		 // Number of players in game
 	private int id;				 // Player id for this move server
+	private String playerName = "Player";   // Player name for this move server
 	
 	public MoveServer (int port) {
 		this.port = port;
@@ -23,6 +24,11 @@ public class MoveServer {
 			System.out.println("Could not listen on port " + port);
 			System.exit(1);
 		}
+	}
+	
+	// Set player name to send to game client to display as the player's name
+	public void setName (String name) {
+	    this.playerName = name; 
 	}
 	
 	// Waits for a client to connect to the socket and then sets up communications
@@ -49,8 +55,11 @@ public class MoveServer {
 				return false;
 			this.numPlayers = sc.nextInt();
 			this.id = sc.nextInt();
+			System.out.println(input);
 			System.out.println("Game established with " + numPlayers + " players");
 			System.out.println("This mover server is player " + id);
+			System.out.println("Sending response to game client, player name is " + this.playerName);
+			out.write("READY " + this.playerName);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
