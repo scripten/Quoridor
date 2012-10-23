@@ -31,6 +31,16 @@ public class MoveServer {
 	    this.playerName = name; 
 	}
 	
+	// Allows outside classes to start a move server - for testing purposes
+	public static void startServer() {
+	    MoveServer ms = new MoveServer(6666);
+	    ms.getClient();
+        while(!ms.startGame())
+            System.out.println("Start message incorrectly formatted");
+        
+        ms.close();
+	}
+	
 	// Waits for a client to connect to the socket and then sets up communications
 	private void getClient () {
 		try {	// Sets up a client server and begins listening
@@ -112,12 +122,7 @@ public class MoveServer {
 	}
 	
 	public static void main(String[] args) {
-		MoveServer ms = new MoveServer(6666);
-		ms.getClient();
-		while(!ms.startGame())
-			System.out.println("Start message incorrectly formatted");
-		
-		ms.close();
+		startServer();
 	}
 
 }
