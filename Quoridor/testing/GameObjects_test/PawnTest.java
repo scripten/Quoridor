@@ -1,4 +1,4 @@
-package GameObject_test;
+package GameObjects_test;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
@@ -9,24 +9,26 @@ import org.junit.Test;
 
 import GameObjects.Coordinates;
 import GameObjects.Pawn;
+import GameObjects.Pawn.DESTINATION;
 
 
 public class PawnTest {
-	private static final int DEFAULT_X = 0;
-	private static final int DEFAULT_Y = 0;
+	private static final int DEFAULT_ROW = 0;
+	private static final int DEFAULT_COLUMN = 0;
 	private static final int DEFAULT_WALL_COUNT = 1;
+	private DESTINATION dest;
 	
 	Pawn pawn;
 	
 	@Before
 	public void setUp() {
-		pawn = new Pawn(DEFAULT_X, DEFAULT_Y, DEFAULT_WALL_COUNT);
+		pawn = new Pawn(DEFAULT_ROW, DEFAULT_COLUMN, dest,  DEFAULT_WALL_COUNT);
 	}
 	
 	@Test
 	public void testDefaultCoordinates() {
-		assertThat(pawn.getCoordinates().getRow(), is(DEFAULT_X));
-		assertThat(pawn.getCoordinates().getColumn(), is(DEFAULT_Y));
+		assertThat(pawn.getCoordinates().getRow(), is(DEFAULT_ROW));
+		assertThat(pawn.getCoordinates().getColumn(), is(DEFAULT_COLUMN));
 	}
 	
 	@Test

@@ -13,6 +13,7 @@ public class MoveServer {
 	private int port;			 // Port number for connection
 	private int numPlayers;		 // Number of players in game
 	private int id;				 // Player id for this move server
+	private String playerName = "Player";   // Player name for this move server
 	
 	public MoveServer (int port) {
 		this.port = port;
@@ -23,6 +24,21 @@ public class MoveServer {
 			System.out.println("Could not listen on port " + port);
 			System.exit(1);
 		}
+	}
+	
+	// Set player name to send to game client to display as the player's name
+	public void setName (String name) {
+	    this.playerName = name; 
+	}
+	
+	// Allows outside classes to start a move server - for testing purposes
+	public static void startServer() {
+	    MoveServer ms = new MoveServer(6666);
+	    ms.getClient();
+        while(!ms.startGame())
+            System.out.println("Start message incorrectly formatted");
+        
+        ms.close();
 	}
 	
 	// Waits for a client to connect to the socket and then sets up communications
@@ -49,13 +65,47 @@ public class MoveServer {
 				return false;
 			this.numPlayers = sc.nextInt();
 			this.id = sc.nextInt();
+			System.out.println(input);
 			System.out.println("Game established with " + numPlayers + " players");
 			System.out.println("This mover server is player " + id);
+			System.out.println("Sending response to game client, player name is " + this.playerName);
+			out.write("READY " + this.playerName);
+			gameLoop();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return true;
+	}
+	
+	private void gameLoop () {
+	    String input = "";
+	    try {
+	        while (true) {
+	            input = in.readLine();
+	            Scanner sc = new Scanner(input);
+	            if (sc.hasNext()) {
+	                String command = sc.next();
+	                System.out.println(command);
+	                if (command.equals("MOVE?")) {
+	                    //make move
+	                    System.out.println("This would be a prompt for a move");
+	                } else if (command.equals("MOVED")) {
+	                    //reflect opponent's move
+                        System.out.println("This would be a move");
+	                } else if (command.equals("REMOVED")) {
+	                    //reflect player removal
+	                    System.out.println("This would be a player removal");
+	                } else if (command.equals("WINNER")) {
+	                    //reflect player win
+	                    System.out.println("This would be a player win");
+	                } 
+	            }
+	        }
+	    } catch (IOException e) {
+	        // TODO Auto-generated catch block
+            e.printStackTrace();
+	    }
 	}
 	
 	// When the server is closed, take care of the leftovers
@@ -72,12 +122,7 @@ public class MoveServer {
 	}
 	
 	public static void main(String[] args) {
-		MoveServer ms = new MoveServer(6666);
-		ms.getClient();
-		while(!ms.startGame())
-			System.out.println("Start message incorrectly formatted");
-		
-		ms.close();
+		startServer();
 	}
 
 }
