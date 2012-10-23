@@ -60,11 +60,42 @@ public class MoveServer {
 			System.out.println("This mover server is player " + id);
 			System.out.println("Sending response to game client, player name is " + this.playerName);
 			out.write("READY " + this.playerName);
+			gameLoop();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return true;
+	}
+	
+	private void gameLoop () {
+	    String input = "";
+	    try {
+	        while (true) {
+	            input = in.readLine();
+	            Scanner sc = new Scanner(input);
+	            if (sc.hasNext()) {
+	                String command = sc.next();
+	                System.out.println(command);
+	                if (command.equals("MOVE?")) {
+	                    //make move
+	                    System.out.println("This would be a prompt for a move");
+	                } else if (command.equals("MOVED")) {
+	                    //reflect opponent's move
+                        System.out.println("This would be a move");
+	                } else if (command.equals("REMOVED")) {
+	                    //reflect player removal
+	                    System.out.println("This would be a player removal");
+	                } else if (command.equals("WINNER")) {
+	                    //reflect player win
+	                    System.out.println("This would be a player win");
+	                } 
+	            }
+	        }
+	    } catch (IOException e) {
+	        // TODO Auto-generated catch block
+            e.printStackTrace();
+	    }
 	}
 	
 	// When the server is closed, take care of the leftovers
