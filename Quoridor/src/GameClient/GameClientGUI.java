@@ -258,18 +258,24 @@ public class GameClientGUI extends JFrame {
 		
 	}
 
-	public void handleSquareButtonPress(SquareButton btn){
-		Coordinates currentCoordinates;
-		Coordinates newCoordinates;
+	public boolean handleSquareButtonPress(SquareButton btn){
+		Coordinates currentCoordinates= players.getCurrentPlayer().getCoordinates();
+		Coordinates newCoordinates = new Coordinates();
+		newCoordinates.setRow(btn.getRow());
+		newCoordinates.setColumn(btn.getColumn());
+		
+		
+		
+		if (!btn.getUsed() && board.isValidMove(currentCoordinates, newCoordinates)) {
+			btn.setValidated();
+		} 
 
 		if (playGame && btn.isValidated()) {
 			btn.setInvalidated();
 			
-			currentCoordinates = players.getCurrentPlayer().getCoordinates();
+			
 
-			newCoordinates = new Coordinates();
-			newCoordinates.setRow(btn.getRow());
-			newCoordinates.setColumn(btn.getColumn());
+			
 			
 			btn.setUsed(true);
 
@@ -290,17 +296,18 @@ public class GameClientGUI extends JFrame {
 				JOptionPane.showMessageDialog(this, String.format("Player %s has won the game.", players.getCurrentPlayerID() + 1));
 				System.out.format("Player %s has won the game.", players.getCurrentPlayerID() + 1);
 				dispose();
-				FirstWindow mainMenu = new FirstWindow();
 				
 			} 
 			players.nextPlayer();
 			lblCurrentPlayer.setText("Current Player: "+(players.getCurrentPlayerID()+1));
 			setTileIcon(btnCurrentPlayer , players.getCurrentPlayerID()) ;
+			
+			return true;
 		}
-		
+		return false;
 	}
 
-	public void handleVerticalWallPress(VerticalWallButton vertWall) {
+	public boolean handleVerticalWallPress(VerticalWallButton vertWall) {
 		
 		if (playGame && vertWall.isValidated()) {
 			vertWall.setInvalidated();
@@ -322,11 +329,13 @@ public class GameClientGUI extends JFrame {
 			players.nextPlayer();
 			lblCurrentPlayer.setText("Current Player: "+(players.getCurrentPlayerID()+1));
 			setTileIcon(btnCurrentPlayer , players.getCurrentPlayerID()) ;
-
-		} 
+			
+			return true;
+		}
+		return false;
 	}
 
-	public void handleHorizontalWallPress(HorizontalWallButton horizWall){
+	public boolean handleHorizontalWallPress(HorizontalWallButton horizWall){
 		
 		if(playGame && horizWall.isValidated()) {
 			horizWall.setInvalidated();
@@ -344,29 +353,11 @@ public class GameClientGUI extends JFrame {
 			players.nextPlayer();
 			lblCurrentPlayer.setText("Current Player: "+(players.getCurrentPlayerID()+1));
 			setTileIcon(btnCurrentPlayer , players.getCurrentPlayerID()) ;
-
+			
+			return true;
 		}
+		return false;
 	}
-
-
-	@Override
-	public void mouseClicked(MouseEvent e) {
-
-		//determine what type of button caused the event
-		if(e.getSource() instanceof SquareButton){
-			handleSquareButtonPress((SquareButton) e.getSource());
-		}else if(e.getSource() instanceof VerticalWallButton){
-			handleVerticalWallPress((VerticalWallButton)e.getSource());
-		}else if(e.getSource() instanceof HorizontalWallButton){
-			handleHorizontalWallPress((HorizontalWallButton)e.getSource());
-		}
-		
-		
-		
-	}
-
-	
-
 	
 	public void CPUTurn() {
 		//if (players.getCurrentPlayerID() != 3)
@@ -480,7 +471,12 @@ public class GameClientGUI extends JFrame {
 		players.nextPlayer();
 
     }
-    
+    /**
+     * Attempt to perform the move sent in by an AI, if valid move return true, else return false
+     * 
+     * @param move
+     * @return
+     */
     public boolean handleMove(String move){
     	/*
     	 * MOVE <op> <location-1> <location-2>
@@ -498,6 +494,7 @@ public class GameClientGUI extends JFrame {
     placed and <location-2> is the bottom or right end.
     	 */
     	
+    	// split the move message up into pieces to be handled
     	String[] moveParts = move.split(" ");
     	String op = moveParts[1];
     	String location1 = moveParts[2];
@@ -507,10 +504,17 @@ public class GameClientGUI extends JFrame {
     	String loc1Col = location1.split(",")[1];
     	String loc2Col = location2.split(",")[1];
     	
-    	if(op.equalsIgnoreCase("m"))
-    		handleSquareButtonPress(tiles[Integer.parseInt(loc2Col)][Integer.parseInt(loc2Row)]);
+    	if(op.equalsIgnoreCase("m")){
+    		return handleSquareButtonPress(tiles[Integer.parseInt(loc2Col)][Integer.parseInt(loc2Row)]);
+    	}else if(op.equalsIgnoreCase("w") && (loc1Row.equalsIgnoreCase(loc2Row)) && (loc1Col.equalsIgnoreCase(loc2Col))){
+    		return false;
+    	}else if(loc1Row.equalsIgnoreCase(loc2Row)){
+    		return handleHorizontalWallPress(horizontalWalls[Integer.parseInt(loc1Col)][Integer.parseInt(loc1Row)]);
+    	}else if(loc1Col.equalsIgnoreCase(loc2Col)){
+    		return handleVerticalWallPress(verticalWalls[Integer.parseInt(loc1Col)][Integer.parseInt(loc1Row)]);
+    	}
     	
-    	return true;
+    	return false;
     }
     
     /**
@@ -520,18 +524,19 @@ public class GameClientGUI extends JFrame {
     public static void main (String args[]){
     	
     	
-    	String []greetings = {"QUORIDOR <4> <0>", "QUORIDOR <4> <3>", "QUORIDOR <4> <1>", "QUORIDOR <4> <2>"};
+    	String []greetings = {"QUORIDOR <4> <0>\n", "QUORIDOR <4> <3>\n", "QUORIDOR <4> <1>\n", "QUORIDOR <4> <2>\n"};
     	String fromServer = null; 
-    	boolean gameOver = false;
+    	GameClientGUI client = new GameClientGUI();
     	  
     	  Socket []clientSockets = new Socket[4];
 		try {
-			clientSockets[0] = new Socket(args[0], 6666);
+			//clientSockets[0] = new Socket(args[0], 6666);
 
 		
-    	  DataOutputStream outToServer = new DataOutputStream(clientSockets[0].getOutputStream());
+    	  //DataOutputStream outToServer = new DataOutputStream(clientSockets[0].getOutputStream());
+			DataOutputStream outToServer = new DataOutputStream(System.out);
     	 // BufferedReader inFromServer = new BufferedReader(new InputStreamReader(clientSockets[0].getInputStream()));
-    	  BufferedReader inFromServer = new BufferedReader(new InputStreamReader(System.in));
+    	  BufferedReader inFromServer = new BufferedReader(new FileReader("testMoves.in"));
     	  
     	  
     	  outToServer.writeBytes(greetings[0]);
@@ -539,23 +544,31 @@ public class GameClientGUI extends JFrame {
     	  fromServer = inFromServer.readLine();
     	  }while(!fromServer.startsWith("READY"));
     	  
-    	  while(!gameOver){
+    	  while(client.playGame){
     		  for(int i= 0; i<args.length; i++){
     			 outToServer.writeBytes("MOVE?\n");
     			 fromServer = inFromServer.readLine();
+    			 
     			 if(!fromServer.startsWith("MOVE"))
     				 ;//reject player 
     			 else
-    				 handleMove(fromServer);
-    			 for(int j = 0; i<args.length; j++)
-    				 outToServer.writeBytes("MOVED <"+i+"> "+fromServer.substring(fromServer.indexOf('<'), fromServer.length()));
+    				 if(!client.handleMove(fromServer))
+    					 ;//reject player
+    			 for(int j = 0; j<args.length; j++){
+    				 if(client.playGame)
+    				 outToServer.writeBytes("MOVED "+fromServer.substring(6)+"\n");
+    				 else
+        				 outToServer.writeBytes("WINNER "+i+"\n");
+
+    			 }
     			 
     		  }  
     	  }
     	  
     	  
     	  
-    	  clientSockets[0].close();
+    	  
+    	 // clientSockets[0].close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
