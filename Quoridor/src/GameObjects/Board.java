@@ -220,7 +220,7 @@ public class Board {
 				return false;
 		} else if (curRow < newRow) {								// South
 			// Reject the move if the move distance is too big or if a wall is in place
-			if (board[curRow + 1][curColumn].getBottomWall().isWall()) 
+			if (board[curRow][curColumn].getBottomWall().isWall()) 
 				return false;
 			else if (board[curRow + 1][curColumn].isOccupied()) {
 				recCoord.setRow(curRow + 1);
@@ -315,6 +315,7 @@ public class Board {
 					Node<State> nextMove;
 					
 					nextMove = Search.aStar(curState, goal, stateGen, heuristic);
+
 					if (nextMove == null) {
 						System.out.println("Wall would block a path.");
 						canMove = false;
