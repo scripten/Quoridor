@@ -52,19 +52,13 @@ import GameObjects.Coordinates;
 		}
 		
 		public boolean hasAvailableWalls() {
-			return wallCount != 0;
+			if(wallCount <= 0)
+				return false;
+			else
+				return true;
+			//return wallCount != 0;
 		}
 		
-		public boolean hasTraveled(Coordinates newCoord) {
-			for (int i = 0; i < path.size(); i++) {
-				if (path.get(i).equals(coord)) {
-					if (i + 1 < path.size() && path.get(i + 1).equals(newCoord)) 
-						return true;
-				}
-			}
-			
-			return false;
-		}
 		
 		@Override 
 		public boolean equals(Object obj) { 
