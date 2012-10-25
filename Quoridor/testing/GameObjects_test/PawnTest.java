@@ -48,8 +48,17 @@ public class PawnTest {
 	
 	
 	@Test
-	public void testUseWallCount() {
+	public void testGetWallCount() {
 		assertThat(pawn.getWallCount(), is(DEFAULT_WALL_COUNT));
+	}
+	
+	@Test
+	public void testUseWallCount() {
+		int i = 0;
+		//pawn = new Pawn(DEFAULT_ROW, DEFAULT_COLUMN, dest,  1);
+		pawn.useWall();
+		System.out.println(pawn.getWallCount());
+		assertThat(pawn.getWallCount(), is(i));
 	}
 	
 	@Test
@@ -57,6 +66,24 @@ public class PawnTest {
 		assertTrue(pawn.hasAvailableWalls());
 	}
 	
+	@Test
+	public void testGetDestination() {
+		pawn = new Pawn(DEFAULT_ROW, DEFAULT_COLUMN, DESTINATION.FIRST_COLUMN,  DEFAULT_WALL_COUNT);
+		assertEquals(pawn.getDestination(), DESTINATION.FIRST_COLUMN);
+	}
+	
+	@Test
+	public void testGetCoordinates() {
+		pawn = new Pawn(DEFAULT_ROW, DEFAULT_COLUMN, dest,  DEFAULT_WALL_COUNT);
+		Pawn testPawn = new Pawn(DEFAULT_ROW, DEFAULT_COLUMN, dest,  DEFAULT_WALL_COUNT);
+		assertEquals(pawn.getCoordinates(), testPawn.getCoordinates());
+	}
+	
+	@Test
+	public void testClone() {
+		pawn = new Pawn(DEFAULT_ROW, DEFAULT_COLUMN, dest,  DEFAULT_WALL_COUNT);
+		assertEquals(pawn.getCoordinates(), Pawn.clone(pawn).getCoordinates());
+	}
 	@After
 	public void testUseWall() {
 		pawn.useWall();
