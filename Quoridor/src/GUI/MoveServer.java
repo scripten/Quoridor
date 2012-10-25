@@ -31,7 +31,7 @@ public class MoveServer {
 	    this.playerName = name; 
 	}
 	
-	// Allows outside classes to start a move server - for testing purposes
+	// Allows outside classes to start a move server
 	public static void startServer() {
 	    MoveServer ms = new MoveServer(6666);
 	    ms.getClient();
@@ -40,6 +40,16 @@ public class MoveServer {
         
         ms.close();
 	}
+	
+	// Allows outside classes to start a move server - this overload allows port selection
+    public static void startServer(int port) {
+        MoveServer ms = new MoveServer(port);
+        ms.getClient();
+        while(!ms.startGame())
+            System.out.println("Start message incorrectly formatted");
+        
+        ms.close();
+    }
 	
 	// Waits for a client to connect to the socket and then sets up communications
 	private void getClient () {
