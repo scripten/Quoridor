@@ -1,9 +1,6 @@
 
 package AI;
 
-import GameObjects.Board;
-import GameObjects.Pawn;
-
 public class Node<T> {
 	Node<T> parent;				// Parent of the node
 	int cost;					// Total cost
