@@ -31,6 +31,9 @@ public class Players {
 			pawns = new Pawn[numPlayers];
 			pawns[0] = new Pawn(8, 4, DESTINATION.FIRST_ROW, NUM_WALLS_TWO_PLAYERS);
 			pawns[1] = new Pawn(0, 4, DESTINATION.LAST_ROW, NUM_WALLS_TWO_PLAYERS);
+			
+			/*pawns[0] = new Pawn(4, 0, DESTINATION.LAST_COLUMN,NUM_WALLS_TWO_PLAYERS);
+			pawns[1] = new Pawn(4, 8, DESTINATION.FIRST_COLUMN, NUM_WALLS_TWO_PLAYERS);*/
 		}
 		
 		currentPlayer = 0;

@@ -22,6 +22,7 @@ public class HorizontalWallButton extends JButton {
 		super();
 		row = -1;
 		column = -1;
+		validated = false;
 	}
 	
 	public HorizontalWallButton(String text, int columns, int rows){

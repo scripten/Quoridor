@@ -78,6 +78,14 @@ public class Board {
 		return board[row][column].getRightWall().isWall();
 	}
 	
+	public boolean hasVerticalFirstWall(int row, int column) {
+		return board[row][column].hasVerticalFirstWall();
+	}
+	
+	public boolean hasHorizontalFirstWall(int row, int column) {
+		return board[row][column].hasHorizontalFirstWall();
+	}
+	
 	public void setOccupied(Coordinates currentCoordinates) {
 		board[currentCoordinates.getRow()][currentCoordinates.getColumn()].setOccupied();
 	}
@@ -293,7 +301,7 @@ public class Board {
 	public boolean isValidWallPlacement(int row, int column, WALL_TYPE wallType, ArrayList<Coordinates> allPlayerCoordinates, ArrayList<DESTINATION> allPlayerDestinations) {
 		boolean canMove = false;
 		
-		if (row == NUM_ROWS - 1 || column == NUM_COLS - 1)
+		if (row >= NUM_ROWS - 1 || column >= NUM_COLS - 1 || row < 0 || column < 0)
 			canMove = false;
 		else if (wallType == WALL_TYPE.VERTICAL)
 			if (board[row][column].hasHorizontalFirstWall())

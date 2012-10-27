@@ -22,6 +22,7 @@ public class VerticalWallButton extends JButton {
 		super();
 		row = -1;
 		column = -1;
+		validated = false;
 	}
 	
 	public VerticalWallButton(String text, int columns, int rows){
