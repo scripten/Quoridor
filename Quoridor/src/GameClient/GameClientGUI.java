@@ -309,6 +309,11 @@ public class GameClientGUI extends JFrame {
 
 	public boolean handleVerticalWallPress(VerticalWallButton vertWall) {
 		
+		
+		if (!vertWall.getUsed() && board.isValidWallPlacement(vertWall.getRow(), vertWall.getColumn(), WALL_TYPE.VERTICAL, players.getPlayersCoordinates(), players.getPlayersDestinations())) {
+			vertWall.setValidated();
+		} 
+		
 		if (playGame && vertWall.isValidated()) {
 			vertWall.setInvalidated();
 			
@@ -325,6 +330,8 @@ public class GameClientGUI extends JFrame {
             setVerticalWallIcon(verticalWalls[vertWall.getColumn()][vertWall.getRow() + 1], players.getCurrentPlayerID() );
 
 			verticalWalls[vertWall.getColumn()][vertWall.getRow() + 1].setUsed(true);
+			
+			setWallCountLabel(players.getCurrentPlayerID());
 
 			players.nextPlayer();
 			lblCurrentPlayer.setText("Current Player: "+(players.getCurrentPlayerID()+1));
@@ -336,6 +343,10 @@ public class GameClientGUI extends JFrame {
 	}
 
 	public boolean handleHorizontalWallPress(HorizontalWallButton horizWall){
+		
+		if (!horizWall.getUsed() && board.isValidWallPlacement(horizWall.getRow(), horizWall.getColumn(), WALL_TYPE.HORIZONTAL, players.getPlayersCoordinates(), players.getPlayersDestinations())) {
+			horizWall.setValidated();
+		} 
 		
 		if(playGame && horizWall.isValidated()) {
 			horizWall.setInvalidated();
@@ -350,6 +361,8 @@ public class GameClientGUI extends JFrame {
 			setHorizontalWallIcon(horizontalWalls[horizWall.getColumn() + 1][horizWall.getRow()], players.getCurrentPlayerID() )  ;
 			horizontalWalls[horizWall.getColumn() + 1][horizWall.getRow()].setUsed(true);
 			
+			setWallCountLabel(players.getCurrentPlayerID());
+			
 			players.nextPlayer();
 			lblCurrentPlayer.setText("Current Player: "+(players.getCurrentPlayerID()+1));
 			setTileIcon(btnCurrentPlayer , players.getCurrentPlayerID()) ;
@@ -359,75 +372,7 @@ public class GameClientGUI extends JFrame {
 		return false;
 	}
 	
-	public void CPUTurn() {
-		//if (players.getCurrentPlayerID() != 3)
-		//	return;
-
-		Node<State> curState = new Node<State>(null);
-		
-		curState.setState(new State(board, players.getCurrentPlayer().getCoordinates(), players.getCurrentPlayer().getDestination()));
-		
-		GoalEval goal = new GoalEval();
-		StateGen stateGen = new StateGen();
-		StateHeuristic heuristic = new StateHeuristic();
-		Node<State> nextMove;
-		
-		nextMove = Search.aStar(curState, goal, stateGen, heuristic);
-		
-		if (nextMove == null) {
-			System.out.println("AI did not find a path.");
-			players.nextPlayer();
-			return;
-		}
-		
-		while (nextMove.getParent() != curState) 
-			nextMove = nextMove.getParent();
-		
-		System.out.format("AI move (%d, %d)\n", 
-				nextMove.getState().getCoordinates().getRow(), 
-				nextMove.getState().getCoordinates().getColumn());
-			
-		if (board.isValidMove(players.getCurrentPlayer().getCoordinates(), nextMove.getState().getCoordinates())) {
-			
-			System.out.format("Path cost: %d\n", nextMove.getCost());
-			System.out.println("Valid AI move");
-			
-			
-
-			setTileIcon(tiles[nextMove.getState().getCoordinates().getColumn()][nextMove.getState().getCoordinates().getRow()],players.getCurrentPlayerID()) ;
-
-			setTileIcon(tiles[players.getCurrentPlayer().getCoordinates().getColumn()][players.getCurrentPlayer().getCoordinates().getRow() ], -1);
-			tiles[players.getCurrentPlayer().getCoordinates().getColumn()][players.getCurrentPlayer().getCoordinates().getRow()].setUsed(false);
-			tiles[players.getCurrentPlayer().getCoordinates().getColumn()][players.getCurrentPlayer().getCoordinates().getRow()].setInvalidated();
-			
-			board.setUnoccupied(players.getCurrentPlayer().getCoordinates());
-			board.setOccupied(nextMove.getState().getCoordinates());
-
-			players.getCurrentPlayer().move(nextMove.getState().getCoordinates());
-			
-			if (players.isWinner()) {
-				playGame = false;
-
-				JOptionPane.showMessageDialog(this, String.format("Player %s has won the game.", players.getCurrentPlayerID() + 1));
-				System.out.format("Player %s has won the game.\n", players.getCurrentPlayerID() + 1);
-				dispose();
-				FirstWindow mainMenu = new FirstWindow();
-			} 
-			
-			
-		} else 
-			System.out.println("Invalid AI move");
-		
-		players.nextPlayer();
-		
-		if (players.getCurrentPlayerID() != 0){
-			CPUTurn();
-			lblCurrentPlayer.setText("Current Player: "+(players.getCurrentPlayerID()+1));
-			setTileIcon(btnCurrentPlayer , players.getCurrentPlayerID()) ;
-		}
-			
-	}
-
+	
     public void setHorizontalWallIcon(HorizontalWallButton btn, int player){
         if(player == 0)
             btn.setIcon(new ImageIcon(GameClientGUI.class.getResource("/quoridor images/blueHorizontalWall.png")));
@@ -470,6 +415,20 @@ public class GameClientGUI extends JFrame {
 		setTileIcon(btnCurrentPlayer , players.getCurrentPlayerID()) ;
 		players.nextPlayer();
 
+    }
+    
+public void setWallCountLabel(int playerID){
+    	
+    	if(playerID==0){
+    		lblPlayer1Walls.setText("Player 1 Walls: "+players.pawns[0].getWallCount());
+    	}else if(playerID==1){
+    		lblPlayer2Walls.setText("Player 2 Walls: "+players.pawns[1].getWallCount());
+    	}else if(playerID==2){
+    		lblPlayer3Walls.setText("Player 3 Walls: "+players.pawns[2].getWallCount());
+    	}else if(playerID==3){
+    		lblPlayer4Walls.setText("Player 4 Walls: "+players.pawns[3].getWallCount());
+    	}
+    	
     }
     /**
      * Attempt to perform the move sent in by an AI, if valid move return true, else return false
@@ -556,7 +515,7 @@ public class GameClientGUI extends JFrame {
     					 ;//reject player
     			 for(int j = 0; j<args.length; j++){
     				 if(client.playGame)
-    				 outToServer.writeBytes("MOVED "+fromServer.substring(6)+"\n");
+    				 outToServer.writeBytes("MOVED "+i+" "+fromServer.substring(5)+"\n");
     				 else
         				 outToServer.writeBytes("WINNER "+i+"\n");
 

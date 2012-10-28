@@ -334,6 +334,8 @@ public class BoardGUI extends JFrame implements MouseListener{
             setVerticalWallIcon(verticalWalls[vertWall.getColumn()][vertWall.getRow() + 1], players.getCurrentPlayerID() );
 
 			verticalWalls[vertWall.getColumn()][vertWall.getRow() + 1].setUsed(true);
+			
+			setWallCountLabel(players.getCurrentPlayerID());
 
 			players.nextPlayer();
 			lblCurrentPlayer.setText("Current Player: "+(players.getCurrentPlayerID()+1));
@@ -358,6 +360,8 @@ public class BoardGUI extends JFrame implements MouseListener{
 			horizWall.setUsed(true);
 			setHorizontalWallIcon(horizontalWalls[horizWall.getColumn() + 1][horizWall.getRow()], players.getCurrentPlayerID() )  ;
 			horizontalWalls[horizWall.getColumn() + 1][horizWall.getRow()].setUsed(true);
+			
+			setWallCountLabel(players.getCurrentPlayerID());
 			
 			players.nextPlayer();
 			lblCurrentPlayer.setText("Current Player: "+(players.getCurrentPlayerID()+1));
@@ -754,6 +758,10 @@ public class BoardGUI extends JFrame implements MouseListener{
 			} else 
 				System.out.println("Invalid AI move");
 		}
+		
+		setWallCountLabel(players.getCurrentPlayerID());
+
+		
 		players.nextPlayer();
 		
 		if (players.getCurrentPlayerID() != 0){
@@ -815,5 +823,19 @@ public class BoardGUI extends JFrame implements MouseListener{
 			lblCurrentPlayer.setText("Current Player: "+(players.getCurrentPlayerID()+1));
 			setTileIcon(btnCurrentPlayer , players.getCurrentPlayerID()) ;
 		}
-    }	
+    }
+    
+    public void setWallCountLabel(int playerID){
+    	
+    	if(playerID==0){
+    		lblPlayer1Walls.setText("Player 1 Walls: "+players.pawns[0].getWallCount());
+    	}else if(playerID==1){
+    		lblPlayer2Walls.setText("Player 2 Walls: "+players.pawns[1].getWallCount());
+    	}else if(playerID==2){
+    		lblPlayer3Walls.setText("Player 3 Walls: "+players.pawns[2].getWallCount());
+    	}else if(playerID==3){
+    		lblPlayer4Walls.setText("Player 4 Walls: "+players.pawns[3].getWallCount());
+    	}
+    	
+    }
 }
