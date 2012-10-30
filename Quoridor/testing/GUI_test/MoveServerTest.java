@@ -36,7 +36,8 @@ public class MoveServerTest {
             port = 6666;
 
             MoveServer.startServer();
-            server = new Socket(localhost, port);
+            
+            server = new Socket("127.0.0.1", port);
             
             in = new BufferedReader(new InputStreamReader(server.getInputStream()));
             out = new PrintWriter(server.getOutputStream(), true);
@@ -53,8 +54,17 @@ public class MoveServerTest {
     }
 
     @Test
-    public void testStartServer() {
-        fail("Not yet implemented");
+    public void testStartGame() {
+        try {
+            out.write("QUORIDOR 2 0");
+            String response = in.readLine();
+            assertEquals("READY Player", response);
+            
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        
     }
 
 }

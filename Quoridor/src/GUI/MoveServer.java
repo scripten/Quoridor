@@ -108,10 +108,13 @@ public class MoveServer {
 	                    System.out.println("This would be a player removal");
 	                } else if (command.equals("WINNER")) {
 	                    //reflect player win
-	                    System.out.println("This would be a player win");
+	                    String winner = sc.next();
+	                    System.out.println("Winner: Player ID " + winner);
+	                    break;
 	                } 
 	            }
 	        }
+	        this.close();
 	    } catch (IOException e) {
 	        // TODO Auto-generated catch block
             e.printStackTrace();
