@@ -4,16 +4,19 @@ import java.net.*;
 import java.io.*;
 import java.util.*;
 
+import GameObjects.*;
+
 public class MoveServer {
 	
 	private ServerSocket server; // Server socket for output
 	private Socket client;		 // Client socket for input
 	private PrintWriter out;	 // Hooked to server socket to print over TCP
 	private BufferedReader in;	 // Hooked to client socket to receive from TCP
-	private int port;			 // Port number for connection
+	private static int port;			 // Port number for connection
 	private int numPlayers;		 // Number of players in game
 	private int id;				 // Player id for this move server
 	private String playerName = "Player";   // Player name for this move server
+	private Board board = new Board();
 	
 	public MoveServer (int port) {
 		this.port = port;
@@ -102,16 +105,35 @@ public class MoveServer {
 	                    System.out.println("This would be a prompt for a move");
 	                } else if (command.equals("MOVED")) {
 	                    //reflect opponent's move
-                        System.out.println("This would be a move");
+                        String moveType = sc.next();
+                        String firstMoveX = sc.next();
+                        String firstMoveY = sc.next();
+                        String secondMoveX = sc.next();
+                        String secondMoveY = sc.next();
+                        if (moveType == "M") {
+                            //move pawn
+                        } else {
+                            // place wall
+                        }
 	                } else if (command.equals("REMOVED")) {
 	                    //reflect player removal
-	                    System.out.println("This would be a player removal");
+	                    int removedPlayer = Integer.parseInt(sc.next());
+	                    System.out.println("Player ID " + removedPlayer + " has been removed from the game.");
+	                    if (removedPlayer == this.id) {
+	                        System.out.println("Aww shucks, we got removed... Shutting down in shame...");
+	                        break;
+	                    }
 	                } else if (command.equals("WINNER")) {
 	                    //reflect player win
-	                    System.out.println("This would be a player win");
+	                    int winner = Integer.parseInt(sc.next());
+	                    System.out.println("Winner: Player ID " + winner);
+	                    if (winner == this.id)
+	                        System.out.println("I won! WOOHOO!");
+	                    break;
 	                } 
 	            }
 	        }
+	        this.close();
 	    } catch (IOException e) {
 	        // TODO Auto-generated catch block
             e.printStackTrace();
@@ -132,7 +154,12 @@ public class MoveServer {
 	}
 	
 	public static void main(String[] args) {
-		startServer();
+	    if (args.length != 0) {
+	        int port2 = Integer.parseInt(args[0]);
+	        startServer(port2);
+	    } else {
+	        startServer();
+	    }
 	}
 
 }
