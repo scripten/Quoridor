@@ -451,16 +451,37 @@ public class GameClientGUI extends JFrame {
     For a W move, <location-1> is the top or left end of the wall
     placed and <location-2> is the bottom or right end.
 		 */
+		String op;
+		String loc1Row;
+		String loc1Col;
+		String loc2Row;
+		String loc2Col;
 
-		// split the move message up into pieces to be handled
-		String[] moveParts = move.split(" ");
-		String op = moveParts[1];
-		String location1 = moveParts[2];
-		String location2 = moveParts[3];
-		String loc1Row = location1.split(",")[0];
-		String loc2Row = location2.split(",")[0];
-		String loc1Col = location1.split(",")[1];
-		String loc2Col = location2.split(",")[1];
+		// unfortunately using static indices to get information from messages
+		
+
+		// check for message formatting errors
+		
+		try  
+		{  
+			op = ""+move.charAt(5);
+			loc1Row = ""+move.charAt(8);
+			loc1Col = ""+move.charAt(11);
+			loc2Row = ""+move.charAt(15);
+			loc2Col = ""+move.charAt(18);
+			
+			Integer.parseInt(loc1Row);
+			Integer.parseInt(loc2Row);
+			Integer.parseInt(loc1Col);
+			Integer.parseInt(loc2Col); 
+		}  
+		catch( Exception e)  
+		{  
+			return false;  
+		} 
+		
+		if(!(op.equalsIgnoreCase("w")||op.equalsIgnoreCase("m")))	//if op is not an m or w
+			return false;
 
 		if(op.equalsIgnoreCase("m")){
 			return handleSquareButtonPress(tiles[Integer.parseInt(loc2Col)][Integer.parseInt(loc2Row)]);
@@ -472,7 +493,9 @@ public class GameClientGUI extends JFrame {
 			return handleVerticalWallPress(verticalWalls[Integer.parseInt(loc1Col)][Integer.parseInt(loc1Row)]);
 		}
 
+
 		return false;
+
 	}
 
 	/**
@@ -486,14 +509,14 @@ public class GameClientGUI extends JFrame {
 		String fromServer = null; 
 		GameClientGUI client = new GameClientGUI();
 
-		//Socket []clientSockets = new Socket[4];
+
 		try {
 
 			DataOutputStream [] outToServers = new DataOutputStream[4];
 
 			for(int i=0; i<4; i++){
-				//outToServers[i] = new DataOutputStream(new Socket(args[i], 6666).getOutputStream());  
-				outToServers[i] = new DataOutputStream(System.out);  
+				outToServers[i] = new DataOutputStream(new Socket(InetAddress.getByName(args[i]), 6666).getOutputStream());  
+				//outToServers[i] = new DataOutputStream(System.out);  
 
 			}
 
@@ -515,10 +538,10 @@ public class GameClientGUI extends JFrame {
 					fromServer = inFromServer.readLine();
 
 					if(!fromServer.startsWith("MOVE"))
-						;//reject player 
+						System.out.println("Client should remove Player "+(currentPlayerID+1));// TODO reject player 
 					else
 						if(!client.handleMove(fromServer))
-							;//reject player
+							System.out.println("Client should remove Player "+(currentPlayerID+1));// TODO reject player
 					for(int waitingPlayerID = 0; waitingPlayerID<args.length; waitingPlayerID++){
 						if(client.playGame)
 							outToServers[waitingPlayerID].writeBytes("MOVED "+currentPlayerID+" "+fromServer.substring(5)+"\n");
