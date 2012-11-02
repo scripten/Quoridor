@@ -46,12 +46,20 @@ public class Players {
 	public int getCurrentPlayerID() {
 		return currentPlayer;
 	}
+
+	public Pawn getSpecificPlayer(int playerID) {
+		return pawns[playerID];
+	}
 	
 	public void nextPlayer() {
 		currentPlayer++;
 		
 		if (currentPlayer > numPlayers - 1)
 			currentPlayer = 0;
+	}
+
+	public void removePlayer(int playerID) {
+		// TODO: remove specific player's pawn from board object and stop counting their turn
 	}
 	
 	public int getNumberOfPlayers() {

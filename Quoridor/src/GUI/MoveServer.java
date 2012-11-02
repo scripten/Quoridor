@@ -17,6 +17,7 @@ public class MoveServer {
 	private int id;				 // Player id for this move server
 	private String playerName = "Player";   // Player name for this move server
 	private Board board = new Board();
+	private Players players;
 	
 	public MoveServer (int port) {
 		this.port = port;
@@ -78,6 +79,13 @@ public class MoveServer {
 				return false;
 			this.numPlayers = sc.nextInt();
 			this.id = sc.nextInt();
+			boolean fourPlayers;
+			if (this.numPlayers == 4)
+				fourPlayers = true;
+			else
+				fourPlayers = false;
+			players = new Players(fourPlayers);
+			
 			System.out.println(input);
 			System.out.println("Game established with " + numPlayers + " players");
 			System.out.println("This mover server is player " + id);
@@ -104,16 +112,25 @@ public class MoveServer {
 	                    //make move
 	                    System.out.println("This would be a prompt for a move");
 	                } else if (command.equals("MOVED")) {
-	                    //reflect opponent's move
+	                    //reflect a move
+	                    String movingPlayer = sc.next();
                         String moveType = sc.next();
                         String firstMoveX = sc.next();
                         String firstMoveY = sc.next();
                         String secondMoveX = sc.next();
                         String secondMoveY = sc.next();
+                        Coordinates firstMove = new Coordinates(firstMoveX, firstMoveY);
+                        Coordinates secondMove = new Coordinates(secondMoveX, secondMoveY);
                         if (moveType == "M") {
-                            //move pawn
+                            // move pawn
+                            (players.getSpecificPlayer(movingPlayer)).move(secondMove);
                         } else {
                             // place wall
+                            if (firstMove.getRow() != secondMove.getRow()){
+                            	board.setVerticalWall(firstMove.getRow(), firstMove.getColumn());
+                            } else {
+                            	board.setHorizontalWall(firstMove.getRow(), firstMove.getColumn());
+                            }
                         }
 	                } else if (command.equals("REMOVED")) {
 	                    //reflect player removal
@@ -122,6 +139,8 @@ public class MoveServer {
 	                    if (removedPlayer == this.id) {
 	                        System.out.println("Aww shucks, we got removed... Shutting down in shame...");
 	                        break;
+	                    } else {
+	                    	players.removePlayer(removedPlayer);
 	                    }
 	                } else if (command.equals("WINNER")) {
 	                    //reflect player win
@@ -155,8 +174,7 @@ public class MoveServer {
 	
 	public static void main(String[] args) {
 	    if (args.length != 0) {
-	        int port2 = Integer.parseInt(args[0]);
-	        startServer(port2);
+	        startServer(Integer.parseInt(args[0]));
 	    } else {
 	        startServer();
 	    }
