@@ -119,11 +119,16 @@ public class MoveServer {
                         String firstMoveY = sc.next();
                         String secondMoveX = sc.next();
                         String secondMoveY = sc.next();
-                        Coordinates firstMove = new Coordinates(firstMoveX, firstMoveY);
-                        Coordinates secondMove = new Coordinates(secondMoveX, secondMoveY);
+                        firstMoveX = firstMoveX.substring(1, 1);
+                        firstMoveY = firstMoveY.substring(0, 0);
+                        secondMoveX = secondMoveX.substring(1, 1);
+                        secondMoveY = secondMoveY.substring(0, 0);
+
+                        Coordinates firstMove = new Coordinates(Integer.parseInt(firstMoveX), Integer.parseInt(firstMoveY));
+                        Coordinates secondMove = new Coordinates(Integer.parseInt(secondMoveX), Integer.parseInt(secondMoveY));
                         if (moveType == "M") {
                             // move pawn
-                            (players.getSpecificPlayer(movingPlayer)).move(secondMove);
+                            (players.getSpecificPlayer(Integer.parseInt(movingPlayer))).move(secondMove);
                         } else {
                             // place wall
                             if (firstMove.getRow() != secondMove.getRow()){
